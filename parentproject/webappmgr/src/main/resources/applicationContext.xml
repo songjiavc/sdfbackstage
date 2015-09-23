@@ -18,12 +18,12 @@
 	<!-- 开启注解事务只对当前配置文件有效 -->
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
-	<jpa:repositories base-package="com.sdf.manager.user" repository-impl-postfix="Impl"
+	<jpa:repositories base-package="com.sdf.manager" repository-impl-postfix="Impl"
 		entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"></jpa:repositories>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="packagesToScan" value="com.web.test.entity" />
+		<property name="packagesToScan" value="com.sdf.manager" />
 		<property name="persistenceProvider">
 			<bean class="org.hibernate.ejb.HibernatePersistence" />
 		</property>
@@ -63,7 +63,7 @@
 			<value>org.gjt.mm.mysql.Driver</value>
 		</property>
 		<property name="url">
-			<value>jdbc:mysql://192.168.1.253:3306/test?useUnicode=true&amp;amp;characterEncoding=utf-8</value>
+			<value>jdbc:mysql://192.168.1.253:3306/echart3?useUnicode=true&amp;amp;characterEncoding=utf-8</value>
 		</property>
 		<property name="username" value="echart" />
 		<property name="password" value="echart" />

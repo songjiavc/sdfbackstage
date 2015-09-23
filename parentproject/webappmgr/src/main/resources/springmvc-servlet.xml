@@ -20,7 +20,9 @@
 -->
 
 	<!-- 扫描web包，应用Spring的注解 -->
-	<context:component-scan base-package="com.web.test.controller"/>
+	<context:component-scan base-package="com.sdf.manager">  
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>   
+	</context:component-scan>  
 	
 	<!-- 会自动注册DefaultAnnotationHandlerMapping与AnnotationMethodHandlerAdapter 两个bean,
 	是spring MVC为@Controllers分发请求所必须的。 -->
