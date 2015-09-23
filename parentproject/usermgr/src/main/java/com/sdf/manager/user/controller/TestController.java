@@ -1,4 +1,4 @@
-package com.web.test.controller;
+package com.sdf.manager.user.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.web.test.MenuBean;
-import com.web.test.entity.Student;
-import com.web.test.service.StudentService;
+import com.sdf.manager.user.MenuBean;
+import com.sdf.manager.user.entity.Student;
+import com.sdf.manager.user.service.StudentService;
 
 
 /**

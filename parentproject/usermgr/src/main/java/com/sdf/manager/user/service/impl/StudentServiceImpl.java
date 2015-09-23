@@ -1,13 +1,13 @@
-package com.web.test.service.impl;
+package com.sdf.manager.user.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.web.test.entity.Student;
-import com.web.test.repository.StudentRepository;
-import com.web.test.service.StudentService;
+import com.sdf.manager.user.entity.Student;
+import com.sdf.manager.user.repository.StudentRepository;
+import com.sdf.manager.user.service.StudentService;
 /**
  * 
  * @author xuzebin

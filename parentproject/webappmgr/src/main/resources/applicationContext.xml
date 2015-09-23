@@ -9,7 +9,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
 	<!-- 注解组件扫描 -->
-	<context:component-scan base-package="com.web.test">
+	<context:component-scan base-package="com.sdf.manager.user">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
@@ -18,7 +18,7 @@
 	<!-- 开启注解事务只对当前配置文件有效 -->
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
-	<jpa:repositories base-package="com.web.test" repository-impl-postfix="Impl"
+	<jpa:repositories base-package="com.sdf.manager.user" repository-impl-postfix="Impl"
 		entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"></jpa:repositories>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -68,7 +68,4 @@
 		<property name="username" value="echart" />
 		<property name="password" value="echart" />
 	</bean>
-
-	
-	
 </beans>

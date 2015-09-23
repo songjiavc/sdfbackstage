@@ -1,4 +1,4 @@
-package com.web.test.entity;
+package com.sdf.manager.user.entity;
 
 import java.io.Serializable;
 

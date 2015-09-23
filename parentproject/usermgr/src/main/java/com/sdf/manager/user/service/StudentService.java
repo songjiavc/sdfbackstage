@@ -1,6 +1,6 @@
-package com.web.test.service;
+package com.sdf.manager.user.service;
 
-import com.web.test.entity.Student;
+import com.sdf.manager.user.entity.Student;
 
 /**
  * 

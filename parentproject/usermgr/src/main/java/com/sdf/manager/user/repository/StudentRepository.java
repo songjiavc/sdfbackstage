@@ -1,8 +1,8 @@
-package com.web.test.repository;
+package com.sdf.manager.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.web.test.entity.Student;
+import com.sdf.manager.user.entity.Student;
 /**
  * 
  * @author xuzebin
