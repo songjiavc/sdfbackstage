@@ -18,6 +18,9 @@
   		<artifactId>usermgr</artifactId>
   		<version>${project.version}</version>
    </dependency>
+   	
+   	
+   
   </dependencies>
   <build>
     <finalName>webappmgr</finalName>
