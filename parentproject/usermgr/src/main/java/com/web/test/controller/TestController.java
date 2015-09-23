@@ -75,8 +75,6 @@ public class TestController {
 	 */
 	@RequestMapping(value = "/getData", method = RequestMethod.POST)
 	public @ResponseBody Map<String,Object> getData(ModelMap model,HttpSession httpSession) throws Exception {
-		Map<String,Object> returnMap = new HashMap<String,Object> ();
-		
 		Map<String,Object> child = new HashMap<String,Object> ();
 		List<MenuBean> menubeans = new ArrayList<MenuBean> ();
 		List<MenuBean> menus = new ArrayList<MenuBean> ();
