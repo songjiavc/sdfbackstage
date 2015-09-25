@@ -6,12 +6,7 @@
     
     <title>测试页面</title>
 	  
-	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/js/easyUI/themes/default/easyui.css"/>    
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/js/easyUI/themes/icon.css"/>    
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/default.css"/>    
-     <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.10.1.min.js"></script>    
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/jquery.easyui.min.js"></script>    
-    <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/locale/easyui-lang-zh_CN.js"></script>  
+	<jsp:include page="../common/top.jsp" flush="true" /> 
     <script type="text/javascript" src="<%=request.getContextPath() %>/user/js/test.js"></script>  
 </head>
 <body>

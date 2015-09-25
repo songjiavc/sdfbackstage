@@ -21,10 +21,14 @@ import com.sdf.manager.user.entity.Student;
 import com.sdf.manager.user.service.StudentService;
 
 
+
 /**
  * 
- * @author xuzebin
- *
+  * @ClassName: TestController 
+  * @Description: TODO(这里用一句话描述这个类的作用) 
+  * @author tuxu@sdfcp.com
+  * @date 2015年9月25日 上午10:42:17 
+  *
  */
 @Controller
 @RequestMapping("/test")
@@ -101,6 +105,13 @@ public class TestController {
 		mb2.setMenuname("添加站点");
 		mb2.setUrl("#");
 		menus.add(mb2);
+		
+		MenuBean mb3 = new MenuBean();
+		mb3.setMenuid("114");
+		mb3.setIcon("icon-nav");
+		mb3.setMenuname("权限管理");
+		mb3.setUrl("/user/authority.jsp");
+		menus.add(mb3);
 		
 		MenuBean m2b = new MenuBean();
 		m2b.setMenuid("20");
