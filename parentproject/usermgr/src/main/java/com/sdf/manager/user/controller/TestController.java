@@ -113,6 +113,13 @@ public class TestController {
 		mb3.setUrl("/user/authority.jsp");
 		menus.add(mb3);
 		
+		MenuBean mb4 = new MenuBean();
+		mb4.setMenuid("115");
+		mb4.setIcon("icon-nav");
+		mb4.setMenuname("角色管理");
+		mb4.setUrl("/user/roleManage.jsp");
+		menus.add(mb4);
+		
 		MenuBean m2b = new MenuBean();
 		m2b.setMenuid("20");
 		m2b.setIcon("icon-sys");
