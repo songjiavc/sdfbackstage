@@ -38,7 +38,7 @@ function initMenu()
 	$.ajax({
 		async: false,   //设置为同步获取数据形式
 		type: "post",
-		url: contextPath + '/test/getData.action',
+		url: contextPath + '/menu/getMenuData.action',
 //		data:data,
 		dataType: "json",
 		success: function (dataresult) {
@@ -187,7 +187,7 @@ function addTab(subtitle, url, icon) {
  
 //创建tab内部的iframe
 function createFrame(url) {
-	var s = '<iframe scrolling="auto" frameborder="0"  src="' + url + '" style="width:100%;height:100%;"></iframe>';
+	var s = '<iframe scrolling="auto" frameborder="no" border="0" src="' + url + '" style="width:100%;height:99.6%;padding:0;margin:0;"></iframe>';
 	return s;
 }
 

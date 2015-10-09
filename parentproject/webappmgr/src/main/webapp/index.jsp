@@ -42,7 +42,7 @@ function submitLoginForm(){
 </head>
 <body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <center>
-  <form method="post" name="login" style="margin:0px" action="<%=request.getContextPath() %>/test/getNewPage.action">
+  <form method="post" name="login" style="margin:0px" action="<%=request.getContextPath() %>/menu/getNewPage.action">
     <table id="__01" width="1000" height="600" border="0" cellpadding="0" cellspacing="0" background="/images/login/lz_dl.jpg">
       <tr>
         <td colspan="3" height="100">&nbsp;</td>
