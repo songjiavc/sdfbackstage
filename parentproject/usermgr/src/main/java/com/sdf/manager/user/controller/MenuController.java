@@ -249,6 +249,35 @@ public class MenuController {
 		return authority;
 	}
 	
+	/**
+	 * 
+	* @Description: TODO(删除权限数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月12日 下午4:02:56
+	 */
+	@RequestMapping(value = "/deleteAuth", method = RequestMethod.POST)
+	public @ResponseBody ResultBean deleteAuth(
+			@RequestParam(value="codes",required=false) String[] codes,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean resultBean = new ResultBean();
+		
+		Authority authority ;
+		for (String code : codes) 
+		{
+			authority = new Authority();
+			authority =  authService.getAuthorityByCode(code);
+//			authority.setStatus("");//设置当前数据为已删除状态
+//			authService.save(authority);//保存更改状态的权限实体
+		}
+		
+		
+		resultBean.setStatus("success");
+		resultBean.setMessage("删除成功!");
+		
+		return resultBean;
+	}
+	
 	
 	
 	
