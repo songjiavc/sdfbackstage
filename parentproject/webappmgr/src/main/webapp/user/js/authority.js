@@ -69,7 +69,7 @@ function initDatagrid()
 				{field:'opt',title:'操作',width:160,align:'center',  
 		            formatter:function(value,row,index){  
 		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="auth" onclick="deleteAuth(&quot'+row.code+'&quot)" href="javascript:void(0)">删除</a>';
+		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">删除</a>';
 		                return btn;  
 		            }  
 		        }  
@@ -128,11 +128,89 @@ function updateAuth(code)
 }
 
 /**
+ * 批量删除权限数据
+ * @param code
+ */
+function deleteAuthList()
+{
+	var url = contextPath + '/menu/deleteAuth.action';
+	var data1 = new Object();
+	
+	var codearr = new Array();
+	var rows = $('#datagrid').datagrid('getSelections');
+	for(var i=0; i<rows.length; i++)
+	{
+		codearr.push(rows[i].code);//code
+	}
+	
+	
+	if(codearr.length>0)
+		{
+			data1.codes=codearr.toString();//将id数组转换为String传递到后台
+			
+			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+		        if (r) {  
+		        	
+			        	$.ajax({
+			        		async: false,   //设置为同步获取数据形式
+			                type: "post",
+			                url: url,
+			                data:data1,
+			                dataType: "json",
+			                success: function (data) {
+			                	$.messager.alert('提示', data.message);
+			                },
+			                error: function (XMLHttpRequest, textStatus, errorThrown) {
+			                    alert(errorThrown);
+			                }
+			           });
+			        	
+		        }  
+		    });  
+			
+		}
+	else
+		{
+			$.messager.alert('提示', "请选择数据后操作!");
+		}
+	
+	
+	
+}
+
+/**
  * 删除权限
  */
 function deleteAuth(code)
 {
-	alert("权限删除");
+	var url = contextPath + '/menu/deleteAuth.action';
+	var data1 = new Object();
+	
+	var codearr = [];
+	codearr.push(code);
+	
+	data1.codes=codearr.toString();
+	$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+        if (r) {  
+        	
+	        	$.ajax({
+	        		async: false,   //设置为同步获取数据形式
+	                type: "post",
+	                url: url,
+	                data:data1,
+	                dataType: "json",
+	                success: function (data) {
+	                	$.messager.alert('提示', data.message);
+	                },
+	                error: function (XMLHttpRequest, textStatus, errorThrown) {
+	                    alert(errorThrown);
+	                }
+	           });
+	        	
+        }  
+    });  
+	
+	
 }
 
 
@@ -146,7 +224,7 @@ function submitAddauth()
 //			$('#ff').form('enableValidation').form('validate');
 		},
 	    success:function(data){
-	    	//data从后台返回后的类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
+	    	//提交表单后，从后台返回的data类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
 	    	$.messager.alert('提示', eval("(" + data + ")").message);
 	    	$("#addAuth").dialog('close');//初始化修改权限弹框关闭
 	    	//在添加权限后刷新权限数据列表

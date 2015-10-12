@@ -20,9 +20,11 @@
   	    	$("#addAuth").dialog('open');
   	    }
   	},{
-  	    text:'删除',
+  	    text:'批量删除',
   	    iconCls:'icon-remove',
-  	    handler:function(){alert('cut')}
+  	    handler:function(){
+  	    	deleteAuthList();
+  	    }
   	}];
   	  
   		
