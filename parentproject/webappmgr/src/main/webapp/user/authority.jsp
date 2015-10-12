@@ -33,11 +33,30 @@
 			.ztree li button.switch.center_docu {visibility:visible; width:16px;}
 			.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
 			
-			.formbox{
-				margin-top:10px;
-				text-align:center;
-			}
-		</style>
+			<style type="text/css"> 
+        #fm 
+        { 
+            margin: 0; 
+            padding: 10px 30px; 
+        } 
+        .ftitle 
+        { 
+            font-size: 14px; 
+            font-weight: bold; 
+            padding: 5px 0; 
+            margin-bottom: 10px; 
+            border-bottom: 1px solid #ccc; 
+        } 
+        .fitem 
+        { 
+            margin-bottom: 5px; 
+        } 
+        .fitem label 
+        { 
+            display: inline-block; 
+            width: 80px; 
+        } 
+    </style> 
 </head>
 <body>
     <div class="zTreeDemoBackground left" style="float:left;width: 200px;">
@@ -70,6 +89,7 @@
                     }
                 }]
             ">
+            
 		<form id="ff" method="get" novalidate>
 	        <div class="formbox">
 	            <label for="name">权限编码:</label>
