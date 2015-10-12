@@ -94,9 +94,10 @@ function deleteAccount()
 function submitAddAccount()
 {
 	$('#accountForm').form('submit',{ 
-		url: contextPath + '/account/addNewAccount.action',
+		url: contextPath + '/account/saveOrUpdate.action',
         success:function(data){  
-            alert(data);  
+        	$.messager.alert('提示', eval("(" + data + ")").message);
+        	closeDialog();
         }  
     });
 }
