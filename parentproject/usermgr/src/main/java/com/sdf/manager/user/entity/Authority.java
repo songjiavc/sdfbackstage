@@ -1,8 +1,14 @@
 package com.sdf.manager.user.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
 
 /** 
   * @ClassName: Student 
@@ -13,22 +19,44 @@ import javax.persistence.Table;
   */
 @Entity
 @Table(name="T_SDF_AUTHORITY")
-public class Authority extends BaseEntiry{
+public class Authority extends BaseEntiry implements Serializable 
+{
+	
+	
+	@Id
+	@Column(name="ID", nullable=false, length=45)
+	@GenericGenerator(name="idGenerator", strategy="uuid")//uuid由机器生成的主键
+	@GeneratedValue(generator="idGenerator")
+	private String id;
 	
 	@Column(name="CODE")
-	protected String code;
+	private String code;
+	
+	@Column(name="AUTH_NAME")
+	private String authName;
 	
 	@Column(name="PARANT_AUTH_ID")
-	protected String parentAuth;
+	private String parentAuth;
 	
 	@Column(name="URL")
-	protected String url;
+	private String url;
 	
 	@Column(name="AUTH_IMG")
-	protected String authImg;
+	private String authImg;
 	
 	@Column(name="STATUS")
-	protected String status;
+	private String status;
+
+	
+	
+	
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getCode() {
 		return code;
@@ -36,6 +64,14 @@ public class Authority extends BaseEntiry{
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getAuthName() {
+		return authName;
+	}
+
+	public void setAuthName(String authName) {
+		this.authName = authName;
 	}
 
 	public String getParentAuth() {

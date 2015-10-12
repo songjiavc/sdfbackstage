@@ -2,6 +2,7 @@ package com.sdf.manager.user.service;
 
 import java.util.List;
 
+import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
 
 /** 
@@ -20,4 +21,29 @@ public interface AuthService {
 	  * @return 
 	  */
 	public List<Authority> findAll();
+
+	/**
+	 * 
+	* @Description: TODO(保存权限数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月9日 下午2:35:42
+	 */
+	public void save(Authority authority);
+
+	/**
+	 * 
+	* @Description: TODO(根据code获取权限数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月9日 下午3:37:34
+	 */
+	public Authority getAuthorityByCode(String code);
+	
+	
+	/***
+	 * 
+	* @Description: TODO(获取权限数据列表) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月10日 下午3:04:33
+	 */
+	public List<Authority> getAuthorityList(AuthorityBean authorityBean);
 }
