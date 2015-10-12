@@ -16,9 +16,9 @@ import javax.persistence.TemporalType;
   *  
   */
 @MappedSuperclass
-public abstract class BaseEntiry {
-		@Id
-		protected String id;  
+public class BaseEntiry {
+//		@Id
+//		protected String id;  
 		  
 		@Column(name="CREATER")
 		protected String creater;
@@ -34,13 +34,13 @@ public abstract class BaseEntiry {
 		@Temporal(TemporalType.TIMESTAMP)
 		protected Date modifyTime;
 
-		public String getId() {
-			return id;
-		}
-
-		public void setId(String id) {
-			this.id = id;
-		}
+//		public String getId() {
+//			return id;
+//		}
+//
+//		public void setId(String id) {
+//			this.id = id;
+//		}
 
 		public String getCreater() {
 			return creater;
