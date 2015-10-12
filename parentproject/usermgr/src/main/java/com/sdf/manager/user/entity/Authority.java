@@ -26,7 +26,7 @@ public class Authority extends BaseEntiry implements Serializable
 	@Id
 	@Column(name="ID", nullable=false, length=45)
 	@GenericGenerator(name="idGenerator", strategy="uuid")//uuid由机器生成的主键
-	@GeneratedValue(generator="idGenerator")
+	@GeneratedValue(generator="idGenerator")	
 	private String id;
 	
 	@Column(name="CODE")

@@ -1,20 +1,28 @@
 package com.sdf.manager.user.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.service.UserService;
+
+
 /** 
-  * @ClassName: MenuController 
-  * @Description: 目录相关控制层
+  * @ClassName: AccountController 
+  * @Description: 帐号controller
   * @author songj@sdfcp.com
-  * @date 2015年9月23日 下午5:21:54 
+  * @date 2015年10月12日 上午11:19:38 
   *  
   */
 @Controller
 @RequestMapping("/account")
 public class AccountController {
+	
+	@Autowired
+	private UserService userService;
 	
     /**
 	 * demo登录提交后跳转方法
@@ -26,12 +34,10 @@ public class AccountController {
 	 */
 	@RequestMapping("/addNewAccount")
 	public String addNewAccount(
-			@RequestParam(value="code",required=false) String userName,
-			@RequestParam(value="password",required=false) String password,
-			@RequestParam(value="status",required=false) String status,
+			AccountBean accountBean,
 			ModelMap model) throws Exception {
 
-
+		
 		model.addAttribute("menuId", "1");
 		return "user/test";
 	}

@@ -93,9 +93,8 @@ function deleteAccount()
 //提交添加权限form表单
 function submitAddAccount()
 {
-	debugger;
-	$('#accountForm').form({ 
-		url: contextPath + '/menu/getMenuData.action',
+	$('#accountForm').form('submit',{ 
+		url: contextPath + '/account/addNewAccount.action',
         success:function(data){  
             alert(data);  
         }  
