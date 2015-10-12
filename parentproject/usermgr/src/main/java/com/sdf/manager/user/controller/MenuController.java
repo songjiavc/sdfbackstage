@@ -1,5 +1,6 @@
 package com.sdf.manager.user.controller;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.user.MenuBean;
+import com.sdf.manager.user.bean.AuthorityBean;
+import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.service.AuthService;
 
 /** 
@@ -137,6 +141,128 @@ public class MenuController {
 		
 		return child;
 	}
+	
+	/**
+	 * 
+	* @Description: TODO(保存或者修改权限) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月9日 下午2:38:35
+	 */
+	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.GET)
+	public @ResponseBody ResultBean saveOrUpdate(
+			@RequestParam(value="code",required=false) String code,
+			@RequestParam(value="authName",required=false) String authName,
+			@RequestParam(value="parentAuth",required=false) String parentAuth,
+			@RequestParam(value="url",required=false) String url,
+			@RequestParam(value="authImg",required=false) String authImg,
+			@RequestParam(value="status",required=false) String status,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean returnMap = new ResultBean();
+		
+		Authority authority;
+		
+		authority = authService.getAuthorityByCode(code);//判断当前code所属的auth是否已存在，若存在则进行修改操作
+		
+		if(null != authority)//已存在，进行权限数据的修改操作
+		{
+			authority.setCode(code);
+			authority.setAuthName(authName);
+			authority.setParentAuth(parentAuth);
+			authority.setUrl(url);
+			authority.setAuthImg(authImg);
+			authority.setStatus(status);
+			authority.setModify("admin");
+			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
+			//修改权限数据
+			authService.save(authority);
+			
+			returnMap.setMessage("修改权限成功!");
+			returnMap.setStatus("success");
+		}
+		else
+		{
+			authority = new Authority();
+			authority.setCode(code);
+			authority.setAuthName(authName);
+			authority.setParentAuth(parentAuth);
+			authority.setUrl(url);
+			authority.setAuthImg(authImg);
+			authority.setStatus(status);
+			authority.setCreater("admin");
+			authority.setCreaterTime(new Timestamp(System.currentTimeMillis()));
+			authority.setModify("admin");
+			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
+			//保存权限数据
+			authService.save(authority);
+			
+			returnMap.setMessage("保存权限成功!");
+			returnMap.setStatus("success");
+		}
+		
+		
+		
+		return returnMap;
+	}
+	
+	
+	/**
+	 * 
+	* @Description: TODO(根据code获取权限的详细信息（根据唯一条件获取数据）) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月10日 上午10:16:35
+	 */
+	@RequestMapping(value = "/getDetailAuth", method = RequestMethod.GET)
+	public @ResponseBody Authority getDetailAuth(
+			@RequestParam(value="code",required=false) String code,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		Authority authority = new Authority();
+		
+		authority = authService.getAuthorityByCode(code);
+		
+		return authority;
+	}
+	
+	
+	/**
+	 * 
+	* @Description: TODO(获取权限列表数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月10日 下午3:14:46
+	 */
+	@RequestMapping(value = "/getAuthList", method = RequestMethod.GET)
+	public @ResponseBody List<Authority> getAuthList(
+			@RequestParam(value="page",required=false) int page,
+			@RequestParam(value="rows",required=false) int rows,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		List<Authority> authority = new ArrayList<Authority>();
+		
+		AuthorityBean authorityBean = new AuthorityBean();
+		
+		authorityBean.setPage(page-1);
+		authorityBean.setRows(rows);
+		
+		authority = authService.getAuthorityList(authorityBean);
+		
+		return authority;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
