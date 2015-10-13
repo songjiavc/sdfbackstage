@@ -15,10 +15,6 @@
 	<spring.version>3.2.5.RELEASE</spring.version>
 	<hibernate.version>4.2.0.Final</hibernate.version>
   </properties>
-	
-  
-  
-  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -123,7 +119,6 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 		<!-- hibernate4 start -->
-		
 		<!-- 数据库依赖 -->
 		<!-- mysql数据库驱动 -->
 		<dependency>

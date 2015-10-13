@@ -35,7 +35,7 @@ function initDatagrid()
 	$('#accountDataGrid').datagrid({
 		singleSelect:false,
 //		queryParams: params,
-		url:'datagrid_data1.json',
+		url: contextPath + '/account/getUserList.action',
 		method:'get',
 		border:false,
 		fit:true,

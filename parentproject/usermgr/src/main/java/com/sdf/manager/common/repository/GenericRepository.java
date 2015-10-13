@@ -13,7 +13,6 @@ import com.sdf.manager.common.util.QueryResult;
 
 @NoRepositoryBean
 public interface GenericRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
-	//JpaRepository本身是一个空接口，下面所有的方法声明都是自定义的
 
 		/**
 

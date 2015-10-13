@@ -1,8 +1,11 @@
 package com.sdf.manager.user.service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
-import com.sdf.manager.user.bean.AccountBean;
+import org.springframework.data.domain.Pageable;
+
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.entity.User;
 
 
@@ -40,4 +43,15 @@ public interface UserService {
 	  */
 	public User getUserByCode(String code);
 
+	/** 
+	  * @Description:分页查询
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月13日 下午1:25:25 
+	  * @param whereJpql
+	  * @param queryParams
+	  * @param orderby
+	  * @param pageable
+	  * @return 
+	  */
+	public QueryResult<User> getScrollDataByJpql(String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable);
 }

@@ -66,4 +66,7 @@ public class AccountController {
 			}
 			return resultBean;
 	}
+	
+	
+
 }

@@ -1,13 +1,16 @@
 package com.sdf.manager.user.service.impl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.repository.UserRepository;
@@ -72,6 +75,11 @@ public class UserServiceImpl implements UserService {
 		
 			
 		return userList;
+	}
+
+	public QueryResult<User> getScrollDataByJpql(String whereJpql, Object[] queryParams,
+			LinkedHashMap<String, String> orderby, Pageable pageable) {
+			return userRepository.getScrollDataByJpql(User.class, whereJpql, queryParams, orderby, pageable);
 	}
 
 }
