@@ -1,8 +1,8 @@
 package com.sdf.manager.user.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.sdf.manager.common.repository.GenericRepository;
 import com.sdf.manager.user.entity.User;
 
 /** 
@@ -12,7 +12,7 @@ import com.sdf.manager.user.entity.User;
   * @date 2015年9月25日 上午8:24:21 
   *  
   */
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends GenericRepository<User, Long>  {
 	
 	
 	/**

@@ -19,7 +19,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
 	<jpa:repositories base-package="com.sdf.manager" repository-impl-postfix="Impl"
-		entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"></jpa:repositories>
+		entity-manager-factory-ref="entityManagerFactory" transaction-manager-ref="transactionManager"  factory-class="com.sdf.manager.common.repository.DefaultRepositoryFactoryBean"></jpa:repositories>
 
 	<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="dataSource" ref="dataSource" />

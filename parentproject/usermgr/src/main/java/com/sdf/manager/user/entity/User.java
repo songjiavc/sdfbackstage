@@ -29,10 +29,10 @@ public class User extends BaseEntiry implements Serializable
 	private static final long serialVersionUID = 9029294793418739543L;
 
 	@Id
-	@Column(name="UID", nullable=false, length=45)
+	@Column(name="ID", nullable=false, length=45)
 	@GenericGenerator(name="idGenerator", strategy="uuid")//uuid由机器生成的主键
 	@GeneratedValue(generator="idGenerator")	
-	private String uid;
+	private String id;
 	
 	@Column(name="CODE")
 	private String code;
@@ -58,12 +58,12 @@ public class User extends BaseEntiry implements Serializable
 	@Column(name="PARENT_UID")
 	private String parentUid;
 	
-	public String getUid() {
-		return uid;
+	public String getId() {
+		return id;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getCode() {
