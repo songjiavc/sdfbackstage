@@ -34,9 +34,12 @@ $(document).ready(
 
 function initDatagrid()
 {
+	var params = new Object();
+	
+	
 	$('#datagrid').datagrid({
 		singleSelect:false,
-//		queryParams: params,
+		queryParams: params,
 		url:contextPath + '/menu/getAuthList.action',//'datagrid_data1.json',
 		method:'get',
 		border:false,
@@ -45,6 +48,7 @@ function initDatagrid()
 //		pagination:true,
 		pageSize:10,
 //		striped:true,
+		loadMsg:'全力加载中...',
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
@@ -77,6 +81,12 @@ function initDatagrid()
 	    onLoadSuccess:function(data){  
 	        $('.editcls').linkbutton({text:'编辑',plain:true,iconCls:'icon-edit'});  
 	        $('.auth').linkbutton({text:'删除',plain:true,iconCls:'icon-remove'});  
+	        
+	    	if(data.rows.length==0){
+				var body = $(this).data().datagrid.dc.body2;
+				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
+				}
+	        
 	    }  
 	});
 }
@@ -87,6 +97,10 @@ function closeDialog()
 {
 	$("#addAuth").dialog('close');//初始化添加权限弹框关闭
 	$("#updateAuth").dialog('close');//初始化修改权限弹框关闭
+	
+	
+	
+
 }
 
 /**
@@ -158,7 +172,9 @@ function deleteAuthList()
 			                data:data1,
 			                dataType: "json",
 			                success: function (data) {
+			                	initDatagrid();
 			                	$.messager.alert('提示', data.message);
+			                	
 			                },
 			                error: function (XMLHttpRequest, textStatus, errorThrown) {
 			                    alert(errorThrown);
@@ -200,6 +216,7 @@ function deleteAuth(code)
 	                data:data1,
 	                dataType: "json",
 	                success: function (data) {
+	                	initDatagrid();
 	                	$.messager.alert('提示', data.message);
 	                },
 	                error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -213,6 +230,27 @@ function deleteAuth(code)
 	
 }
 
+/**
+ * 初始化上级权限combobox数据
+ */
+function initParentAuthList()
+{
+//	$('#parentAuth').clear();//清空combobox值
+//	$('#parentAuth').setValue("");
+//	$('#parentAuth').combobox({
+//			url:contextPath+'/menu/getParentAuth.action',
+//			valueField:'code',
+//			textField:'authName',
+//			 onLoadSuccess: function () { //数据加载完毕事件
+//                 var data = $('#parentAuth').combobox('getData');
+//                 if (data.length > 0) {
+//                     $("#parentAuth").combobox('select', data[0].code);
+//                 }
+//					
+//             }
+//		}); 
+}
+
 
 //提交添加权限form表单
 function submitAddauth()
@@ -220,8 +258,7 @@ function submitAddauth()
 	$('#ff').form('submit',{
 		url:contextPath+'/menu/saveOrUpdate.action',
 		onSubmit:function(param){
-			var flag = true;
-//			$('#ff').form('enableValidation').form('validate');
+			return $('#ff').form('enableValidation').form('validate');
 		},
 	    success:function(data){
 	    	//提交表单后，从后台返回的data类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
@@ -229,6 +266,13 @@ function submitAddauth()
 	    	$("#addAuth").dialog('close');//初始化修改权限弹框关闭
 	    	//在添加权限后刷新权限数据列表
 	    	initDatagrid();
+	    	$('#ff').form('clear');
+	    	$("#parentAuth").combobox('select','0');
+	    	$('#ff [name="status"]:radio').each(function() {   //设置“是”为默认选中radio
+	            if (this.value == '1'){   
+	               this.checked = true;   
+	            }       
+	         }); 
 	    }
 	});
 }
@@ -239,8 +283,7 @@ function submitUpdateauth()
 	$('#ffupdate').form('submit',{
 		url:contextPath+'/menu/saveOrUpdate.action',
 		onSubmit:function(param){
-			var flag = true;
-//			$('#ffupdate').form('enableValidation').form('validate');
+			return $('#ffupdate').form('enableValidation').form('validate');
 		},
 	    success:function(data){
 	    	//data从后台返回后的类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
@@ -248,6 +291,7 @@ function submitUpdateauth()
 	    	$("#updateAuth").dialog('close');//初始化修改权限弹框关闭
 	    	//在修改权限后刷新权限数据列表
 	    	initDatagrid();
+	    	$('#ffupdate').form('clear');
 	    }
 	});
 }

@@ -17,7 +17,9 @@
   	    text:'添加',
   	    iconCls:'icon-add',
   	    handler:function(){
+  	    	initParentAuthList();//初始化上级权限下拉框值
   	    	$("#addAuth").dialog('open');
+  	    	
   	    }
   	},{
   	    text:'批量删除',
@@ -35,29 +37,20 @@
 			.ztree li button.switch.center_docu {visibility:visible; width:16px;}
 			.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
 			
-			<style type="text/css"> 
-        #fm 
-        { 
-            margin: 0; 
-            padding: 10px 30px; 
-        } 
-        .ftitle 
-        { 
-            font-size: 14px; 
-            font-weight: bold; 
-            padding: 5px 0; 
-            margin-bottom: 10px; 
-            border-bottom: 1px solid #ccc; 
-        } 
-        .fitem 
-        { 
-            margin-bottom: 5px; 
-        } 
-        .fitem label 
-        { 
-            display: inline-block; 
-            width: 80px; 
-        } 
+     		 .ftitle{
+	  			width:100%;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑',
+	  		}
+	  		.ftitle label{
+	  			margin-left: 30px;
+	  		}
+	  		.ftitle .commonInput{
+	  			margin-right: 50px;
+	  			float : right;
+	  			width: 200px;
+	  			border-radius : 5px;
+	  		}
     </style> 
 </head>
 <body>
@@ -67,14 +60,14 @@
     <div style="float:left;margin-left:10px;" >
     	<div style="margin-top:0px;">
     	 <table id="datagrid"  title="权限列表" style="width:800px;height:400px;"
-			data-options="rownumbers:true,singleSelect:false,pagination:true,
+			data-options="rownumbers:false,singleSelect:false,pagination:true,
 			collapsible:false,toolbar:toolbar">
 		 </table>
     	</div>
      </div>
      
        <!-- 添加权限弹框 -->
-  <div id="addAuth" class="easyui-dialog" title="添加权限" style="width:400px;height:300px;padding:10px"
+  <div id="addAuth" class="easyui-dialog" title="添加权限" style="width:400px;height:310px;padding:10px"
             data-options="
                 iconCls: 'icon-save',
                 buttons: [{
@@ -93,42 +86,44 @@
             ">
             
 		<form id="ff" method="get" novalidate>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="code">权限编码:</label>
-	            <input class="easyui-validatebox" type="text" name="code"  data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" name="code"  data-options="required:true"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="authName">权限名称:</label>
-	            <input class="easyui-validatebox" type="text" name="authName" data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" name="authName" data-options="required:true"
 	             validType="length[1,20]" missingMessage="权限名称不可以为空" invalidMessage="权限名称长度不可以超过20个字符"></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="parentAuth">上级权限:</label>
-	            <select class="easyui-combobox" id="parentAuth" name="parentAuth"  data-options="editable:false,required:true" 
-	            style="width:140px;" missingMessage="请选择上级权限">
-						<option value="0">无上级权限</option>
-				</select>
-	           
+	            <div style="margin-right: 15%;float:right;">
+		            <select class="easyui-combobox" id="parentAuth" name="parentAuth"  
+		          	  data-options="editable:false,required:true" style="width:200px;" >
+					</select>
+	            </div>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
-	            <input class="easyui-validatebox" type="text" name="authImg" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="authImg" data-options="required:true"></input>
 	        </div>
-	         <div class="formbox">
+	         <div class="ftitle">
 	            <label for="status">是否启用:</label>
-	            <input class="easyui-validatebox" type="radio" name="status" checked value="1">是</input>
-	            <input class="easyui-validatebox" type="radio" name="status" value="0">否</input>
+	            <div style="float:right;margin-right: 40%;">
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>是</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0">否</input>
+	        	</div>
 	        </div>
 	      </form>
     </div> 
     
     <!-- 修改权限弹框 -->
-    <div id="updateAuth" class="easyui-dialog" title="修改权限" style="width:400px;height:300px;padding:10px"
+    <div id="updateAuth" class="easyui-dialog" title="修改权限" style="width:400px;height:310px;padding:10px"
             data-options="
                 iconCls: 'icon-save',
                 buttons: [{
@@ -146,37 +141,40 @@
                 }]
             ">
 		<form id="ffupdate" method="get" novalidate>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="code">权限编码:</label>
-	            <input class="easyui-validatebox" type="text" name="code" data-options="required:true" readonly="readonly"
+	            <input class="easyui-validatebox commonInput" type="text" name="code" data-options="required:true" readonly="readonly"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="authName">权限名称:</label>
-	            <input class="easyui-validatebox" type="text" name="authName" data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" name="authName" data-options="required:true"
 	             validType="length[1,20]" missingMessage="权限名称不可以为空" invalidMessage="权限名称长度不可以超过20个字符"></input>
 	        </div>
-	        <div class="formbox">
-	            <label for="parentAuth">上级权限:</label>
-	            <select class="easyui-combobox" id="parentAuth" name="parentAuth"  data-options="editable:false,required:true" 
-	            style="width:140px;" missingMessage="请选择上级权限">
-						<option value="0">无上级权限</option>
-				</select>
-	           
+	        <div class="ftitle">
+	            <label for="parentAuthU">上级权限:</label>
+	            <div style="margin-right: 15%;float:right;">
+		            <select class="easyui-combobox commonInput" id="parentAuthU" name="parentAuth"  data-options="editable:false,required:true" 
+		            style="width:200px;" missingMessage="请选择上级权限">
+							<option value="0">无上级权限</option>
+					</select>
+	           	</div>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
-	            <input class="easyui-validatebox" type="text" name="authImg" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="authImg" data-options="required:true"></input>
 	        </div>
-	         <div class="formbox">
+	         <div class="ftitle">
 	            <label for="status">是否启用:</label>
-	            <input class="easyui-validatebox" type="radio" name="status" checked value="1">是</input>
-	            <input class="easyui-validatebox" type="radio" name="status" value="0">否</input>
-	        </div>
+	            <div style="float:right;margin-right: 40%;">
+		            <input  type="radio" name="status"  value="1" checked>是</input>
+		            <input  type="radio" style="margin-left:10px;" name="status" value="0">否</input>
+		     	</div>
+  			</div>
 	      </form>
     </div> 
      

@@ -1,6 +1,10 @@
 package com.sdf.manager.user.service;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
@@ -46,4 +50,21 @@ public interface AuthService {
 	* @date 2015年10月10日 下午3:04:33
 	 */
 	public List<Authority> getAuthorityList(AuthorityBean authorityBean);
+
+	/**
+	 * 
+	* @Description: TODO(带分页条件模糊查询权限数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月14日 上午8:55:41
+	 */
+	public Map<String, Object> getAuthList(Class<Authority> entityClass, String whereJpql, Object[] queryParams, 
+			LinkedHashMap<String, String> orderby, Pageable pageable);
+	
+	/**
+	 * 
+	* @Description: TODO(根据状态位和code获取父级权限列表) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月14日 上午9:57:44
+	 */
+	public List<Authority> getAuthorityByStatusAndCode(String status, String code);
 }

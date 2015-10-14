@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.sdf.manager.common.repository.GenericRepository;
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
 
@@ -15,7 +16,7 @@ import com.sdf.manager.user.entity.Authority;
   * @date 2015年9月25日 上午8:24:21 
   *  
   */
-public interface AuthRepository extends JpaRepository<Authority, String> {
+public interface AuthRepository extends GenericRepository<Authority, String> {
 	
 	
 	/**
@@ -26,6 +27,15 @@ public interface AuthRepository extends JpaRepository<Authority, String> {
 	 */
 	@Query("select u from Authority u where u.code =?1")
 	public Authority getAuthorityByCode(String code);
+	
+	/**
+	 * 
+	* @Description: TODO(根据状态位和code获取父级权限列表) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月14日 上午9:59:13
+	 */
+	@Query("select u from Authority u where u.status =?1 and u.code!=?2")
+	public List<Authority> getAuthorityByStatusAndCode(String status,String code);
 	
 	
 	/**
