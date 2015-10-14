@@ -1,14 +1,23 @@
 package com.sdf.manager.user.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.UserService;
@@ -67,6 +76,25 @@ public class AccountController {
 			return resultBean;
 	}
 	
-	
+	@RequestMapping(value = "/getUserList", method = RequestMethod.GET)
+	public @ResponseBody QueryResult<User> getUserList(
+			@RequestParam(value="page",required=false) int page,
+			@RequestParam(value="rows",required=false) int rows,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		Pageable pageable = new PageRequest(page, rows);
+		Object[] params = new Object[]{};
+		QueryResult<User> queryObj = userService.getScrollDataByJpql("1=1", params,null , pageable);
+		List<AccountBean> accountList = new ArrayList<AccountBean>();
+		List<User> userList = queryObj.getResultList();
+		for(User user : userList){
+			AccountBean accountBean = new AccountBean();
+			accountBean.setCode(user.getCode());
+			accountBean.setName(user.getName());
+			accountBean.setPage(page);
+			accountBean.setRows(rows);
+		}
+		return queryObj;
+	}
 
 }
