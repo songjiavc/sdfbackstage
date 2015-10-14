@@ -3,12 +3,15 @@ package com.sdf.manager.user.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -193,6 +196,7 @@ public class MenuController {
 			authority.setCreaterTime(new Timestamp(System.currentTimeMillis()));
 			authority.setModify("admin");
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
+			authority.setIsDeleted("1");
 			//保存权限数据
 			authService.save(authority);
 			
@@ -231,22 +235,60 @@ public class MenuController {
 	* @author bann@sdfcp.com
 	* @date 2015年10月10日 下午3:14:46
 	 */
-	@RequestMapping(value = "/getAuthList", method = RequestMethod.GET)
-	public @ResponseBody List<Authority> getAuthList(
-			@RequestParam(value="page",required=false) int page,
-			@RequestParam(value="rows",required=false) int rows,
+	@RequestMapping(value = "/getParentAuth", method = RequestMethod.GET)
+	public @ResponseBody List<Authority> getParentAuth(
+			@RequestParam(value="status",required=false) String status,
+			@RequestParam(value="code",required=false) String code,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		List<Authority> authority = new ArrayList<Authority>();
 		
-		AuthorityBean authorityBean = new AuthorityBean();
 		
-		authorityBean.setPage(page-1);
-		authorityBean.setRows(rows);
-		
-		authority = authService.getAuthorityList(authorityBean);
+		authority = authService.getAuthorityByStatusAndCode(status, code);
 		
 		return authority;
+	}
+	
+	/**
+	 * 
+	* @Description: TODO(查询权限数据带分页) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月14日 上午8:58:45
+	 */
+	@RequestMapping(value = "/getAuthList", method = RequestMethod.GET)
+	public @ResponseBody Map<String,Object> getAuthList(
+			@RequestParam(value="page",required=false) int page,
+			@RequestParam(value="rows",required=false) int rows,
+			@RequestParam(value="status",required=false) String status,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		Map<String,Object> returnData = new HashMap<String,Object> ();
+		
+		//放置分页参数
+		Pageable pageable = new PageRequest(page-1,rows);
+		
+		StringBuffer whereJpql = new StringBuffer("");//底层处理中若whereJpql==“”则不会将语句放入到sql中
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add("1");//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		
+		if(null != status && !"".equals(status))
+		{
+			params.add(status);//只查询有效的数据
+			buffer.append(" status = ?").append(params.size());
+		}
+		//排序
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		orderBy.put("code", "desc");
+		
+		returnData = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		
+		return returnData;
 	}
 	
 	/**
@@ -267,8 +309,8 @@ public class MenuController {
 		{
 			authority = new Authority();
 			authority =  authService.getAuthorityByCode(code);
-//			authority.setStatus("");//设置当前数据为已删除状态
-//			authService.save(authority);//保存更改状态的权限实体
+			authority.setIsDeleted("0");;//设置当前数据为已删除状态
+			authService.save(authority);//保存更改状态的权限实体
 		}
 		
 		
