@@ -17,7 +17,8 @@
   	    text:'添加',
   	    iconCls:'icon-add',
   	    handler:function(){
-  	    	initParentAuthList();//初始化上级权限下拉框值
+  	   		 //初始化上级权限下拉框值
+  	    	initParentAuthList('add','','');
   	    	$("#addAuth").dialog('open');
   	    	
   	    }
@@ -99,14 +100,14 @@
 	        <div class="ftitle">
 	            <label for="parentAuth">上级权限:</label>
 	            <div style="margin-right: 15%;float:right;">
-		            <select class="easyui-combobox" id="parentAuth" name="parentAuth"  
+		            <select class="easyui-combobox" id="parentAuthA" name="parentAuth"  
 		          	  data-options="editable:false,required:true" style="width:200px;" >
 					</select>
 	            </div>
 	        </div>
 	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
@@ -162,7 +163,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
