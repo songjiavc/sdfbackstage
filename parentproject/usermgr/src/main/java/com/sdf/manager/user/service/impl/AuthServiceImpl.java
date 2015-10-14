@@ -86,36 +86,15 @@ public class AuthServiceImpl implements AuthService {
 	* @author bann@sdfcp.com
 	* @date 2015年10月14日 上午8:55:41
 	 */
-	public Map<String,Object> getAuthList(Class<Authority> entityClass, String whereJpql, Object[] queryParams, 
+	public QueryResult<Authority> getAuthList(Class<Authority> entityClass, String whereJpql, Object[] queryParams, 
 			LinkedHashMap<String, String> orderby, Pageable pageable)
 	{
 		
-		Map<String,Object> returnData = new HashMap<String,Object> ();
-		
 		QueryResult<Authority> authlist = authRepository.getScrollDataByJpql(entityClass, whereJpql, queryParams,
 				orderby, pageable);
-		
-		List<Authority> authorities = authlist.getResultList();
-		Long totalrow = authlist.getTotalRecord();
-		
-		returnData.put("rows", authorities);
-		returnData.put("total", totalrow);
-		
-		return returnData;
+		return authlist;
 	}
 	
-	/**
-	 * 
-	* @Description: TODO(根据状态位和code获取父级权限列表) 
-	* @author bann@sdfcp.com
-	* @date 2015年10月14日 上午9:57:44
-	 */
-	public List<Authority> getAuthorityByStatusAndCode(String status,String code)
-	{
-		List<Authority> authorities = authRepository.getAuthorityByStatusAndCode(status, code);
-		
-		return authorities;
-	}
 	
 	
 	
