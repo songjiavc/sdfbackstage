@@ -23,12 +23,22 @@ public class AuthorityBean
 	
 	private String status;
 	
+	private String isDeleted;//是否删除
+	
 	private int page;//当前页
 	
 	private int rows;//行数
 	
 	
 	
+
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 
 	public int getPage() {
 		return page;
