@@ -25,7 +25,7 @@ public interface AuthRepository extends GenericRepository<Authority, String> {
 	* @author bann@sdfcp.com
 	* @date 2015年10月9日 下午3:37:34
 	 */
-	@Query("select u from Authority u where u.code =?1")
+	@Query("select u from Authority u where u.isDeleted ='1' and u.code =?1")
 	public Authority getAuthorityByCode(String code);
 	
 	/**
@@ -34,8 +34,8 @@ public interface AuthRepository extends GenericRepository<Authority, String> {
 	* @author bann@sdfcp.com
 	* @date 2015年10月14日 上午9:59:13
 	 */
-	@Query("select u from Authority u where u.status =?1 and u.code!=?2")
-	public List<Authority> getAuthorityByStatusAndCode(String status,String code);
+//	@Query("select u from Authority u where u.status =?1 and u.code!=?2")
+//	public List<Authority> getAuthorityByStatusAndCode(String status,String code);
 	
 	
 	/**
