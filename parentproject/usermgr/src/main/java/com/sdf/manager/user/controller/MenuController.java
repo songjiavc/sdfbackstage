@@ -428,9 +428,68 @@ public class MenuController {
 		return treeBeanList;
 	}
 	
-	
-	
-	
+	/**
+	 * 
+	* @Description: TODO(权限输入值校验，用来校验code唯一性和authname唯一性) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月15日 上午10:55:07
+	 */
+	@RequestMapping(value = "/checkValue", method = RequestMethod.POST)
+	public @ResponseBody ResultBean  checkValue(
+			@RequestParam(value="id",required=false) String id,
+			@RequestParam(value="code",required=false) String code,
+			@RequestParam(value="authname",required=false) String authname,
+			ModelMap model,HttpSession httpSession) throws Exception {
+		
+		ResultBean resultBean = new ResultBean ();
+		
+		//放置分页参数
+		Pageable pageable = new PageRequest(0,10000);
+		
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add("1");//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		
+		if(null != code && !"".equals(code))
+		{
+			params.add(code);
+			buffer.append(" and code = ?").append(params.size());
+		}
+		
+		if(null != authname && !"".equals(authname))
+		{
+			params.add(authname);
+			buffer.append(" and authName = ?").append(params.size());
+		}
+		
+		if(null != id && !"".equals(id))
+		{//校验修改中的值的唯一性
+			params.add(id);
+			buffer.append(" and id != ?").append(params.size());
+		}
+		
+		//排序
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		
+		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		
+		if(authlist.getResultList().size()>0)
+		{
+			resultBean.setExist(true);//若查询的数据条数大于0，则当前输入值已存在，不符合唯一性校验
+		}
+		else
+		{
+			resultBean.setExist(false);
+		}
+		
+		return resultBean;
+		
+	}
 	
 	
 	
