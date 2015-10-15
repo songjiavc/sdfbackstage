@@ -155,6 +155,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.GET)
 	public @ResponseBody ResultBean saveOrUpdate(
+			@RequestParam(value="id",required=false) String id,
 			@RequestParam(value="code",required=false) String code,
 			@RequestParam(value="authName",required=false) String authName,
 			@RequestParam(value="parentAuth",required=false) String parentAuth,
@@ -167,10 +168,11 @@ public class MenuController {
 		
 		Authority authority;
 		
-		authority = authService.getAuthorityByCode(code);//判断当前code所属的auth是否已存在，若存在则进行修改操作
+		authority = authService.getAuthorityByCode(id);//判断当前code所属的auth是否已存在，若存在则进行修改操作
 		
 		if(null != authority)//已存在，进行权限数据的修改操作
 		{
+			authority.setId(id);
 			authority.setCode(code);
 			authority.setAuthName(authName);
 			authority.setParentAuth(parentAuth);
@@ -267,7 +269,7 @@ public class MenuController {
 		}
 		//排序
 		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
-		orderBy.put("code", "desc");
+		orderBy.put("id", "asc");
 		
 		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
 				orderBy, pageable);
@@ -276,10 +278,6 @@ public class MenuController {
 		
 		List<AuthorityBean> authBeanlist = new ArrayList<AuthorityBean>();
 		
-		AuthorityBean authbean = new AuthorityBean();
-		authbean.setCode("1");
-		authbean.setAuthName("权限树");
-		authBeanlist.add(authbean);
 		
 		for (Authority authority : authes) 
 		{
@@ -368,7 +366,7 @@ public class MenuController {
 		for (String code : codes) 
 		{
 			authority = new Authority();
-			authority =  authService.getAuthorityByCode(code);
+			authority =  authService.getAuthorityByCode(code);//code传递进去的参数实际是id
 			authority.setIsDeleted("0");;//设置当前数据为已删除状态
 			authService.save(authority);//保存更改状态的权限实体
 		}
@@ -415,13 +413,6 @@ public class MenuController {
 		List<Authority> authes = authlist.getResultList();
 		
 		List<TreeBean> treeBeanList = new ArrayList<TreeBean> ();
-		TreeBean treeBean = new TreeBean();
-		treeBean.setId("1");
-		treeBean.setParent(true);
-		treeBean.setName("权限树");
-		treeBean.setOpen(true);
-		treeBean.setpId("0");
-		treeBeanList.add(treeBean);
 		
 		for (Authority authority : authes) {
 			
