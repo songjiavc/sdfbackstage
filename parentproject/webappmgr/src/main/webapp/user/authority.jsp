@@ -90,14 +90,15 @@
 	        <div class="ftitle">
 	    	    <input type="hidden" name="id" id="idA"/>
 	            <label for="code">权限编码:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="code"  data-options="required:true"
-	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
+	            <input class="easyui-validatebox commonInput" type="text" id="codeA" name="code"  
+	          	  data-options="required:true"
+	             validType="checkCodes['#codeA','idA']" missingMessage="权限编码不可以为空" />
 	        </div>
 	        <div class="ftitle">
 	            <label for="authName">权限名称:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="authName" data-options="required:true"
-	             validType="length[1,20]" missingMessage="权限名称不可以为空" invalidMessage="权限名称长度不可以超过20个字符"></input>
-	        </div>
+	            <input class="easyui-validatebox commonInput" type="text" id="authNameA" name="authName" data-options="required:true"
+	             validType="checkAname['#authNameA','idA']" missingMessage="权限名称不可以为空" ></input>
+	        </div>	
 	        <div class="ftitle">
 	            <label for="parentAuth">上级权限:</label>
 	            <div style="margin-right: 15%;float:right;">
@@ -146,13 +147,13 @@
 	        <div class="ftitle">
 	        	<input type="hidden" name="id" id="idU"/>
 	            <label for="code">权限编码:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="code" data-options="required:true" readonly="readonly"
+	            <input class="easyui-validatebox commonInput" type="text" id="codeU" name="code" data-options="required:true" readonly="readonly"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="authName">权限名称:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="authName" data-options="required:true"
-	             validType="length[1,20]" missingMessage="权限名称不可以为空" invalidMessage="权限名称长度不可以超过20个字符"></input>
+	            <input class="easyui-validatebox commonInput" type="text" id="authNameU" name="authName" data-options="required:true"
+	             validType="checkAname['#authNameU','idU']" missingMessage="权限名称不可以为空"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="parentAuthU">上级权限:</label>
