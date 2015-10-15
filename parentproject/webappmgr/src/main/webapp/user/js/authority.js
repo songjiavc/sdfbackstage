@@ -55,8 +55,8 @@ function initDatagrid(parentCode)
 					},
 				{field:'opt',title:'操作',width:160,align:'center',  
 		            formatter:function(value,row,index){  
-		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">删除</a>';
+		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
+		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
 		                return btn;  
 		            }  
 		        }  
@@ -93,7 +93,7 @@ function updateAuth(code)
 {
 	var url = contextPath + '/menu/getDetailAuth.action';
 	var data1 = new Object();
-	data1.code=code;
+	data1.code=code;//权限的id
 	
 	$.ajax({
 		async: false,   //设置为同步获取数据形式
@@ -104,6 +104,7 @@ function updateAuth(code)
         success: function (data) {
         	
 				$('#ffupdate').form('load',{
+					id:data.id,
 					code:data.code,
 					authName:data.authName,
 					parentAuth:data.parentAuth,
@@ -139,7 +140,7 @@ function deleteAuthList()
 	var rows = $('#datagrid').datagrid('getSelections');
 	for(var i=0; i<rows.length; i++)
 	{
-		codearr.push(rows[i].code);//code
+		codearr.push(rows[i].id);//code
 	}
 	
 	
@@ -158,6 +159,9 @@ function deleteAuthList()
 			                dataType: "json",
 			                success: function (data) {
 			                	initDatagrid('');
+			                	//批量删除权限后重新加载树
+			                	initZnodes();
+			                	
 			                	$.messager.alert('提示', data.message);
 			                	
 			                },
@@ -202,6 +206,8 @@ function deleteAuth(code)
 	                dataType: "json",
 	                success: function (data) {
 	                	initDatagrid('');
+	                	//删除权限后重新加载树
+	                	initZnodes();
 	                	$.messager.alert('提示', data.message);
 	                },
 	                error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -239,10 +245,10 @@ function initParentAuthList(addOrUpdate,code,parentauth)
 			url:contextPath+'/menu/getParentAuth.action',
 			valueField:'code',
 			textField:'authName',
-			 onLoadSuccess: function () { //数据加载完毕事件
-                 if (data.length > 0 && "add" == addOrUpdate) 
+			 onLoadSuccess: function (data1) { //数据加载完毕事件
+                 if (data1.length > 0 && "add" == addOrUpdate) 
                  {
-                	 $("#"+parentAuthId).combobox('select', data[0].code);
+                	 $("#"+parentAuthId).combobox('select',data1[0].code);
                  }
                  else
             	 {
@@ -352,7 +358,7 @@ function zTreeOnClick(event, treeId, treeNode)
 //    alert(treeNode.tId + ", " + treeNode.id);
     initDatagrid(treeNode.id)
 }
-
+ 
 /*var zNodes =[
 				{ id:1, pId:0, name:"权限树", open:true},
 				{ id:11, pId:1, name:"用户"},

@@ -88,6 +88,7 @@
             
 		<form id="ff" method="get" novalidate>
 	        <div class="ftitle">
+	    	    <input type="hidden" name="id" id="idA"/>
 	            <label for="code">权限编码:</label>
 	            <input class="easyui-validatebox commonInput" type="text" name="code"  data-options="required:true"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
@@ -143,6 +144,7 @@
             ">
 		<form id="ffupdate" method="get" novalidate>
 	        <div class="ftitle">
+	        	<input type="hidden" name="id" id="idU"/>
 	            <label for="code">权限编码:</label>
 	            <input class="easyui-validatebox commonInput" type="text" name="code" data-options="required:true" readonly="readonly"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
