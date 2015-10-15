@@ -32,7 +32,8 @@ public class UserRepositoryTest {
 	public void testGetScrollDataByJpql() {
 		Pageable pageable = new PageRequest(0, 10);
 		Object[] params = new Object[]{};
-		QueryResult<User> qr = userRepository.getScrollDataByJpql(User.class, "1=1", params, null, pageable);
+		QueryResult<User> qr = userRepository.getScrollDataByJpql(User.class, null, params, null, pageable);
+		System.out.println(qr.getResultList().size());
 		System.out.println(qr.getTotalRecord());
 	}
 

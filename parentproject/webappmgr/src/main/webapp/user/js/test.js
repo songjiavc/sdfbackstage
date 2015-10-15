@@ -42,7 +42,6 @@ function initMenu()
 //		data:data,
 		dataType: "json",
 		success: function (dataresult) {
-			debugger;
 			_menus = dataresult;
 		
 			var firstMenuName = "basic";//获取的是_menu变量下的名为basic的下面的菜单数据

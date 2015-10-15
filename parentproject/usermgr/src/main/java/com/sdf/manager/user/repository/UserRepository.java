@@ -12,27 +12,15 @@ import com.sdf.manager.user.entity.User;
   * @date 2015年9月25日 上午8:24:21 
   *  
   */
-public interface UserRepository extends GenericRepository<User, Long>  {
+public interface UserRepository extends GenericRepository<User, String>  {
 	
-	
-	/**
-	 * 
-	* @Description: TODO(根据code获取权限数据) 
-	* @author bann@sdfcp.com
-	* @date 2015年10月9日 下午3:37:34
-	 */
+	/** 
+	  * @Description: 判断code是否有重复
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月15日 下午1:18:37 
+	  * @param code
+	  * @return 
+	  */
 	@Query("select u from User u where u.code =?1")
 	public User getUserByCode(String code);
-	
-	
-	/**
-	 * 
-	* @Description: TODO(根据条件获取list数据) 
-	* @author bann@sdfcp.com
-	* @date 2015年10月10日 上午10:25:45
-	 */
-//	public List<Authority> getAuthorityDatas(AuthorityBean authorityBean);
-	
-	
-	
 }

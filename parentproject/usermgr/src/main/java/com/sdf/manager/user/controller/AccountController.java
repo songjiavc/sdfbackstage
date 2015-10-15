@@ -1,7 +1,8 @@
 package com.sdf.manager.user.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
-import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.UserService;
@@ -51,50 +52,45 @@ public class AccountController {
 			ModelMap model)   {
 			ResultBean resultBean = new ResultBean();
 			try{
-				User user;
-				user = userService.getUserByCode(accountBean.getCode());//判断当前code所属的auth是否已存在，若存在则进行修改操作
-				if(StringUtils.isEmpty(user)){
-					user = new User();
-					user.setCode(accountBean.getCode());
-					user.setName(accountBean.getName());
-					user.setPassword(accountBean.getPassword());
-					userService.save(user);
-					resultBean.setMessage("新增权限成功!");
-					resultBean.setStatus("success");
-				}else{
-					user.setCode(accountBean.getCode());
-					user.setName(accountBean.getName());
-					user.setPassword(accountBean.getPassword());
-					userService.save(user);
-					resultBean.setMessage("修改权限成功!");
-					resultBean.setStatus("success");
-				}
-			}catch (Exception e) {
-				resultBean.setMessage("操作失败!");
+				userService.saveOrUpdate(accountBean);
+				resultBean.setMessage("操作成功!");
+				resultBean.setStatus("success");
+			}catch(BizException bizEx){
+				resultBean.setMessage(bizEx.getMessage());
+				resultBean.setStatus("failure");
+			}
+			catch (Exception e) {
+				resultBean.setMessage("操作异常!");
 				resultBean.setStatus("failure");
 			}
 			return resultBean;
 	}
 	
 	@RequestMapping(value = "/getUserList", method = RequestMethod.GET)
-	public @ResponseBody QueryResult<User> getUserList(
+	public @ResponseBody Map<String,Object> getUserList(
 			@RequestParam(value="page",required=false) int page,
 			@RequestParam(value="rows",required=false) int rows,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
-		Pageable pageable = new PageRequest(page, rows);
+		Map<String,Object> rtMap = new HashMap<String, Object>(); 
+		Pageable pageable = new PageRequest(page-1, rows);
 		Object[] params = new Object[]{};
-		QueryResult<User> queryObj = userService.getScrollDataByJpql("1=1", params,null , pageable);
-		List<AccountBean> accountList = new ArrayList<AccountBean>();
-		List<User> userList = queryObj.getResultList();
-		for(User user : userList){
-			AccountBean accountBean = new AccountBean();
-			accountBean.setCode(user.getCode());
-			accountBean.setName(user.getName());
-			accountBean.setPage(page);
-			accountBean.setRows(rows);
-		}
-		return queryObj;
+		rtMap = userService.getScrollDataByJpql(User.class,null, params,null , pageable);
+		return rtMap;
 	}
-
+	@RequestMapping(value = "/getDetailAccount", method = RequestMethod.GET)
+	public @ResponseBody AccountBean getDetailAccount(
+			@RequestParam(value="id",required=true) String id,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		AccountBean accountBean = new AccountBean();
+		User user = userService.getUserById(id);
+		accountBean.setId(user.getId());
+		accountBean.setCode(user.getCode());
+		accountBean.setName(user.getName());
+		accountBean.setPassword(user.getPassword());
+		accountBean.setTelephone(user.getTelephone());
+		accountBean.setStatus(user.getStatus());
+		return accountBean;
+	}
 }

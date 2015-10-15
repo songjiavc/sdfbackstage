@@ -2,6 +2,8 @@ package com.sdf.manager.user.bean;
 
 public class AccountBean 
 {
+	private String id;
+	
 	private String code;
 	
 	private String name;
@@ -11,10 +13,16 @@ public class AccountBean
 	private String parentName;
 	
 	private String status;
+
+	private String telephone;
 	
-	private int page;//当前页
-	
-	private int rows;//行数
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getCode() {
 		return code;
@@ -32,6 +40,14 @@ public class AccountBean
 		this.name = name;
 	}
 
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
 	public String getParentName() {
 		return parentName;
 	}
@@ -46,22 +62,6 @@ public class AccountBean
 
 	public void setStatus(String status) {
 		this.status = status;
-	}
-
-	public int getPage() {
-		return page;
-	}
-
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	public int getRows() {
-		return rows;
-	}
-
-	public void setRows(int rows) {
-		this.rows = rows;
 	}
 
 	public String getPassword() {
