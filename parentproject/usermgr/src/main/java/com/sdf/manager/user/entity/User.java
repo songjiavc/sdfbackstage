@@ -43,6 +43,9 @@ public class User extends BaseEntiry implements Serializable
 	@Column(name="PASSWORD")
 	private String password;
 	
+	@Column(name="TELEPHONE")
+	private String telephone;
+	
 	@Column(name="PROVINCE_CODE")
 	private String provinceCode;
 	
@@ -57,6 +60,9 @@ public class User extends BaseEntiry implements Serializable
 	
 	@Column(name="PARENT_UID")
 	private String parentUid;
+	
+	@Column(name="status")
+	private String status;
 	
 	public String getId() {
 		return id;
@@ -128,6 +134,22 @@ public class User extends BaseEntiry implements Serializable
 
 	public void setParentUid(String parentUid) {
 		this.parentUid = parentUid;
+	}
+
+	public String getTelephone() {
+		return telephone;
+	}
+
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

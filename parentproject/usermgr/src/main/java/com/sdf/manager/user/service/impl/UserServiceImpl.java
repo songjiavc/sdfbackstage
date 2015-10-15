@@ -1,16 +1,23 @@
 package com.sdf.manager.user.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.repository.UserRepository;
@@ -38,13 +45,43 @@ public class UserServiceImpl implements UserService {
 
 	/**
 	 * 
-	* @Description: TODO(保存权限数据) 
-	* @author bann@sdfcp.com
-	* @date 2015年10月9日 下午2:33:45
+	* @Description: 业务上保存更新方法
+	* @author songj@sdfcp.com
+	 * @throws BizException 
+	* @date 2015年10月15日 下午1:33:45
 	 */
-	public void save(User user) {
-		userRepository.save(user);
-		
+	public void saveOrUpdate(AccountBean accountBean) throws BizException {
+		ResultBean resultBean = new ResultBean();
+		User user;
+		user = this.getUserById(accountBean.getId());//判断当前code所属的auth是否已存在，若存在则进行修改操作
+		if(StringUtils.isEmpty(user)){
+			//如果是新增判断帐号是否表内重复
+			User userCode = this.getUserByCode(accountBean.getCode());
+			if(null == userCode){
+				user = new User();
+				user.setCode(accountBean.getCode());
+				user.setName(accountBean.getName());
+				user.setPassword(accountBean.getPassword());
+				user.setTelephone(accountBean.getTelephone());
+				user.setStatus(accountBean.getStatus());
+				user.setCreater("admin");
+				user.setCreaterTime(new Date());
+				user.setModify("admin");
+				user.setModifyTime(new Date());
+				userRepository.save(user);
+			}else{
+				throw new BizException(0101);
+			}
+		}else{
+			// user.setCode(accountBean.getCode());   修改时登录帐号不允许修改
+			user.setName(accountBean.getName());
+			user.setPassword(accountBean.getPassword());
+			user.setTelephone(accountBean.getTelephone());
+			user.setStatus(accountBean.getStatus());
+			user.setModify("admin");
+			user.setModifyTime(new Date());
+			userRepository.save(user);
+		}
 	}
 
 	
@@ -55,9 +92,9 @@ public class UserServiceImpl implements UserService {
 	 * @return 
 	 * @see com.sdf.manager.user.service.UserService#getUserByCode(java.lang.String) 
 	 */
-	public User getUserByCode(String code)
+	public User getUserById(String id)
 	{
-		User user =  userRepository.getUserByCode(code);
+		User user =  userRepository.findOne(id);
 		return user;
 	}
 	
@@ -77,9 +114,27 @@ public class UserServiceImpl implements UserService {
 		return userList;
 	}
 
-	public QueryResult<User> getScrollDataByJpql(String whereJpql, Object[] queryParams,
+	public Map<String,Object> getScrollDataByJpql(Class<User> entityClass,String whereJpql, Object[] queryParams,
 			LinkedHashMap<String, String> orderby, Pageable pageable) {
-			return userRepository.getScrollDataByJpql(User.class, whereJpql, queryParams, orderby, pageable);
+		Map<String,Object> returnData = new HashMap<String,Object>();
+		List<AccountBean> accountList = new ArrayList<AccountBean>();
+		QueryResult<User> userObj = userRepository.getScrollDataByJpql(entityClass, whereJpql, queryParams,orderby, pageable);
+		List<User> userlist = userObj.getResultList();
+		Long totalrow = userObj.getTotalRecord();
+		for(User user : userlist){
+			AccountBean accountBean = new AccountBean();
+			accountBean.setId(user.getId());
+			accountBean.setCode(user.getCode());
+			accountBean.setName(user.getName());
+			accountList.add(accountBean);
+		}
+		returnData.put("rows", accountList);
+		returnData.put("total", totalrow);
+		return returnData;
+	}
+
+	public User getUserByCode(String code) {
+		return userRepository.getUserByCode(code);
 	}
 
 }

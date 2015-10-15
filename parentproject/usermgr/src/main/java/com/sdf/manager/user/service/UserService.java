@@ -2,10 +2,13 @@ package com.sdf.manager.user.service;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.User;
 
 
@@ -27,17 +30,26 @@ public interface UserService {
 	public List<User> findAll();
 
 	/** 
-	  * @Description: 保存用户信息
+	  * @Description: 保存更新用户信息
 	  * @author songj@sdfcp.com
 	  * @date 2015年10月12日 上午11:16:13 
 	  * @param user 
 	  */
-	public void save(User user);
+	public void saveOrUpdate(AccountBean accountBean) throws BizException;
 
 	/** 
-	  * @Description: 通过code获得帐号信息
+	  * @Description: TODO(这里用一句话描述这个类的作用)
 	  * @author songj@sdfcp.com
-	  * @date 2015年10月12日 上午11:16:31 
+	  * @date 2015年10月15日 上午10:39:51 
+	  * @param id
+	  * @return 
+	  */
+	public User getUserById(String id);
+	
+	/** 
+	  * @Description: 判断code是否有重复记录
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月15日 下午1:16:03 
 	  * @param code
 	  * @return 
 	  */
@@ -53,5 +65,5 @@ public interface UserService {
 	  * @param pageable
 	  * @return 
 	  */
-	public QueryResult<User> getScrollDataByJpql(String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable);
+	public Map<String,Object>  getScrollDataByJpql(Class<User> entityClass,String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable);
 }
