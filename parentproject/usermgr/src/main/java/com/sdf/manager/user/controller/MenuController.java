@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.MenuBean;
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
@@ -153,6 +155,7 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.GET)
 	public @ResponseBody ResultBean saveOrUpdate(
+			@RequestParam(value="id",required=false) String id,
 			@RequestParam(value="code",required=false) String code,
 			@RequestParam(value="authName",required=false) String authName,
 			@RequestParam(value="parentAuth",required=false) String parentAuth,
@@ -165,10 +168,11 @@ public class MenuController {
 		
 		Authority authority;
 		
-		authority = authService.getAuthorityByCode(code);//判断当前code所属的auth是否已存在，若存在则进行修改操作
+		authority = authService.getAuthorityByCode(id);//判断当前code所属的auth是否已存在，若存在则进行修改操作
 		
 		if(null != authority)//已存在，进行权限数据的修改操作
 		{
+			authority.setId(id);
 			authority.setCode(code);
 			authority.setAuthName(authName);
 			authority.setParentAuth(parentAuth);
@@ -235,18 +239,58 @@ public class MenuController {
 	* @author bann@sdfcp.com
 	* @date 2015年10月10日 下午3:14:46
 	 */
-	@RequestMapping(value = "/getParentAuth", method = RequestMethod.GET)
-	public @ResponseBody List<Authority> getParentAuth(
+	@RequestMapping(value = "/getParentAuth", method = RequestMethod.POST)
+	public @ResponseBody List<AuthorityBean> getParentAuth(
 			@RequestParam(value="status",required=false) String status,
 			@RequestParam(value="code",required=false) String code,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
-		List<Authority> authority = new ArrayList<Authority>();
+		//放置分页参数
+		Pageable pageable = new PageRequest(0,10000);
+		
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add("1");//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		
+		if(null != code && !"".equals(code))
+		{
+			params.add(code);//只查询有效的数据
+			buffer.append(" and  code != ?").append(params.size());
+		}
+		
+		if(null != status && !"".equals(status))
+		{
+			params.add(status);//只查询有效的数据
+			buffer.append(" and  status = ?").append(params.size());
+		}
+		//排序
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		orderBy.put("id", "asc");
+		
+		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		
+		List<Authority> authes = authlist.getResultList();
+		
+		List<AuthorityBean> authBeanlist = new ArrayList<AuthorityBean>();
 		
 		
-		authority = authService.getAuthorityByStatusAndCode(status, code);
+		for (Authority authority : authes) 
+		{
+			AuthorityBean authbeanin = new AuthorityBean();
+			
+			authbeanin.setCode(authority.getId());
+			authbeanin.setAuthName(authority.getAuthName());
+			
+			authBeanlist.add(authbeanin);
+		}
 		
-		return authority;
+		
+		return authBeanlist;
 	}
 	
 	/**
@@ -260,6 +304,7 @@ public class MenuController {
 			@RequestParam(value="page",required=false) int page,
 			@RequestParam(value="rows",required=false) int rows,
 			@RequestParam(value="status",required=false) String status,
+			@RequestParam(value="parentCode",required=false) String parentCode,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		Map<String,Object> returnData = new HashMap<String,Object> ();
@@ -267,7 +312,6 @@ public class MenuController {
 		//放置分页参数
 		Pageable pageable = new PageRequest(page-1,rows);
 		
-		StringBuffer whereJpql = new StringBuffer("");//底层处理中若whereJpql==“”则不会将语句放入到sql中
 		//参数
 		StringBuffer buffer = new StringBuffer();
 		List<Object> params = new ArrayList<Object>();
@@ -279,14 +323,28 @@ public class MenuController {
 		if(null != status && !"".equals(status))
 		{
 			params.add(status);//只查询有效的数据
-			buffer.append(" status = ?").append(params.size());
+			buffer.append(" and status = ?").append(params.size());
 		}
+		
+		if(null != parentCode && !"".equals(parentCode))
+		{
+			params.add(parentCode);//查询父级code为当前值的数据
+			buffer.append(" and parentAuth = ?").append(params.size());
+		}
+		
 		//排序
 		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
 		orderBy.put("code", "desc");
 		
-		returnData = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
 				orderBy, pageable);
+		
+		//处理返回数据
+		List<Authority> authorities = authlist.getResultList();
+		Long totalrow = authlist.getTotalRecord();
+		
+		returnData.put("rows", authorities);
+		returnData.put("total", totalrow);
 		
 		return returnData;
 	}
@@ -308,7 +366,7 @@ public class MenuController {
 		for (String code : codes) 
 		{
 			authority = new Authority();
-			authority =  authService.getAuthorityByCode(code);
+			authority =  authService.getAuthorityByCode(code);//code传递进去的参数实际是id
 			authority.setIsDeleted("0");;//设置当前数据为已删除状态
 			authService.save(authority);//保存更改状态的权限实体
 		}
@@ -318,6 +376,56 @@ public class MenuController {
 		resultBean.setMessage("删除成功!");
 		
 		return resultBean;
+	}
+	
+	
+	/**
+	 * 
+	* @Description: TODO(获取权限页面的权限树) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月14日 下午2:59:13
+	 */
+	@RequestMapping(value = "/getTreedata", method = RequestMethod.POST)
+	public @ResponseBody List<TreeBean> getTreedata(ModelMap model,HttpSession httpSession) throws Exception {
+		
+		
+		
+		//放置分页参数
+		Pageable pageable = new PageRequest(0,10000);
+		
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add("1");//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		
+		params.add("1");//树种只显示启用状态的权限数据
+		buffer.append(" and  status = ?").append(params.size());
+		//排序
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		orderBy.put("code", "desc");
+		
+		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		
+		List<Authority> authes = authlist.getResultList();
+		
+		List<TreeBean> treeBeanList = new ArrayList<TreeBean> ();
+		
+		for (Authority authority : authes) {
+			
+			TreeBean treeBeanIn = new TreeBean();
+			treeBeanIn.setId(authority.getId());
+//			treeBeanIn.setParent(true);
+			treeBeanIn.setName(authority.getAuthName());
+			treeBeanIn.setOpen(true);
+			treeBeanIn.setpId(authority.getParentAuth());
+			treeBeanList.add(treeBeanIn);
+		}
+		
+		return treeBeanList;
 	}
 	
 	

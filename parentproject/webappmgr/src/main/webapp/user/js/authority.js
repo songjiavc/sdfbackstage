@@ -1,41 +1,24 @@
+var zNodes ;
 $(document).ready(
 		function()
 		{
 			
-			initDatagrid();
+			initDatagrid('');
 			closeDialog();
 			
-			$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+			initZnodes();
 			
-            var pager = $('#dg').datagrid().datagrid('getPager');    // get the pager of datagrid
-           /*  pager.pagination({
-                buttons:[{
-                    iconCls:'icon-search',
-                    handler:function(){
-                        alert('search');
-                    }
-                },{
-                    iconCls:'icon-add',
-                    handler:function(){
-                        alert('add');
-                    }
-                },{
-                    iconCls:'icon-edit',
-                    handler:function(){
-                        alert('edit');
-                    }
-                }]
-            });        */   
-            
+			
+			
             
 		}
 );
 
 
-function initDatagrid()
+function initDatagrid(parentCode)
 {
 	var params = new Object();
-	
+	params.parentCode = parentCode;//父级id
 	
 	$('#datagrid').datagrid({
 		singleSelect:false,
@@ -72,8 +55,8 @@ function initDatagrid()
 					},
 				{field:'opt',title:'操作',width:160,align:'center',  
 		            formatter:function(value,row,index){  
-		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.code+'&quot;)" href="javascript:void(0)">删除</a>';
+		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
+		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
 		                return btn;  
 		            }  
 		        }  
@@ -110,7 +93,7 @@ function updateAuth(code)
 {
 	var url = contextPath + '/menu/getDetailAuth.action';
 	var data1 = new Object();
-	data1.code=code;
+	data1.code=code;//权限的id
 	
 	$.ajax({
 		async: false,   //设置为同步获取数据形式
@@ -121,6 +104,7 @@ function updateAuth(code)
         success: function (data) {
         	
 				$('#ffupdate').form('load',{
+					id:data.id,
 					code:data.code,
 					authName:data.authName,
 					parentAuth:data.parentAuth,
@@ -128,6 +112,8 @@ function updateAuth(code)
 					status:data.status,
 					authImg:data.authImg
 				});
+				
+				initParentAuthList('update',code,data.parentAuth);
 		
         	
         	
@@ -154,7 +140,7 @@ function deleteAuthList()
 	var rows = $('#datagrid').datagrid('getSelections');
 	for(var i=0; i<rows.length; i++)
 	{
-		codearr.push(rows[i].code);//code
+		codearr.push(rows[i].id);//code
 	}
 	
 	
@@ -172,7 +158,10 @@ function deleteAuthList()
 			                data:data1,
 			                dataType: "json",
 			                success: function (data) {
-			                	initDatagrid();
+			                	initDatagrid('');
+			                	//批量删除权限后重新加载树
+			                	initZnodes();
+			                	
 			                	$.messager.alert('提示', data.message);
 			                	
 			                },
@@ -216,7 +205,9 @@ function deleteAuth(code)
 	                data:data1,
 	                dataType: "json",
 	                success: function (data) {
-	                	initDatagrid();
+	                	initDatagrid('');
+	                	//删除权限后重新加载树
+	                	initZnodes();
 	                	$.messager.alert('提示', data.message);
 	                },
 	                error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -233,22 +224,39 @@ function deleteAuth(code)
 /**
  * 初始化上级权限combobox数据
  */
-function initParentAuthList()
+function initParentAuthList(addOrUpdate,code,parentauth)
 {
-//	$('#parentAuth').clear();//清空combobox值
-//	$('#parentAuth').setValue("");
-//	$('#parentAuth').combobox({
-//			url:contextPath+'/menu/getParentAuth.action',
-//			valueField:'code',
-//			textField:'authName',
-//			 onLoadSuccess: function () { //数据加载完毕事件
-//                 var data = $('#parentAuth').combobox('getData');
-//                 if (data.length > 0) {
-//                     $("#parentAuth").combobox('select', data[0].code);
-//                 }
-//					
-//             }
-//		}); 
+	var parentAuthId = "parentAuthA";
+	
+	
+	var data = new Object();
+	data.status = "1";
+	
+	if("update" == addOrUpdate)
+		{//修改
+			data.code = code;
+			parentAuthId = "parentAuthU";
+		}
+	
+	$('#'+parentAuthId).combobox('clear');//清空combobox值
+	
+	$('#'+parentAuthId).combobox({
+			queryParams:data,
+			url:contextPath+'/menu/getParentAuth.action',
+			valueField:'code',
+			textField:'authName',
+			 onLoadSuccess: function (data1) { //数据加载完毕事件
+                 if (data1.length > 0 && "add" == addOrUpdate) 
+                 {
+                	 $("#"+parentAuthId).combobox('select',data1[0].code);
+                 }
+                 else
+            	 {
+            	 	$("#"+parentAuthId).combobox('select', parentauth);
+            	 }
+					
+             }
+		}); 
 }
 
 
@@ -265,7 +273,9 @@ function submitAddauth()
 	    	$.messager.alert('提示', eval("(" + data + ")").message);
 	    	$("#addAuth").dialog('close');//初始化修改权限弹框关闭
 	    	//在添加权限后刷新权限数据列表
-	    	initDatagrid();
+	    	initDatagrid('');
+	    	//在添加权限后刷新权限树
+	    	initZnodes();
 	    	$('#ff').form('clear');
 	    	$("#parentAuth").combobox('select','0');
 	    	$('#ff [name="status"]:radio').each(function() {   //设置“是”为默认选中radio
@@ -290,7 +300,9 @@ function submitUpdateauth()
 	    	$.messager.alert('提示', eval("(" + data + ")").message);
 	    	$("#updateAuth").dialog('close');//初始化修改权限弹框关闭
 	    	//在修改权限后刷新权限数据列表
-	    	initDatagrid();
+	    	initDatagrid('');
+	    	//在修改权限后刷新权限树
+	    	initZnodes();
 	    	$('#ffupdate').form('clear');
 	    }
 	});
@@ -299,18 +311,55 @@ function submitUpdateauth()
 
 
 /***********树配置************/
-var setting = {
-		view: {
-			showLine: false
-		},
-		data: {
-			simpleData: {
-				enable: true
-			}
-		}
-	};
 
-var zNodes =[
+var setting ;
+/**
+ * 初始化树节点数据
+ */
+function initZnodes()
+{
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/menu/getTreedata.action',
+        dataType: "json",
+        success: function (data) {
+        	setting = {
+        			view: {
+        				showLine: false
+        			},
+        			data: {
+        				simpleData: {
+        					enable: true
+        				}
+        			},
+        			callback: {
+        				onClick: zTreeOnClick
+        			}
+        		};
+        		zNodes = data;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+}
+
+/**
+ * 树节点点击事件
+ * @param event
+ * @param treeId
+ * @param treeNode
+ */
+function zTreeOnClick(event, treeId, treeNode) 
+{
+//    alert(treeNode.tId + ", " + treeNode.id);
+    initDatagrid(treeNode.id)
+}
+ 
+/*var zNodes =[
 				{ id:1, pId:0, name:"权限树", open:true},
 				{ id:11, pId:1, name:"用户"},
 				{ id:111, pId:11, name:"添加站点"},
@@ -325,4 +374,4 @@ var zNodes =[
 				{ id:2, pId:0, name:"信息", isParent:true},
 				{ id:3, pId:0, name:"日志", isParent:true},
 				{ id:4, pId:0, name:"报表", isParent:true}
-			];
+			];*/

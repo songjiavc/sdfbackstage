@@ -17,7 +17,8 @@
   	    text:'添加',
   	    iconCls:'icon-add',
   	    handler:function(){
-  	    	initParentAuthList();//初始化上级权限下拉框值
+  	   		 //初始化上级权限下拉框值
+  	    	initParentAuthList('add','','');
   	    	$("#addAuth").dialog('open');
   	    	
   	    }
@@ -87,6 +88,7 @@
             
 		<form id="ff" method="get" novalidate>
 	        <div class="ftitle">
+	    	    <input type="hidden" name="id" id="idA"/>
 	            <label for="code">权限编码:</label>
 	            <input class="easyui-validatebox commonInput" type="text" name="code"  data-options="required:true"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
@@ -99,14 +101,14 @@
 	        <div class="ftitle">
 	            <label for="parentAuth">上级权限:</label>
 	            <div style="margin-right: 15%;float:right;">
-		            <select class="easyui-combobox" id="parentAuth" name="parentAuth"  
+		            <select class="easyui-combobox" id="parentAuthA" name="parentAuth"  
 		          	  data-options="editable:false,required:true" style="width:200px;" >
 					</select>
 	            </div>
 	        </div>
 	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
@@ -142,6 +144,7 @@
             ">
 		<form id="ffupdate" method="get" novalidate>
 	        <div class="ftitle">
+	        	<input type="hidden" name="id" id="idU"/>
 	            <label for="code">权限编码:</label>
 	            <input class="easyui-validatebox commonInput" type="text" name="code" data-options="required:true" readonly="readonly"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
@@ -162,7 +165,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="url">权限 url:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="url" data-options="required:true"></input>
+	            <input class="easyui-validatebox commonInput" type="text" name="url" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="authImg">权限图片:</label>
