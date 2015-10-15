@@ -25,7 +25,7 @@ public interface AuthRepository extends GenericRepository<Authority, String> {
 	* @author bann@sdfcp.com
 	* @date 2015年10月9日 下午3:37:34
 	 */
-	@Query("select u from Authority u where u.isDeleted ='1' and u.code =?1")
+	@Query("select u from Authority u where u.isDeleted ='1' and u.id =?1")
 	public Authority getAuthorityByCode(String code);
 	
 	/**
