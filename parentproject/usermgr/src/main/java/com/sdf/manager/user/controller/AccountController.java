@@ -62,6 +62,7 @@ public class AccountController {
 			catch (Exception e) {
 				resultBean.setMessage("操作异常!");
 				resultBean.setStatus("failure");
+				e.printStackTrace();
 			}
 			return resultBean;
 	}

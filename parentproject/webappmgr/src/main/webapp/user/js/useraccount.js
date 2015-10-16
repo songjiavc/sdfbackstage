@@ -27,7 +27,20 @@ function initDatagrid()
 				{field:'telephone',title:'电话',width:'20%',align:'center'},
 				{field:'creator',title:'录入人',width:'10%',align:'center'},
 				{field:'creatorTime',title:'录入时间',width:'10%',align:'center'},
-				{field:'status',title:'启用',align:'center',width:'5%'},
+				{field:'status',title:'启用',align:'center',width:'5%',
+					formatter:function(value,row,index){
+					var showStatus = "";
+					if("1" == row.status)
+						{
+							showStatus = "是";
+						}
+					else
+						{
+							showStatus = "否";
+						}
+						return showStatus;
+					}
+				},
 				{field:'opt',title:'操作',width:160,align:'center', 
 		            formatter:function(value,row,index){
 		                var btn = '<a class="editcls" onclick="updateAccount(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
@@ -100,15 +113,14 @@ function formCheckout(){
 //提交添加权限form表单
 function submitAddAccount()
 {
-	alert("1");
-	$('#ff').form('submit',{
+	$('#addAccountForm').form('submit',{
 		url:contextPath+'/account/saveOrUpdate.action',
-		onSubmit:function(){
-			alert($('#ff').form('enableValidation').form('validate'));
-			return $(this).form('enableValidation').form('validate');
+		onSubmit:function(param){
+			return $('#addAccountForm').form('validate');
 		},
 		success:function(data){
-			$.messager.alert('Info', data, 'info');
+			$.messager.alert('提示', eval("(" + data + ")").message);
+        	closeDialog();
 		}
 	});
 }

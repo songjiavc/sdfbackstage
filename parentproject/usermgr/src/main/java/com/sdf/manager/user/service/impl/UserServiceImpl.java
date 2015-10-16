@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
@@ -51,14 +50,11 @@ public class UserServiceImpl implements UserService {
 	* @date 2015年10月15日 下午1:33:45
 	 */
 	public void saveOrUpdate(AccountBean accountBean) throws BizException {
-		ResultBean resultBean = new ResultBean();
-		User user;
-		user = this.getUserById(accountBean.getId());//判断当前code所属的auth是否已存在，若存在则进行修改操作
-		if(StringUtils.isEmpty(user)){
+		if(StringUtils.isEmpty(accountBean.getId())){
 			//如果是新增判断帐号是否表内重复
 			User userCode = this.getUserByCode(accountBean.getCode());
 			if(null == userCode){
-				user = new User();
+				User user = new User();
 				user.setCode(accountBean.getCode());
 				user.setName(accountBean.getName());
 				user.setPassword(accountBean.getPassword());
@@ -74,6 +70,7 @@ public class UserServiceImpl implements UserService {
 			}
 		}else{
 			// user.setCode(accountBean.getCode());   修改时登录帐号不允许修改
+			User user = this.getUserById(accountBean.getId());
 			user.setName(accountBean.getName());
 			user.setPassword(accountBean.getPassword());
 			user.setTelephone(accountBean.getTelephone());
@@ -126,6 +123,10 @@ public class UserServiceImpl implements UserService {
 			accountBean.setId(user.getId());
 			accountBean.setCode(user.getCode());
 			accountBean.setName(user.getName());
+			accountBean.setStatus(user.getStatus());
+			accountBean.setTelephone(user.getTelephone());
+			accountBean.setCreater(user.getCreater());
+			accountBean.setCreaterTime(user.getCreaterTime());
 			accountList.add(accountBean);
 		}
 		returnData.put("rows", accountList);
