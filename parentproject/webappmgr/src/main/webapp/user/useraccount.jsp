@@ -21,7 +21,7 @@
 	  	    handler:function(){alert('cut')}
 	  	}];
 	</script>
-	 <style type="text/css">
+	 <style type="text/css" scoped="scoped">
 	  		.ftitle{
 	  			width:100%;
 	  			margin-bottom: 20px;
@@ -30,18 +30,17 @@
 	  		.ftitle label{
 	  			margin-left: 30px;
 	  		}
-	  		.ftitle .commonInput{
+	  		.ftitle input{
 	  			margin-right: 50px;
 	  			float : right;
 	  			width: 200px;
-	  			border-radius : 5px;
 	  		}
 	  	</style>
 </head>
 <body>
 	
 	<table id="accountDataGrid" class="easyui-datagrid" title="用户列表" 
-			data-options="toolbar:toolbar" />
+			data-options="toolbar:toolbar" ></table>
 	    <!-- 添加权限弹框 -->
   	<div id="addAccount" class="easyui-dialog" title="添加用户" style="width:480px;height:350px;padding:10px;"
             data-options="
@@ -60,50 +59,30 @@
                     }
                 }]
             ">
-		<form id="ff" method="post" >
-			<div>
-				<label for="email">Email:</label>
-				<input class="easyui-validatebox" type="text" name="email" required="true" validType="email"></input>
-			</div>
-			<div>
-				<label for="subject">Subject:</label>
-				<input class="easyui-validatebox" type="text" name="subject" required="true"></input>
-			</div>
-			<div>
-				<label for="message">Message:</label>
-				<textarea name="message" style="height:60px;"></textarea>
-			</div>
+		<form id="addAccountForm" method="post" >
 	        <div class="ftitle">
-	            <label for="code">权限编码:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="code"  data-options="required:true"
-	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
+	            <label for="code">用户编码:</label>
+	            <input class="easyui-validatebox textbox" type="text" name="code"  data-options="required:true,validType:'length[3,10]'"
+	              missingMessage="用户编码不可以为空" invalidMessage="用户编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="name" >用户姓名:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="name"  data-options="required:true"  missingMessage="用户真实姓名"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="name"  data-options="required:true"  validType="length[1,20]" missingMessage="用户真实姓名"></input>
 	        </div>
 	        <div class="ftitle">
 	        	<label for="telephone" >用户电话:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="telephone" missingMessage="用户电话"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="telephone" missingMessage="用户电话"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
-	            <input class="easyui-validatebox commonInput" type="password" name="password" data-options="required:true"
+	            <input class="easyui-validatebox textbox" type="password" name="password" data-options="required:true"
 	            validType="length[1,20]"   missingMessage="密码不可以为空" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="confirmPassword" >确认密码:</label>
-	            <input class="easyui-validatebox commonInput" type="password" name ="confirmPassword"  data-options="required:true"></input>
+	            <input class="easyui-validatebox textbox" type="password" name ="confirmPassword"  data-options="required:true"></input>
 	        </div>
-          	<div class="ftitle">
-	            <label for="status">是否启用:</label>
-	            <div style="float:right;margin-right: 50px; ">
-		            <input class="easyui-validatebox" type="radio" name="status" checked >是</input>
-		            <input class="easyui-validatebox" type="radio" name="status">否</input>
-	        	</div>
-           </div>
-	       </div>
-	       </form>
+          </form>
      </div>  
      <!-- 修改权限弹框 -->
     <div id="updateAccount" class="easyui-dialog" title="修改用户" style="width:480px;height:350px;padding:10px;"
@@ -127,7 +106,7 @@
 	       	<input type="hidden" name="id" />
 	      	<div class="ftitle">
 	            <label for="code" >用户帐号:</label>
-	          	<input class="easyui-validatebox commonInput" type="text" name="code"  readonly="readonly"
+	          	<input class="easyui-validatebox textbox" type="text" name="code"  readonly="readonly"
 	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
@@ -153,9 +132,8 @@
 		            <input class="easyui-validatebox" type="radio" name="status" checked >是</input>
 		            <input class="easyui-validatebox" type="radio" name="status">否</input>
 	        	</div>
-           </div>
-	       </div>
-	    </form>
-	</div> 
+          	</div>
+    		</form>
+       </div>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package com.sdf.manager.user.bean;
 
+import java.util.Date;
+
 public class AccountBean 
 {
 	private String id;
@@ -15,6 +17,10 @@ public class AccountBean
 	private String status;
 
 	private String telephone;
+	
+	private String creater;
+	
+	private Date createrTime;
 	
 	public String getId() {
 		return id;
@@ -71,7 +77,20 @@ public class AccountBean
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
-	
+
+	public String getCreater() {
+		return creater;
+	}
+
+	public void setCreater(String creater) {
+		this.creater = creater;
+	}
+
+	public Date getCreaterTime() {
+		return createrTime;
+	}
+
+	public void setCreaterTime(Date createrTime) {
+		this.createrTime = createrTime;
+	}
 }
