@@ -178,11 +178,30 @@ public class MenuController {
 			authority.setParentAuth(parentAuth);
 			authority.setUrl(url);
 			authority.setAuthImg(authImg);
+			String originStatus = authority.getStatus();//记录修改前的权限状态
 			authority.setStatus(status);
 			authority.setModify("admin");
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			//修改权限数据
 			authService.save(authority);
+			
+			if(!originStatus.equals(status))//若待修改数据的启用状态发生变化，则要判断是否有子级权限，若有则要批量修改启用状态
+			{
+				List<Authority> authList = new ArrayList<Authority> ();
+				authList = getChildauthByRecursive(authList, id, model, httpSession);
+				
+				if(authList.size()>0)//拥有子级权限，对子级权限的启用状态进行修改
+				{
+					for (Authority authority2 : authList) 
+					{
+						authority2.setStatus(status);
+						authority2.setModify("admin");
+						authority2.setModifyTime(new Timestamp(System.currentTimeMillis()));
+						authService.save(authority2);
+					}
+				}
+			}
+			
 			
 			returnMap.setMessage("修改权限成功!");
 			returnMap.setStatus("success");
@@ -211,6 +230,29 @@ public class MenuController {
 		
 		
 		return returnMap;
+	}
+	
+	/**
+	 * 
+	* @Description: TODO(使用递归方法获取所有子级权限数据) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月16日 下午2:19:41
+	 */
+	private List<Authority> getChildauthByRecursive(List<Authority> authList,String parentAuth,ModelMap model,HttpSession httpSession)
+	{
+		List<Authority> authListget = getChildAuthList(parentAuth, model, httpSession);
+		
+		if(authListget.size()>0)
+		{
+			for (Authority authority : authListget) {
+				
+				authList.add(authority);
+				
+				authListget = getChildauthByRecursive(authList, authority.getId(), model, httpSession);
+			}
+		}
+		
+		return authList;
 	}
 	
 	
@@ -368,6 +410,8 @@ public class MenuController {
 			authority = new Authority();
 			authority =  authService.getAuthorityByCode(code);//code传递进去的参数实际是id
 			authority.setIsDeleted("0");;//设置当前数据为已删除状态
+			authority.setModify("admin");
+			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			authService.save(authority);//保存更改状态的权限实体
 		}
 		
@@ -430,6 +474,46 @@ public class MenuController {
 	
 	/**
 	 * 
+	* @Description: TODO(获取子级权限列表) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月16日 下午2:14:55
+	 */
+	@RequestMapping(value = "/getChildAuthList", method = RequestMethod.POST)
+	public @ResponseBody List<Authority> getChildAuthList(@RequestParam(value="parentAuth",required=false) String parentAuth,
+			ModelMap model,HttpSession httpSession)
+	{
+		List<Authority> authList = new ArrayList<Authority> ();
+		
+		//放置分页参数
+		Pageable pageable = new PageRequest(0,10000);
+		
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add("1");//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		//连接父级权限id查询条件，用来查询当前id下是否有子级权限
+		if(null != parentAuth && !"".equals(parentAuth))
+		{
+			params.add(parentAuth);
+			buffer.append(" and parentAuth = ?").append(params.size());
+		}
+		
+		//排序
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		
+		QueryResult<Authority> authlist = authService.getAuthList(Authority.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		
+		authList = authlist.getResultList();
+		
+		return authList;
+	}
+	
+	/**
+	 * 
 	* @Description: TODO(权限输入值校验，用来校验code唯一性和authname唯一性) 
 	* @author bann@sdfcp.com
 	* @date 2015年10月15日 上午10:55:07
@@ -439,6 +523,7 @@ public class MenuController {
 			@RequestParam(value="id",required=false) String id,
 			@RequestParam(value="code",required=false) String code,
 			@RequestParam(value="authname",required=false) String authname,
+			@RequestParam(value="parentAuth",required=false) String parentAuth,
 			ModelMap model,HttpSession httpSession) throws Exception {
 		
 		ResultBean resultBean = new ResultBean ();
@@ -470,6 +555,13 @@ public class MenuController {
 		{//校验修改中的值的唯一性
 			params.add(id);
 			buffer.append(" and id != ?").append(params.size());
+		}
+		
+		//连接父级权限id查询条件，用来查询当前id下是否有子级权限
+		if(null != parentAuth && !"".equals(parentAuth))
+		{
+			params.add(parentAuth);
+			buffer.append(" and parentAuth = ?").append(params.size());
 		}
 		
 		//排序
