@@ -14,6 +14,8 @@ public class ResultBean
 	private String message;//返回提示信息
 	
 	private String status;//返回状态（success of fail）
+	
+	private boolean isExist;//当前值是否存在
 
 	public String getMessage() {
 		return message;
@@ -29,6 +31,14 @@ public class ResultBean
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public boolean isExist() {
+		return isExist;
+	}
+
+	public void setExist(boolean isExist) {
+		this.isExist = isExist;
 	}
 	
 	

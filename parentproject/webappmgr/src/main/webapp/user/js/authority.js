@@ -2,15 +2,9 @@ var zNodes ;
 $(document).ready(
 		function()
 		{
-			
 			initDatagrid('');
 			closeDialog();
-			
 			initZnodes();
-			
-			
-			
-            
 		}
 );
 
@@ -266,6 +260,7 @@ function submitAddauth()
 	$('#ff').form('submit',{
 		url:contextPath+'/menu/saveOrUpdate.action',
 		onSubmit:function(param){
+				
 			return $('#ff').form('enableValidation').form('validate');
 		},
 	    success:function(data){
@@ -307,6 +302,82 @@ function submitUpdateauth()
 	    }
 	});
 }
+
+/**
+ * 校验code,authname唯一性
+ */
+function checkCode(id,code,authname)
+{
+	var flag = false;//当前值可用，不存在
+	var data = new Object();
+	
+	data.id = id;
+	data.code = code;
+	data.authname = authname;
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/menu/checkValue.action',
+        data:data,
+        dataType: "json",
+        success: function (data) {
+        	if(data.exist)//若data.isExist==true,则当前校验值已存在，则不可用使用
+        		{
+        			flag = true;
+        		}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	return flag;
+}
+
+/**
+ * 自定义校验authname
+ */
+$.extend($.fn.validatebox.defaults.rules, {
+    checkAname: {//自定义校验authname
+        validator: function(value,param){
+        	var rules = $.fn.validatebox.defaults.rules;  
+        	if(value.length==0||value.length>10){  
+        		rules.checkAname.message = "当前权限名称不可为空且长度不可以超过10个字符";  
+                return false;  
+            }
+        	else
+    		{
+        		rules.checkAname.message = "当前权限名称已存在"; 
+                return !checkCode($("#"+param[1]).val(),'',value);
+    		}
+        	
+        }
+    }
+});
+
+/**
+ * 自定义校验code
+ */
+$.extend($.fn.validatebox.defaults.rules, {
+    checkCodes: {//自定义校验code
+        validator: function(value,param){
+        	var rules = $.fn.validatebox.defaults.rules;  
+        	if(value.length==0||value.length>10){  
+        		rules.checkCodes.message = "当前权限编码不可为空且长度不可以超过10个字符";  
+                return false;  
+            }
+        	else
+    		{
+        		rules.checkCodes.message = "当前权限编码已存在"; 
+                return !checkCode($("#"+param[1]).val(),value,'');
+    		}
+        	
+        	
+        }
+    }
+});
+
 
 
 
@@ -355,23 +426,7 @@ function initZnodes()
  */
 function zTreeOnClick(event, treeId, treeNode) 
 {
-//    alert(treeNode.tId + ", " + treeNode.id);
     initDatagrid(treeNode.id)
 }
  
-/*var zNodes =[
-				{ id:1, pId:0, name:"权限树", open:true},
-				{ id:11, pId:1, name:"用户"},
-				{ id:111, pId:11, name:"添加站点"},
-				{ id:112, pId:11, name:"添加管理员"},
-				{ id:113, pId:11, name:"添加中心"},
-				{ id:114, pId:11, name:"站点管理"},
-				{ id:115, pId:11, name:"代理管理"},
-				{ id:12, pId:1, name:"商品"},
-				{ id:121, pId:12, name:"商品管理"},
-				{ id:122, pId:12, name:"购买商品"},
-				{ id:13, pId:1, name:"产品", isParent:true},
-				{ id:2, pId:0, name:"信息", isParent:true},
-				{ id:3, pId:0, name:"日志", isParent:true},
-				{ id:4, pId:0, name:"报表", isParent:true}
-			];*/
+
