@@ -1,4 +1,4 @@
-var zNodes ;
+var zNodes ;//放置树节点的全局变量
 $(document).ready(
 		function()
 		{
@@ -74,10 +74,6 @@ function closeDialog()
 {
 	$("#addAuth").dialog('close');//初始化添加权限弹框关闭
 	$("#updateAuth").dialog('close');//初始化修改权限弹框关闭
-	
-	
-	
-
 }
 
 /**
@@ -132,48 +128,61 @@ function deleteAuthList()
 	
 	var codearr = new Array();
 	var rows = $('#datagrid').datagrid('getSelections');
+	
+	var deleteFlag = true;
+	
 	for(var i=0; i<rows.length; i++)
 	{
 		codearr.push(rows[i].id);//code
+		
+		//判断当前权限是否有子级权限
+		var haveChildFlag = checkHaveChildAuth(rows[i].id);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
+		
+		if(haveChildFlag)
+			{
+				$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'拥有子级权限,不可以进行删除操作!");
+				deleteFlag = false;
+				break;
+			}
 	}
 	
-	
-	if(codearr.length>0)
+	if(deleteFlag)//选中的待删除权限中没有拥有子级权限的权限时可以进行删除操作
 		{
-			data1.codes=codearr.toString();//将id数组转换为String传递到后台
-			
-			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-		        	
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid('');
-			                	//批量删除权限后重新加载树
-			                	initZnodes();
-			                	
-			                	$.messager.alert('提示', data.message);
-			                	
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
+			if(codearr.length>0)
+			{
+				data1.codes=codearr.toString();//将id数组转换为String传递到后台
+				
+				$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+			        if (r) {  
 			        	
-		        }  
-		    });  
-			
+				        	$.ajax({
+				        		async: false,   //设置为同步获取数据形式
+				                type: "post",
+				                url: url,
+				                data:data1,
+				                dataType: "json",
+				                success: function (data) {
+				                	initDatagrid('');
+				                	//批量删除权限后重新加载树
+				                	initZnodes();
+				                	
+				                	$.messager.alert('提示', data.message);
+				                	
+				                },
+				                error: function (XMLHttpRequest, textStatus, errorThrown) {
+				                    alert(errorThrown);
+				                }
+				           });
+				        	
+			        }  
+			    });  
+				
+			}
+			else
+			{
+				$.messager.alert('提示', "请选择数据后操作!");
+			}
 		}
-	else
-		{
-			$.messager.alert('提示', "请选择数据后操作!");
-		}
-	
-	
 	
 }
 
@@ -189,28 +198,38 @@ function deleteAuth(code)
 	codearr.push(code);
 	
 	data1.codes=codearr.toString();
-	$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
-        if (r) {  
-        	
-	        	$.ajax({
-	        		async: false,   //设置为同步获取数据形式
-	                type: "post",
-	                url: url,
-	                data:data1,
-	                dataType: "json",
-	                success: function (data) {
-	                	initDatagrid('');
-	                	//删除权限后重新加载树
-	                	initZnodes();
-	                	$.messager.alert('提示', data.message);
-	                },
-	                error: function (XMLHttpRequest, textStatus, errorThrown) {
-	                    alert(errorThrown);
-	                }
-	           });
-	        	
-        }  
-    });  
+	
+	var haveChildFlag = checkHaveChildAuth(code);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
+	
+	if(haveChildFlag)
+		{
+			$.messager.alert('提示', "当前待删除权限有子级权限,不可以进行删除操作!");
+		}
+	else
+		{
+			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+		        if (r) {  
+			        	$.ajax({
+			        		async: false,   //设置为同步获取数据形式
+			                type: "post",
+			                url: url,
+			                data:data1,
+			                dataType: "json",
+			                success: function (data) {
+			                	initDatagrid('');
+			                	//删除权限后重新加载树
+			                	initZnodes();
+			                	$.messager.alert('提示', data.message);
+			                },
+			                error: function (XMLHttpRequest, textStatus, errorThrown) {
+			                    alert(errorThrown);
+			                }
+			           });
+			        	
+		        }  
+		    });  
+		}
+	
 	
 	
 }
@@ -334,6 +353,38 @@ function checkCode(id,code,authname)
 	
 	return flag;
 }
+
+/**
+ * 判断是否有子级权限
+ * @param id
+ */
+function checkHaveChildAuth(id)
+{
+	var flag = false;//当前值可用，不存在
+	var data = new Object();
+	
+	data.parentAuth = id;
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/menu/checkValue.action',
+        data:data,
+        dataType: "json",
+        success: function (data) {
+        	if(data.exist)//若data.isExist==true则当前权限下有子级权限
+        		{
+        			flag = true;
+        		}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	return flag;
+}
+
 
 /**
  * 自定义校验authname
