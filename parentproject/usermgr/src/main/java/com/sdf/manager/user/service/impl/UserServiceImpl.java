@@ -17,7 +17,8 @@ import org.springframework.util.StringUtils;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
-import com.sdf.manager.user.bean.AuthorityBean;
+import com.sdf.manager.user.bean.RoleBean;
+import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.repository.UserRepository;
 import com.sdf.manager.user.service.UserService;
@@ -112,6 +113,25 @@ public class UserServiceImpl implements UserService {
 			accountBean.setTelephone(user.getTelephone());
 			accountBean.setCreater(user.getCreater());
 			accountBean.setCreaterTime(user.getCreaterTime());
+			List<RoleBean> roleBeanList = new ArrayList<RoleBean>();
+			/*for(Role role : user.getRoles()){
+				RoleBean roleBean = new RoleBean();
+				roleBean.setRuleId(role.getId());
+				roleBean.setRuleCode(role.getCode());
+				roleBean.setRuleName(role.getName());
+				roleBeanList.add(roleBean);
+			}*/
+			RoleBean roleBean1 = new RoleBean();
+			roleBean1.setRuleId("111111");
+			roleBean1.setRuleCode("222222");
+			roleBean1.setRuleName("333333");
+			roleBeanList.add(roleBean1);
+			RoleBean roleBean2 = new RoleBean();
+			roleBean2.setRuleId("444444");
+			roleBean2.setRuleCode("555555");
+			roleBean2.setRuleName("666666");
+			roleBeanList.add(roleBean2);
+			accountBean.setRoles(roleBeanList);
 			accountList.add(accountBean);
 		}
 		returnData.put("rows", accountList);

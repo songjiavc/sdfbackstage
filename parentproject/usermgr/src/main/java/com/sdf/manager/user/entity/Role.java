@@ -2,6 +2,7 @@ package com.sdf.manager.user.entity;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,8 +16,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.mapping.Set;
-import org.springframework.data.annotation.Transient;
 
 /** 
   * @ClassName: Student 
@@ -51,16 +50,17 @@ public class Role extends BaseEntiry implements Serializable
 	@Column(name="PARENT_ROLE",length=45)
 	private String parentRole;
 	
-	@Transient
-	private Set users;
-	
-    //@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
-    //中间表Teacher_Student的Teacher_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Student)的外键关系。
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+	//, referencedColumnName = "ID"  当不想用主键当外建时使用
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "RELA_SDF_USER_ROLE", 
-            joinColumns = {  @JoinColumn(name = "ROLE_ID", referencedColumnName = "roleId")  }, 
-            inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "userId") })
-    public Set getUsers() {
+            joinColumns = {@JoinColumn(name = "ROLE_ID")  }, 
+            inverseJoinColumns = { @JoinColumn(name = "USER_ID")   })
+	private Set<User> users = new HashSet<User>();
+	
+	//@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
+    //中间表Teacher_Student的Teacher_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Student)的外键关系。
+	
+	public Set<User> getUsers() {
         return users;
     }
 	
@@ -98,6 +98,10 @@ public class Role extends BaseEntiry implements Serializable
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 

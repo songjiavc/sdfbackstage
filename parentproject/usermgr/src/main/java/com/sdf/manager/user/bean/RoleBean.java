@@ -7,7 +7,7 @@ package com.sdf.manager.user.bean;
   * @date 2015年10月19日 上午8:23:37 
   *  
   */
-public class RuleBean 
+public class RoleBean 
 {
 	private String ruleId;
 	
