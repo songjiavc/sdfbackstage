@@ -95,21 +95,6 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 	
-	/***
-	 * 
-	* @Description: TODO(获取权限数据列表) 
-	* @author bann@sdfcp.com
-	* @date 2015年10月10日 下午3:04:33
-	 */
-	public List<User> getAuthorityList(AuthorityBean authorityBean)
-	{
-		List<User> userList = new ArrayList<User>();
-		
-		userList = userRepository.findAll();
-		
-			
-		return userList;
-	}
 
 	public Map<String,Object> getScrollDataByJpql(Class<User> entityClass,String whereJpql, Object[] queryParams,
 			LinkedHashMap<String, String> orderby, Pageable pageable) {

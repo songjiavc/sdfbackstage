@@ -39,7 +39,7 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	 * @param em
 	 */
 	public GenericRepositoryImpl(Class<T> domainClass, EntityManager em) {
-        this(JpaEntityInformationSupport.getMetadata(domainClass, em), em); 
+        this(JpaEntityInformationSupport.getMetadata(domainClass, em), em); 	
     }
 	
 	public void setQueryParams(Query query, Object[] queryParams){

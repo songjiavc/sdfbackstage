@@ -62,16 +62,16 @@
 		<form id="addAccountForm" method="post" >
 	        <div class="ftitle">
 	            <label for="code">用户编码:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="code"  data-options="required:true,validType:'length[3,10]'"
+	            <input class="easyui-validatebox textbox" type="text" name="code"  data-options="required:true,validType:['englishOrNum','length[0,20]']""
 	              missingMessage="用户编码不可以为空" invalidMessage="用户编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="name" >用户姓名:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="name"  data-options="required:true"  validType="length[1,20]" missingMessage="用户真实姓名"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="name"  data-options="required:true,validType:['CHS','length[0,20]']"  missingMessage="用户真实姓名"></input>
 	        </div>
 	        <div class="ftitle">
 	        	<label for="telephone" >用户电话:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="telephone" missingMessage="用户电话"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="telephone" validType="" missingMessage="用户电话"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
@@ -106,8 +106,8 @@
 	       	<input type="hidden" name="id" />
 	      	<div class="ftitle">
 	            <label for="code" >用户帐号:</label>
-	          	<input class="easyui-validatebox textbox" type="text" name="code"  readonly="readonly"
-	             validType="length[1,20]" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
+	          	<input class="easyui-validatebox textbox" type="text" name="code"  readonly="readonly" data-options="required:true" 
+	             validType="checkCodes['#codeA','idA']" missingMessage="权限编码不可以为空" invalidMessage="权限编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="name" >用户姓名:</label>

@@ -1,6 +1,8 @@
 package com.sdf.manager.user.bean;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AccountBean 
 {
@@ -15,6 +17,8 @@ public class AccountBean
 	private String parentName;
 	
 	private String status;
+	
+	private List<RuleBean> ruleBeanList = new ArrayList<RuleBean>();
 
 	private String telephone;
 	
@@ -93,4 +97,13 @@ public class AccountBean
 	public void setCreaterTime(Date createrTime) {
 		this.createrTime = createrTime;
 	}
+
+	public List<RuleBean> getRuleBeanList() {
+		return ruleBeanList;
+	}
+
+	public void setRuleBeanList(List<RuleBean> ruleBeanList) {
+		this.ruleBeanList = ruleBeanList;
+	}
+	
 }

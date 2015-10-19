@@ -1,7 +1,10 @@
 package com.sdf.manager.user.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -19,7 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.UserService;
 
@@ -93,5 +98,24 @@ public class AccountController {
 		accountBean.setTelephone(user.getTelephone());
 		accountBean.setStatus(user.getStatus());
 		return accountBean;
+	}
+	
+	
+	/**
+	 * 
+	* @Description: TODO(权限输入值校验，用来校验code唯一性和authname唯一性) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月15日 上午10:55:07
+	 */
+	@RequestMapping(value = "/checkValue", method = RequestMethod.GET)
+	public @ResponseBody boolean  checkValue(
+			@RequestParam(value="code",required=false) String code,
+			ModelMap model,HttpSession httpSession) throws Exception {
+		User user = userService.getUserByCode(code);
+		if(null == user){
+			return false;
+		}else{
+			return true;
+		}
 	}
 }

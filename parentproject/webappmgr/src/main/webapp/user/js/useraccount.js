@@ -41,6 +41,11 @@ function initDatagrid()
 						return showStatus;
 					}
 				},
+				{field:'roles',title:'角色',align:'center',width:'5%',
+					formatter:function(value,row,index){
+						debugger;
+					}
+				},
 				{field:'opt',title:'操作',width:160,align:'center', 
 		            formatter:function(value,row,index){
 		                var btn = '<a class="editcls" onclick="updateAccount(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
@@ -99,6 +104,7 @@ function updateAccount(id)
  */
 function deleteAccount()
 {
+	debugger;
 	alert("权限删除");
 }
 
@@ -143,3 +149,45 @@ function submitUpdateAccount()
 	    }
 	});
 }
+
+/**
+ * 校验code唯一性
+ */
+function checkCode(code)
+{
+	var flag = false;//当前值可用，不存在
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/account/checkValue.action',
+        data:{
+        	code : code
+        },
+        dataType: "json",
+        success: function (data) {
+        	if(data.exist)//若data.isExist==true,则当前校验值已存在，则不可用使用
+        		{
+        			flag = true;
+        		}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	return flag;
+}
+
+
+/**
+ * 自定义校验code
+ */
+$.extend($.fn.validatebox.defaults.rules, {
+    checkCodes: {//自定义校验code
+        validator: function(value,param){
+        	var rules = $.fn.validatebox.defaults.rules;  
+    		rules.checkCodes.message = "当前权限编码已存在"; 
+            return !checkCode($("#"+param[1]).val(),value,'');
+        }
+    }
+});
