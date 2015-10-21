@@ -1,7 +1,7 @@
 package com.sdf.manager.user.entity;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.mapping.Set;
 import org.springframework.data.annotation.Transient;
 
 /** 
@@ -51,19 +50,68 @@ public class Role extends BaseEntiry implements Serializable
 	@Column(name="PARENT_ROLE",length=45)
 	private String parentRole;
 	
+//	@Column(name="STATUS")
+//	private String status;
+	
+	@Column(name="PARENT_ROLENAME")
+	private String parentRolename;
+	
 	@Transient
-	private Set users;
-	
-    //@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
+	//@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
     //中间表Teacher_Student的Teacher_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Student)的外键关系。
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    //属性referencedColumnName标注的是所关联表中的字段名，若不指定则使用的所关联表的主键字段名作为外键。 
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "RELA_SDF_USER_ROLE", 
-            joinColumns = {  @JoinColumn(name = "ROLE_ID", referencedColumnName = "roleId")  }, 
-            inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "userId") })
-    public Set getUsers() {
-        return users;
-    }
+            joinColumns = {  @JoinColumn(name = "ROLE_ID", referencedColumnName = "id")  }, 
+            inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "id") })
+	private List<User> users ;
 	
+	@Transient
+	//表间关联的主控方的配置
+	//@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Role表的外键关系。
+    //中间表RELA_SDF_AUTHORITY_ROLE的ROLE_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Authority)的外键关系。
+    //属性referencedColumnName标注的是所关联表中的字段名，若不指定则使用的所关联表的主键字段名作为外键。 
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "RELA_SDF_AUTHORITY_ROLE", 
+            joinColumns = {  @JoinColumn(name = "ROLE_ID", referencedColumnName = "id")  }, 
+            inverseJoinColumns = {@JoinColumn(name = "authority_ID", referencedColumnName = "id") })
+	private List<Authority> authorities ;
+
+	
+	
+	
+	public String getParentRolename() {
+		return parentRolename;
+	}
+
+	public void setParentRolename(String parentRolename) {
+		this.parentRolename = parentRolename;
+	}
+
+//	public String getStatus() {
+//		return status;
+//	}
+//
+//	public void setStatus(String status) {
+//		this.status = status;
+//	}
+
+	public List<Authority> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(List<Authority> authorities) {
+		this.authorities = authorities;
+	}
+
+	public List<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
 	public String getId() {
 		return id;
 	}
