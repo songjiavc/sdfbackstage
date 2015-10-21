@@ -22,11 +22,11 @@ function initDatagrid()
 		striped:true,
 		columns:[[
 				{field:'id',checkbox:true	},
-				{field:'code',title:'登录帐号',width:'15%',align:'center'},
-				{field:'name',title:'名称',width:'15%',align:'center'},
-				{field:'telephone',title:'电话',width:'20%',align:'center'},
-				{field:'creator',title:'录入人',width:'10%',align:'center'},
-				{field:'creatorTime',title:'录入时间',width:'10%',align:'center'},
+				{field:'code',title:'登录帐号',width:'10%',align:'center'},
+				{field:'name',title:'名称',width:'10%',align:'center'},
+				{field:'telephone',title:'电话',width:'15%',align:'center'},
+				{field:'creater',title:'录入人',width:'10%',align:'center'},
+				{field:'createrTime',title:'录入时间',width:'10%',align:'center'},
 				{field:'status',title:'启用',align:'center',width:'5%',
 					formatter:function(value,row,index){
 					var showStatus = "";
@@ -41,22 +41,28 @@ function initDatagrid()
 						return showStatus;
 					}
 				},
-				{field:'roles',title:'角色',align:'center',width:'5%',
+				{field:'roles',title:'角色',align:'center',width:'15%',
 					formatter:function(value,row,index){
-						debugger;
+						if(value!= undefined){
+							var lis = '<ol 	style="padding:0 0 0 15;">';
+							$.each(value,function(i,data){
+								lis=lis+'<li style="align:left">'+data.ruleName;
+			                });
+							return lis+'</ol>';
+						}
 					}
 				},
-				{field:'opt',title:'操作',width:160,align:'center', 
+				{field:'opt',title:'操作',width:'150',align:'center', 
 		            formatter:function(value,row,index){
-		                var btn = '<a class="editcls" onclick="updateAccount(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="delcls" onclick="deleteAccount(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
+		                var btn = '<a class="editcls" onclick="updateAccount(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
+		                	+'<a class="setRoles" onclick="setRoles(&quot;'+row.id+'&quot;,&quot;'+row.roles+'&quot;)" href="javascript:void(0)"></a>';
 		                return btn;
 		            }
 		        }
 		    ]],
 	    onLoadSuccess:function(data){  
 	        $('.editcls').linkbutton({text:'编辑',plain:true,iconCls:'icon-edit'});  
-	        $('.auth').linkbutton({text:'删除',plain:true,iconCls:'icon-remove'});  
+	        $('.setRoles').linkbutton({text:'设置角色',plain:true,iconCls:'icon-search'});  
 	    }  
 	});
 }
@@ -89,7 +95,13 @@ function updateAccount(id)
 	        dataType: "json",
 	        success: function (data) {
 				$('#updateAccountForm').form('load',{
-					code:data.code
+					id:data.id,
+					code:data.code,
+					name:data.name,
+					password:data.password,
+					confirmPassword:data.password,
+					telephone:data.telephone,
+					status:data.status
 				});
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -97,22 +109,6 @@ function updateAccount(id)
 	        }
 		});
 		$("#updateAccount").dialog("open");//打开修改用户弹框
-}
-
-/**
- * 删除权限
- */
-function deleteAccount()
-{
-	debugger;
-	alert("权限删除");
-}
-
-function formCheckout(){
-	if($.trim($('#password').val()) != $.trim($('#confirmPassword').val())){
-		return false;
-	}
-	return true;
 }
 
 
@@ -127,6 +123,7 @@ function submitAddAccount()
 		success:function(data){
 			$.messager.alert('提示', eval("(" + data + ")").message);
         	closeDialog();
+        	initDatagrid();
 		}
 	});
 }
@@ -158,7 +155,7 @@ function checkCode(code)
 	var flag = false;//当前值可用，不存在
 	$.ajax({
 		async: false,   //设置为同步获取数据形式
-        type: "post",
+        type: "get",
         url: contextPath+'/account/checkValue.action',
         data:{
         	code : code
@@ -179,6 +176,59 @@ function checkCode(code)
 }
 
 
+	/**
+	 * 批量删除
+	 * @param code
+	 */
+	function deleteAccountByIds()
+	{
+		var url = contextPath + '/account/deleteAccountByIds.action';
+		var paramObj = new Object();
+		
+		var idArr = new Array();
+		var rows = $('#accountDataGrid').datagrid('getSelections');
+		debugger;
+		var deleteFlag = true;
+		
+		for(var i=0; i<rows.length; i++)
+		{
+			idArr.push(rows[i].id);//code
+		}
+		
+		if(idArr.length>0)
+		{
+			paramObj.ids=idArr.toString();	//将id数组转换为String传递到后台
+			
+			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+		        if (r) {  
+			        	$.ajax({
+			        		async: false,   //设置为同步获取数据形式
+			                type: "post",
+			                url: url,
+			                data:paramObj,
+			                dataType: "json",
+			                success: function (data) {
+			                	initDatagrid('');
+			                	//批量删除权限后重新加载树
+			                	$.messager.alert('提示', data.message);
+			                	
+			                },
+			                error: function (XMLHttpRequest, textStatus, errorThrown) {
+			                    alert(errorThrown);
+			                }
+			           });
+			        	
+		        }  
+		    });  
+			
+		}
+		else
+		{
+			$.messager.alert('提示', "请选择数据后操作!");
+		}
+	}
+	
+
 /**
  * 自定义校验code
  */
@@ -189,5 +239,9 @@ $.extend($.fn.validatebox.defaults.rules, {
     		rules.checkCodes.message = "当前权限编码已存在"; 
             return !checkCode($("#"+param[1]).val(),value,'');
         }
-    }
+    },
+    equalTo: { 
+    	validator: function (value, param) { 
+    		return $(param[0]).val() == value; 
+    		}, message: '字段不匹配' }
 });

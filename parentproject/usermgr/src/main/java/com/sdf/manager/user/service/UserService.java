@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
+import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.User;
@@ -65,4 +66,13 @@ public interface UserService {
 	  * @return 
 	  */
 	public Map<String,Object>  getScrollDataByJpql(Class<User> entityClass,String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable);
+	
+	/** 
+	  * @Description: 删除帐号
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月20日 下午2:20:46 
+	  * @param ids
+	  * @throws BizException 
+	  */
+	public void deleteAccountByIds(String[] ids) throws BizException;
 }
