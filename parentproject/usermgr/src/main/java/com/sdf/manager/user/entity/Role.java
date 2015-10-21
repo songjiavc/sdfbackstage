@@ -88,13 +88,6 @@ public class Role extends BaseEntiry implements Serializable
 		this.parentRolename = parentRolename;
 	}
 
-//	public String getStatus() {
-//		return status;
-//	}
-//
-//	public void setStatus(String status) {
-//		this.status = status;
-//	}
 
 	public List<Authority> getAuthorities() {
 		return authorities;

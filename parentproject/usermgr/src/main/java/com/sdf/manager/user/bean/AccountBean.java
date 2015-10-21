@@ -18,7 +18,7 @@ public class AccountBean
 	
 	private String status;
 	
-	private List<RuleBean> ruleBeanList = new ArrayList<RuleBean>();
+	private List<RoleBean> roles = new ArrayList<RoleBean>();
 
 	private String telephone;
 	
@@ -98,12 +98,14 @@ public class AccountBean
 		this.createrTime = createrTime;
 	}
 
-	public List<RuleBean> getRuleBeanList() {
-		return ruleBeanList;
+	public List<RoleBean> getRoles() {
+		return roles;
 	}
 
-	public void setRuleBeanList(List<RuleBean> ruleBeanList) {
-		this.ruleBeanList = ruleBeanList;
+	public void setRoles(List<RoleBean> roles) {
+		this.roles = roles;
 	}
+
+	
 	
 }
