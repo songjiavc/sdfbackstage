@@ -16,12 +16,12 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRleaRoleBean;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.repository.UserRepository;
 import com.sdf.manager.user.service.UserService;
+
 /** 
   * @ClassName: AuthServiceImpl 
   * @Description: 
@@ -60,7 +60,6 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(accountBean.getPassword());
 				user.setTelephone(accountBean.getTelephone());
 				user.setStatus(accountBean.getStatus());
-				user.setIsDeleted(Constants.IS_NOT_DELETED);
 				user.setCreater("admin");
 				user.setCreaterTime(new Date());
 				user.setModify("admin");
@@ -141,28 +140,6 @@ public class UserServiceImpl implements UserService {
 
 	public User getUserByCode(String code) {
 		return userRepository.getUserByCode(code);
-	}
-	
-	
-	/* (非 Javadoc) 
-	 * <p>Title: deleteAccountByIds</p> 
-	 * <p>Description: </p> 
-	 * @param ids
-	 * @throws BizException 
-	 * @see com.sdf.manager.user.service.UserService#deleteAccountByIds(java.lang.String[]) 
-	 */
-	public void deleteAccountByIds(String[] ids) throws BizException{
-		if(ids.length > 0){
-			for(String id : ids){
-				User user = this.getUserById(id);
-				user.setIsDeleted(Constants.IS_DELETED);
-				user.setModify("admin");
-				user.setModifyTime(new Date());
-				userRepository.save(user);
-			}
-		}else{
-			throw new BizException(0102);
-		}
 	}
 
 }

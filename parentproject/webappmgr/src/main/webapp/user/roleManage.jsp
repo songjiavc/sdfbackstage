@@ -13,13 +13,17 @@
   	    text:'添加',
   	    iconCls:'icon-add',
   	    handler:function(){
+  	    	 //初始化上级权限下拉框值
+  	    	getParentRole('add','','');
   	    	$("#addRole").dialog('open');
   	    	
   	    }
   	},{
   	    text:'删除',
   	    iconCls:'icon-remove',
-  	    handler:function(){alert('cut')}
+  	    handler:function(){
+  	    	deleteRoleList();
+  	    	}
   	}];
   	  
   	
@@ -31,32 +35,29 @@
 			.ztree li button.switch.center_docu {visibility:visible; width:16px;}
 			.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
 			
-			.formbox{
-				margin-top:10px;
-				text-align:center;
-			}
+			 .ftitle{
+	  			width:100%;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑',
+	  		}
+	  		.ftitle label{
+	  			margin-left: 30px;
+	  		}
+	  		.ftitle .commonInput{
+	  			margin-right: 50px;
+	  			float : right;
+	  			width: 200px;
+	  			border-radius : 5px;
+	  		}
 		</style>
 		
 	 
 </head>
 <body>
-  <!-- 带模糊查询的布局 
-   <div id="cc" class="easyui-layout" style="width:800px;height:auto;" style="float:left;margin-left:10px;">
-        <div region="north" title="查询"  style="height:100px;">
-        	
-        </div>
-        <div style="margin-top:110px;">
-	    	 <table id="datagrid"  title="角色列表"   style="width:800px;height:auto;"
-				data-options="rownumbers:true,singleSelect:false,pagination:true,
-				collapsible:false,toolbar:toolbar">
-				</table>
-        </div>
-	</div> -->
+
     <div style="float:left;margin-left:10px;" >
     	<div style="margin-top:0px;">
-    	 <table id="datagrid"  title="角色列表" style="width:800px;height:400px;"
-			data-options="rownumbers:true,singleSelect:false,pagination:true,
-			collapsible:false,toolbar:toolbar">
+    	 <table id="datagrid"  title="角色列表" style="width:800px;height:400px;">
 			</table>
     	</div>
  	</div>  
@@ -70,7 +71,7 @@
                     text:'确认',
                     iconCls:'icon-ok',
                     handler:function(){
-                        alert('ok');
+                        roleManage();
                     }
                 },{
                     text:'取消',
@@ -81,6 +82,7 @@
                 }]
             ">
         <div class="zTreeDemoBackground left" style="float:left;width: 200px;">
+        	<input type="hidden" id="ztreeId"/>
 			<ul id="treeDemo" class="ztree"></ul>
 		</div>
     </div>
@@ -100,32 +102,89 @@
                     iconCls:'icon-ok',
                     handler:function(){
                         $('#addRole').dialog('close');
+                        $('#parentRoleAname').val('');
                     }
                 }]
             ">
 		<form id="ff" method="get" novalidate>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="name">角色编码:</label>
-	            <input class="easyui-validatebox" type="text" name="name" data-options="required:true"
-	             validType="length[1,20]" missingMessage="角色编码不可以为空" invalidMessage="角色编码长度不可以超过20个字符"></input>
+	            <input type="hidden" name="id" id="idA"/>
+	            <input class="easyui-validatebox commonInput" type="text" id="codeA" name="code" data-options="required:true"
+	             validType="checkCodes['#codeA','idA']" missingMessage="角色编码不可以为空" ></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="email">角色名称:</label>
-	            <input class="easyui-validatebox" type="text" name="email" data-options="required:true"
-	             validType="length[1,20]" missingMessage="角色名称不可以为空" invalidMessage="角色名称长度不可以超过20个字符"></input>
+	            <input class="easyui-validatebox commonInput" type="text" id="nameA" name="name" data-options="required:true"
+	             validType="checkAname['#nameA','idA']" missingMessage="角色名称不可以为空" ></input>
 	        </div>
-	        <div class="formbox">
+	        <div class="ftitle">
 	            <label for="subject">角色上级:</label>
-	            <input class="easyui-validatebox" type="text" name="subject" data-options="required:true"></input>
+	            <div style="margin-right: 15%;float:right;">
+	            	<input type="hidden" id="parentRoleAname" name="parentRolename"/>
+		            <select class="easyui-combobox" id="parentRoleA" name="parentRole"  
+		          	  data-options="editable:false" style="width:200px;" >
+					</select>
+	            </div>
 	        </div>
-	         <div class="formbox">
+	        <!--  <div class="ftitle">
 	            <label for="isVisible">是否启用:</label>
-	            <input class="easyui-validatebox" type="radio" name="isVisible" checked >是</input>
-	            <input class="easyui-validatebox" type="radio" name="isVisible">否</input>
-	        </div>
+	            <div style="float:right;margin-right: 40%;">
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>是</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0">否</input>
+		        </div>
+	        </div> -->
 	      </form>
     </div>
-     
+     <!-- 修改角色弹框 -->
+     <div id="updateRole" class="easyui-dialog" title="修改角色" style="width:400px;height:300px;padding:10px"
+            data-options="
+                iconCls: 'icon-save',
+                buttons: [{
+                    text:'提交',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        submitUpdaterole();
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        $('#updateRole').dialog('close');
+                        $('#parentRoleUname').val('');
+                    }
+                }]
+            ">
+		<form id="ffUpdate" method="get" novalidate>
+	         <div class="ftitle">
+	            <label for="name">角色编码:</label>
+	             <input type="hidden" name="id" id="idU"/>
+	            <input class="easyui-validatebox commonInput" type="text" id="codeU" name="code" data-options="required:true"
+	             validType="checkCodes['#codeU','idU']" missingMessage="角色编码不可以为空" ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="email">角色名称:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="nameU" name="name" data-options="required:true"
+	             validType="checkAname['#nameU','idU']" missingMessage="角色名称不可以为空" ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="subject">角色上级:</label>
+	            <div style="margin-right: 15%;float:right;">
+	         	   <input type="hidden" id="parentRoleUname" name="parentRolename"/>
+		            <select class="easyui-combobox" id="parentRoleU" name="parentRole"  
+		          	  data-options="editable:false" style="width:200px;" >
+					</select>
+	            </div>
+	        </div>
+	         <!-- <div class="ftitle">
+	            <label for="isVisible">是否启用:</label>
+	            <div style="float:right;margin-right: 40%;">
+		             <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>是</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0">否</input>
+		        </div>
+	        </div> -->
+	      </form>
+    </div>
 </body>
 	
  <%-- <script src="<%=request.getContextPath() %>/js/ztree/jquery-1.4.4.min.js" type="text/javascript"></script> --%>

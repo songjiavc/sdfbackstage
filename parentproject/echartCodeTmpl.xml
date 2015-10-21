@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates><template autoinsert="false" context="typecomment_context" deleted="false" description="Comment for created types" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.typecomment" name="typecomment">/** 
   * @ClassName: ${type_name} 
   * @Description: ${todo}(这里用一句话描述这个类的作用) 
-  * @author tuxu@sdfcp.com
+  * @author bann@sdfcp.com
   * @date ${date} ${time} 
   * 
   * ${tags} 
@@ -26,7 +26,7 @@
 * @Title: ${file_name} 
 * @Package ${package_name} 
 * @Description: ${todo}(用一句话描述该文件做什么) 
-* @author songj@sdfcp.com
+* @author bann@sdfcp.com
 * @date ${date} ${time} 
 * @version V1.0   
 */</template><template autoinsert="false" context="delegatecomment_context" deleted="false" description="Comment for delegate methods" enabled="true" id="org.eclipse.jdt.ui.text.codetemplates.delegatecomment" name="delegatecomment">/** 

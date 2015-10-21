@@ -524,6 +524,7 @@ public class MenuController {
 			@RequestParam(value="code",required=false) String code,
 			@RequestParam(value="authname",required=false) String authname,
 			@RequestParam(value="parentAuth",required=false) String parentAuth,
+			@RequestParam(value="status",required=false) String status,
 			ModelMap model,HttpSession httpSession) throws Exception {
 		
 		ResultBean resultBean = new ResultBean ();
@@ -562,6 +563,13 @@ public class MenuController {
 		{
 			params.add(parentAuth);
 			buffer.append(" and parentAuth = ?").append(params.size());
+		}
+		
+		//连接状态条件
+		if(null != status && !"".equals(status))
+		{
+			params.add(status);
+			buffer.append(" and status = ?").append(params.size());
 		}
 		
 		//排序
