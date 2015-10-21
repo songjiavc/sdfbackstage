@@ -1,9 +1,7 @@
 package com.sdf.manager.user.controller;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
-import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.user.bean.AccountBean;
-import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.UserService;
 
@@ -51,6 +47,7 @@ public class AccountController {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("finally")
 	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
 	public @ResponseBody ResultBean saveOrUpdate(
 			AccountBean accountBean,
@@ -68,8 +65,9 @@ public class AccountController {
 				resultBean.setMessage("操作异常!");
 				resultBean.setStatus("failure");
 				e.printStackTrace();
+			}finally{
+				return resultBean;
 			}
-			return resultBean;
 	}
 	
 	@RequestMapping(value = "/getUserList", method = RequestMethod.GET)
@@ -80,8 +78,14 @@ public class AccountController {
 	{
 		Map<String,Object> rtMap = new HashMap<String, Object>(); 
 		Pageable pageable = new PageRequest(page-1, rows);
-		Object[] params = new Object[]{};
-		rtMap = userService.getScrollDataByJpql(User.class,null, params,null , pageable);
+		//参数
+		StringBuffer buffer = new StringBuffer();
+		List<Object> params = new ArrayList<Object>();
+		
+		//只查询未删除数据
+		params.add(Constants.IS_NOT_DELETED);//只查询有效的数据
+		buffer.append(" isDeleted = ?").append(params.size());
+		rtMap = userService.getScrollDataByJpql(User.class,buffer.toString(), params.toArray(),null , pageable);
 		return rtMap;
 	}
 	@RequestMapping(value = "/getDetailAccount", method = RequestMethod.GET)
@@ -116,6 +120,30 @@ public class AccountController {
 			return false;
 		}else{
 			return true;
+		}
+	}
+	
+	
+
+	@SuppressWarnings("finally")
+	@RequestMapping(value = "/deleteAccountByIds", method = RequestMethod.POST)
+	public @ResponseBody ResultBean deleteAccount(
+			@RequestParam(value="ids",required=false) String[] ids,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean resultBean = new ResultBean();
+		try {
+			userService.deleteAccountByIds(ids);
+			resultBean.setStatus("success");
+			resultBean.setMessage("删除成功!");
+		}catch(BizException bizEx){
+			resultBean.setStatus("failure");
+			resultBean.setMessage(bizEx.getMessage());
+		}catch (Exception e) {
+			resultBean.setStatus("failure");
+			resultBean.setMessage(e.getMessage());
+		}finally{
+			return resultBean;
 		}
 	}
 }

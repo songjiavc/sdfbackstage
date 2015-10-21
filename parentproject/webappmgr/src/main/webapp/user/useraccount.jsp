@@ -18,7 +18,9 @@
 	  	},{
 	  	    text:'删除',
 	  	    iconCls:'icon-remove',
-	  	    handler:function(){alert('cut')}
+	  	    handler:function(){
+	  	    	deleteAccountByIds();
+	  	    }
 	  	}];
 	</script>
 	 <style type="text/css" scoped="scoped">
@@ -30,7 +32,8 @@
 	  		.ftitle label{
 	  			margin-left: 30px;
 	  		}
-	  		.ftitle input{
+	  		
+	  		.ftitle .textbox{
 	  			margin-right: 50px;
 	  			float : right;
 	  			width: 200px;
@@ -75,12 +78,19 @@
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
-	            <input class="easyui-validatebox textbox" type="password" name="password" data-options="required:true"
+	            <input class="easyui-validatebox textbox" type="password" id="password" name="password" data-options="required:true"
 	            validType="length[1,20]"   missingMessage="密码不可以为空" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="confirmPassword" >确认密码:</label>
-	            <input class="easyui-validatebox textbox" type="password" name ="confirmPassword"  data-options="required:true"></input>
+	            <input class="easyui-validatebox textbox" type="password" name ="confirmPassword"  data-options="required:true" validType="equalTo['#password']" invalidMessage="两次输入密码不匹配"></input>
+	        </div>
+	       	 <div class="ftitle">
+	            <label for="status">是否启用:</label>
+	            <div style="float:right;margin-right: 40%;">
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>是</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0">否</input>
+	        	</div>
 	        </div>
           </form>
      </div>  
@@ -111,28 +121,28 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="name" >用户姓名:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="name"  data-options="required:true"  missingMessage="用户真实姓名"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="name"  data-options="required:true"  missingMessage="用户真实姓名"></input>
 	        </div>
 	        <div class="ftitle">
 	        	<label for="telephone" >用户电话:</label>
-	            <input class="easyui-validatebox commonInput" type="text" name="telephone" missingMessage="用户电话"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="telephone" missingMessage="用户电话"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
-	            <input class="easyui-validatebox commonInput" type="password" name="password" data-options="required:true"
+	            <input class="easyui-validatebox textbox" type="password" name="password" data-options="required:true"
 	            validType="length[1,20]"   missingMessage="密码不可以为空" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="confirmPassword" >确认密码:</label>
-	            <input class="easyui-validatebox commonInput" type="password" name ="confirmPassword"  data-options="required:true"></input>
+	            <input class="easyui-validatebox textbox" type="password" name ="confirmPassword"  data-options="required:true"></input>
 	        </div>
           	<div class="ftitle">
 	            <label for="status">是否启用:</label>
-	            <div style="float:right;margin-right: 50px; ">
-		            <input class="easyui-validatebox" type="radio" name="status" checked >是</input>
-		            <input class="easyui-validatebox" type="radio" name="status">否</input>
+	            <div style="float:right;margin-right: 40%;">
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>是</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0">否</input>
 	        	</div>
-          	</div>
+	        </div>
     		</form>
        </div>
 </body>
