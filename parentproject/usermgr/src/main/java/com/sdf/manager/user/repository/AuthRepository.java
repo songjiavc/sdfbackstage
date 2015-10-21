@@ -1,12 +1,8 @@
 package com.sdf.manager.user.repository;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.sdf.manager.common.repository.GenericRepository;
-import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
 
 	/** 
