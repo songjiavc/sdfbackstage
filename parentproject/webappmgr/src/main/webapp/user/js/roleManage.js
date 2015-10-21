@@ -206,7 +206,8 @@ function authManage(id,parentRole)
 			{
 				authparent = parentauthlist[i];
 				nodeparent = zTree.getNodeByParam("id",authparent.id);
-				if(null != nodeparent)
+				if(null != nodeparent)/*为了避免当上级角色拥有的权限已经被设置为不启用状态或已删除时而关联表的数据还在，
+										则此时是获取不到树节点的，因为当前树不会加载不启用状态的权限和删除的权限*/
 					{
 						zTree.setChkDisabled(nodeparent, false);
 					}
