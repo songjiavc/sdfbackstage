@@ -21,7 +21,7 @@ import com.sdf.manager.station.bean.StationBean;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.repository.StationRepository;
 import com.sdf.manager.station.service.StationService;
-import com.sdf.manager.user.bean.RoleBean;
+import com.sdf.manager.user.bean.UserRleaRoleBean;
 /** 
   * @ClassName: AuthServiceImpl 
   * @Description: 
@@ -113,7 +113,7 @@ public class StationServiceImpl implements StationService {
 			accountBean.setTelephone(user.getTelephone());
 			accountBean.setCreater(user.getCreater());
 			accountBean.setCreaterTime(user.getCreaterTime());
-			List<RoleBean> roleBeanList = new ArrayList<RoleBean>();
+			List<UserRleaRoleBean> roleBeanList = new ArrayList<UserRleaRoleBean>();
 			/*for(Role role : user.getRoles()){
 				RoleBean roleBean = new RoleBean();
 				roleBean.setRuleId(role.getId());
@@ -121,15 +121,15 @@ public class StationServiceImpl implements StationService {
 				roleBean.setRuleName(role.getName());
 				roleBeanList.add(roleBean);
 			}*/
-			RoleBean roleBean1 = new RoleBean();
-			roleBean1.setRuleId("111111");
-			roleBean1.setRuleCode("222222");
-			roleBean1.setRuleName("333333");
+			UserRleaRoleBean roleBean1 = new UserRleaRoleBean();
+			roleBean1.setRoleId("111111");
+			roleBean1.setRoleCode("222222");
+			roleBean1.setRoleName("333333");
 			roleBeanList.add(roleBean1);
-			RoleBean roleBean2 = new RoleBean();
-			roleBean2.setRuleId("444444");
-			roleBean2.setRuleCode("555555");
-			roleBean2.setRuleName("666666");
+			UserRleaRoleBean roleBean2 = new UserRleaRoleBean();
+			roleBean2.setRoleId("444444");
+			roleBean2.setRoleCode("555555");
+			roleBean2.setRoleName("666666");
 			roleBeanList.add(roleBean2);
 			//accountBean.setRoles(roleBeanList);
 			accountList.add(accountBean);
