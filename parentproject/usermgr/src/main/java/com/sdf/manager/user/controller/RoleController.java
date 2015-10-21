@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.user.bean.RoleBean;
+import com.sdf.manager.user.bean.RoleAuthBean;
 import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.service.AuthService;
@@ -296,12 +296,12 @@ public class RoleController
 		* @date 2015年10月19日 下午2:55:48
 		 */
 		@RequestMapping(value = "/getParentRole", method = RequestMethod.POST)
-		public @ResponseBody List<RoleBean> getParentRole(
+		public @ResponseBody List<RoleAuthBean> getParentRole(
 //				@RequestParam(value="status",required=false) String status,
 				@RequestParam(value="id",required=false) String id,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
-			List<RoleBean> roleBeans = new ArrayList<RoleBean> ();
+			List<RoleAuthBean> roleBeans = new ArrayList<RoleAuthBean> ();
 			
 			//放置分页参数
 			Pageable pageable = new PageRequest(0,10000);
@@ -336,7 +336,7 @@ public class RoleController
 			
 			for (Role role : roles) 
 			{
-				RoleBean roleBean = new RoleBean();
+				RoleAuthBean roleBean = new RoleAuthBean();
 				
 				roleBean.setId(role.getId());
 				roleBean.setName(role.getName());
