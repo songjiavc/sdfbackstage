@@ -110,6 +110,7 @@ public class RoleController
 			   role.setName(name);
 			   role.setParentRole(parentRole);
 			   role.setParentRolename(parentRolename);//上级角色名称
+			   role.setIsSystem("0");//页面中操作添加的角色都是非系统数据
 //			   role.setStatus(status);
 			   role.setCreater("admin");
 			   role.setCreaterTime(new Timestamp(System.currentTimeMillis()));
