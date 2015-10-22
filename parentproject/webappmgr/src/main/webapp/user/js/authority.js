@@ -29,6 +29,7 @@ function initDatagrid(parentCode)
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'isSystem',hidden:true},
 		        {field:'authName',width:120,title:'权限名称'},
 				{field:'code',title:'权限编码',width:120,align:'left'},
 				{field:'url',title:'权限url',width:120,align:'left'},
@@ -49,8 +50,8 @@ function initDatagrid(parentCode)
 					},
 				{field:'opt',title:'操作',width:160,align:'center',  
 		            formatter:function(value,row,index){  
-		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
+		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">编辑</a>'
+		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">删除</a>';
 		                return btn;  
 		            }  
 		        }  
@@ -79,42 +80,51 @@ function closeDialog()
 /**
  * 权限修改
  */
-function updateAuth(code)
+function updateAuth(code,isSystem)
 {
 	var url = contextPath + '/menu/getDetailAuth.action';
 	var data1 = new Object();
 	data1.code=code;//权限的id
 	
-	$.ajax({
-		async: false,   //设置为同步获取数据形式
-        type: "get",
-        url: url,
-        data:data1,
-        dataType: "json",
-        success: function (data) {
-        	
-				$('#ffupdate').form('load',{
-					id:data.id,
-					code:data.code,
-					authName:data.authName,
-					parentAuth:data.parentAuth,
-					url:data.url,
-					status:data.status,
-					authImg:data.authImg
-				});
+	if("1"!=isSystem)
+		{
+			$.ajax({
+				async: false,   //设置为同步获取数据形式
+		        type: "get",
+		        url: url,
+		        data:data1,
+		        dataType: "json",
+		        success: function (data) {
+		        	
+						$('#ffupdate').form('load',{
+							id:data.id,
+							code:data.code,
+							authName:data.authName,
+							parentAuth:data.parentAuth,
+							url:data.url,
+							status:data.status,
+							authImg:data.authImg
+						});
+						
+						initParentAuthList('update',code,data.parentAuth);
 				
-				initParentAuthList('update',code,data.parentAuth);
-		
-        	
-        	
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
-        }
-   });
+		        	
+		        	
+		        },
+		        error: function (XMLHttpRequest, textStatus, errorThrown) {
+		            alert(errorThrown);
+		        }
+		   });
+			
+			
+			$("#updateAuth").dialog("open");//打开修改权限弹框
+		}
+	else
+	{
+		$.messager.alert('提示',"当前待修改数据是系统数据不可以进行修改操作!");
+	}
 	
 	
-	$("#updateAuth").dialog("open");//打开修改权限弹框
 }
 
 /**
@@ -138,12 +148,21 @@ function deleteAuthList()
 		//判断当前权限是否有子级权限
 		var haveChildFlag = checkHaveChildAuth(rows[i].id);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
 		
+		var issystem = rows[i].isSystem;//当前数据的是否为系统数据的标志位
+		
 		if(haveChildFlag)
 			{
 				$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'拥有子级权限,不可以进行删除操作!");
 				deleteFlag = false;
 				break;
 			}
+		else
+			if("1"==issystem)
+				{
+					$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'是系统数据,不可以进行删除操作!");
+					deleteFlag = false;
+					break;
+				}
 	}
 	
 	if(deleteFlag)//选中的待删除权限中没有拥有子级权限的权限时可以进行删除操作
@@ -152,7 +171,7 @@ function deleteAuthList()
 			{
 				data1.codes=codearr.toString();//将id数组转换为String传递到后台
 				
-				$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
 			        if (r) {  
 			        	
 				        	$.ajax({
@@ -189,46 +208,55 @@ function deleteAuthList()
 /**
  * 删除权限
  */
-function deleteAuth(code)
+function deleteAuth(code,isSystem)
 {
 	var url = contextPath + '/menu/deleteAuth.action';
 	var data1 = new Object();
 	
-	var codearr = [];
-	codearr.push(code);
-	
-	data1.codes=codearr.toString();
-	
-	var haveChildFlag = checkHaveChildAuth(code);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
-	
-	if(haveChildFlag)
-		{
-			$.messager.alert('提示', "当前待删除权限有子级权限,不可以进行删除操作!");
-		}
+	if("1"!=isSystem)
+	{
+		var codearr = [];
+		codearr.push(code);
+		
+		data1.codes=codearr.toString();
+		
+		var haveChildFlag = checkHaveChildAuth(code);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
+		
+		if(haveChildFlag)
+			{
+				$.messager.alert('提示', "当前待删除权限有子级权限,不可以进行删除操作!");
+			}
+		else
+			{
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+			        if (r) {  
+				        	$.ajax({
+				        		async: false,   //设置为同步获取数据形式
+				                type: "post",
+				                url: url,
+				                data:data1,
+				                dataType: "json",
+				                success: function (data) {
+				                	initDatagrid('');
+				                	//删除权限后重新加载树
+				                	initZnodes();
+				                	$.messager.alert('提示', data.message);
+				                },
+				                error: function (XMLHttpRequest, textStatus, errorThrown) {
+				                    alert(errorThrown);
+				                }
+				           });
+				        	
+			        }  
+			    });  
+			}
+	}
 	else
-		{
-			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid('');
-			                	//删除权限后重新加载树
-			                	initZnodes();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
-			        	
-		        }  
-		    });  
-		}
+	{
+		$.messager.alert('提示',"当前待删除数据是系统数据不可以进行删除操作!");
+	}
+	
+	
 	
 	
 	

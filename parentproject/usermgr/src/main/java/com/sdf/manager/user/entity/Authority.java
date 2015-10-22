@@ -46,6 +46,9 @@ public class Authority extends BaseEntiry implements Serializable
 	
 	@Column(name="STATUS")
 	private String status;
+	
+	@Column(name="ISSYSTEM")
+	private String isSystem;//是否为系统级数据，不可以进行删除等操作
 
 	
 	
@@ -105,5 +108,16 @@ public class Authority extends BaseEntiry implements Serializable
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public String getIsSystem() {
+		return isSystem;
+	}
+
+	public void setIsSystem(String isSystem) {
+		this.isSystem = isSystem;
+	}
+	
+	
+	
 	
 }
