@@ -7,7 +7,7 @@ package com.sdf.manager.user.bean;
   * @date 2015年10月19日 上午8:23:37 
   *  
   */
-public class UserRleaRoleBean
+public class UserRelaRoleBean
 {
 	private String roleId;
 	

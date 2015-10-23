@@ -6,10 +6,10 @@ import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
-import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.User;
+import com.sdf.manager.user.entity.UserRelaRole;
 
 
 /** 
@@ -44,7 +44,7 @@ public interface UserService {
 	  * @param id
 	  * @return 
 	  */
-	public User getUserById(String id);
+	public User getUserById(String id) throws BizException;
 	
 	/** 
 	  * @Description: 判断code是否有重复记录
@@ -75,4 +75,22 @@ public interface UserService {
 	  * @throws BizException 
 	  */
 	public void deleteAccountByIds(String[] ids) throws BizException;
+	
+	/** 
+	  * @Description: 根据userid
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月23日 上午8:32:58 
+	  * @param userId
+	  * @throws BizException 
+	  */
+	public void saveUserRelaRole(String userId,List<UserRelaRole> roles)throws BizException;
+	
+	/** 
+	  * @Description: 根据userId获取权限
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月23日 上午10:35:33 
+	  * @param userId
+	  * @return 
+	  */
+	public List<UserRelaRole> findUserRelaRoleByUserId(String userId);
 }

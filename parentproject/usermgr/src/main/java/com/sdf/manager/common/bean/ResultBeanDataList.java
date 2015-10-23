@@ -1,5 +1,8 @@
 package com.sdf.manager.common.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 
   * @ClassName: resultBean 
@@ -8,14 +11,14 @@ package com.sdf.manager.common.bean;
   * @date 2015年10月9日 下午4:46:57 
   *
  */
-public class ResultBean
+public class ResultBeanDataList<T>
 {
 	private String message;//返回提示信息
 	
 	private String status;//返回状态（success of fail）
 	
-	private boolean isExist;//当前值是否存在
-
+	private List<T> dataList = new ArrayList<T>();
+	
 	public String getMessage() {
 		return message;
 	}
@@ -32,12 +35,12 @@ public class ResultBean
 		this.status = status;
 	}
 
-	public boolean isExist() {
-		return isExist;
+	public List<T> getDataList() {
+		return dataList;
 	}
 
-	public void setExist(boolean isExist) {
-		this.isExist = isExist;
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
 	}
 	
 }

@@ -20,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
   */
 @Entity
 @Table(name="RELA_SDF_USER_ROLE")
-public class UserRelaRole extends BaseEntiry implements Serializable 
+public class UserRelaRole implements Serializable 
 {
 	
 	

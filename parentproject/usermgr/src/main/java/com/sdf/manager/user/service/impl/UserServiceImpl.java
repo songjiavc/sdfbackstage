@@ -15,11 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
-import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
-import com.sdf.manager.user.bean.UserRleaRoleBean;
+import com.sdf.manager.user.bean.UserRelaRoleBean;
+import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
+import com.sdf.manager.user.entity.UserRelaRole;
+import com.sdf.manager.user.repository.UserRelaRoleRepository;
 import com.sdf.manager.user.repository.UserRepository;
 import com.sdf.manager.user.service.UserService;
 /** 
@@ -35,6 +38,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
 	
+	@Autowired
+	private UserRelaRoleRepository userRelaRoleRepository;
 	/**
 	 * @return
 	 */
@@ -90,9 +95,12 @@ public class UserServiceImpl implements UserService {
 	 * @return 
 	 * @see com.sdf.manager.user.service.UserService#getUserByCode(java.lang.String) 
 	 */
-	public User getUserById(String id)
+	public User getUserById(String id) throws BizException
 	{
 		User user =  userRepository.findOne(id);
+		if(user == null){
+			throw new BizException(0103);
+		}
 		return user;
 	}
 	
@@ -113,24 +121,14 @@ public class UserServiceImpl implements UserService {
 			accountBean.setTelephone(user.getTelephone());
 			accountBean.setCreater(user.getCreater());
 			accountBean.setCreaterTime(user.getCreaterTime());
-			List<UserRleaRoleBean> roleBeanList = new ArrayList<UserRleaRoleBean>();
-			/*for(Role role : user.getRoles()){
-				RoleBean roleBean = new RoleBean();
-				roleBean.setRuleId(role.getId());
-				roleBean.setRuleCode(role.getCode());
-				roleBean.setRuleName(role.getName());
-				roleBeanList.add(roleBean);
-			}*/
-			UserRleaRoleBean roleBean1 = new UserRleaRoleBean();
-			roleBean1.setRoleId("111111");
-			roleBean1.setRoleCode("222222");
-			roleBean1.setRoleName("333333");
-			roleBeanList.add(roleBean1);
-			UserRleaRoleBean roleBean2 = new UserRleaRoleBean();
-			roleBean2.setRoleId("444444");
-			roleBean2.setRoleCode("555555");
-			roleBean2.setRoleName("666666");
-			roleBeanList.add(roleBean2);
+			List<UserRelaRoleBean> roleBeanList = new ArrayList<UserRelaRoleBean>();
+			for(Role role : user.getRoles()){
+				UserRelaRoleBean userRelaRoleBean = new UserRelaRoleBean();
+				userRelaRoleBean.setRoleId(role.getId());
+				userRelaRoleBean.setRoleCode(role.getCode());
+				userRelaRoleBean.setRoleName(role.getName());
+				roleBeanList.add(userRelaRoleBean);
+			}
 			accountBean.setRoles(roleBeanList);
 			accountList.add(accountBean);
 		}
@@ -164,5 +162,39 @@ public class UserServiceImpl implements UserService {
 			throw new BizException(0102);
 		}
 	}
-
+	
+	
+	/* (非 Javadoc) 
+	 * <p>Title: saveUserRelaRole</p> 
+	 * <p>Description: </p> 
+	 * @param userId
+	 * @param roles
+	 * @throws BizException 
+	 * @see com.sdf.manager.user.service.UserService#saveUserRelaRole(java.lang.String, java.util.List) 
+	 */
+	public void saveUserRelaRole(String userId,List<UserRelaRole> roles)throws BizException{
+		//删除以前的关系
+		List<UserRelaRole> userRelaRoleList = userRelaRoleRepository.findUserRelaRoleByUserId(userId);
+		for(UserRelaRole userRelaRole : userRelaRoleList){
+			userRelaRoleRepository.delete(userRelaRole);
+		}
+		//加入新关系
+		for(UserRelaRole role : roles){
+			UserRelaRole userRelaRole = new UserRelaRole();
+			userRelaRole.setRoleId(role.getId());
+			userRelaRole.setUserId(userId);
+			userRelaRoleRepository.save(userRelaRole);
+		}
+	}
+	
+	/** 
+	  * @Description: TODO(这里用一句话描述这个类的作用)
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月23日 上午10:35:09 
+	  * @param userId
+	  * @return 
+	  */
+	public List<UserRelaRole> findUserRelaRoleByUserId(String userId){
+		return userRelaRoleRepository.findUserRelaRoleByUserId(userId);
+	}
 }

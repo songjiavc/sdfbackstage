@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
+import com.sdf.manager.user.entity.UserRelaRole;
 import com.sdf.manager.user.service.UserService;
 
 
@@ -125,6 +129,16 @@ public class AccountController {
 	
 	
 
+	/** 
+	  * @Description: 帐号删除
+	  * @author songj@sdfcp.com
+	  * @date 2015年10月22日 下午1:35:59 
+	  * @param ids
+	  * @param model
+	  * @param httpSession
+	  * @return
+	  * @throws Exception 
+	  */
 	@SuppressWarnings("finally")
 	@RequestMapping(value = "/deleteAccountByIds", method = RequestMethod.POST)
 	public @ResponseBody ResultBean deleteAccount(
@@ -140,6 +154,58 @@ public class AccountController {
 			resultBean.setStatus("failure");
 			resultBean.setMessage(bizEx.getMessage());
 		}catch (Exception e) {
+			resultBean.setStatus("failure");
+			resultBean.setMessage(e.getMessage());
+		}finally{
+			return resultBean;
+		}
+	}
+	@SuppressWarnings("finally")
+	@RequestMapping(value = "/getUserRelaRoleList", method = RequestMethod.GET)
+	public @ResponseBody Map<String,Object> getUserRelaRoleList(
+			@RequestParam(value="id",required=false) String id,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+	    Map<String,Object> returnMap = new HashMap<String,Object>();
+		List<Role> roles = new ArrayList<Role>();
+		try {
+			User user = userService.getUserById(id);
+			roles = user.getRoles();
+			returnMap.put("rows", roles);
+			returnMap.put("total", roles.size());
+		}catch(BizException bizEx){
+			returnMap.put("success", false);
+			returnMap.put("message", bizEx.getMessage());
+		}catch (Exception e) {
+			returnMap.put("success", false);
+			returnMap.put("message",e.getMessage());
+		}finally{
+			return returnMap;
+		}
+	}
+	
+	@SuppressWarnings("finally")
+	@RequestMapping(value = "/saveUserRleaRole", method = RequestMethod.POST)
+	public @ResponseBody ResultBean  saveUserRleaRole(
+			@RequestParam(value="roleList",required=true) String roleList,
+			@RequestParam(value="userId",required=true) String userId,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean resultBean = new ResultBean();
+		try{
+			List<UserRelaRole> selRoleList = new ArrayList<UserRelaRole>();
+			//把json字符串转换成对象
+			JSONArray jsonArr = JSONArray.parseArray(roleList);
+			for (int i = 0; i < jsonArr.size(); i++) {
+				selRoleList.add((UserRelaRole)JSONObject.toJavaObject(jsonArr.getJSONObject(i),UserRelaRole.class)); 
+			}
+			userService.saveUserRelaRole(userId,selRoleList);
+			resultBean.setStatus("success");
+			resultBean.setMessage("保存成功!");
+		}catch(BizException bizEx){
+			resultBean.setStatus("failure");
+			resultBean.setMessage(bizEx.getMessage());
+		}catch(Exception e){
 			resultBean.setStatus("failure");
 			resultBean.setMessage(e.getMessage());
 		}finally{

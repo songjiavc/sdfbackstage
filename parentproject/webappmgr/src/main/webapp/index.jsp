@@ -7,7 +7,7 @@ Boolean useMaskCode = (Boolean)request.getAttribute("useMaskCode");
 <html>
   <head>
     
-    <title>后台管理系统</title>
+    <title>时代枫企业管理平台</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -21,23 +21,23 @@ Boolean useMaskCode = (Boolean)request.getAttribute("useMaskCode");
   </head>
   
     <script language="javascript">
-function setFocus(){
-	document.login.username.focus();
-}
-function submitForm(){
-	   document.login.submit();
-}
-function resetForm(){
-	document.login.reset();
-	document.login.username.focus();
-}
-function changeimage(obj,path){
-    obj.src=path;
-}
-function submitLoginForm(){
- if(event.keyCode==13)
-  document.login.submit();
-}
+		function setFocus(){
+			document.login.username.focus();
+		}
+		function submitForm(){
+			   document.login.submit();
+		}
+		function resetForm(){
+			document.login.reset();
+			document.login.username.focus();
+		}
+		function changeimage(obj,path){
+		    obj.src=path;
+		}
+		function submitLoginForm(){
+		 if(event.keyCode==13)
+		  document.login.submit();
+		}
 </script>
 </head>
 <body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">

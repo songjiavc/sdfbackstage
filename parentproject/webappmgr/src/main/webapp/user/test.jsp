@@ -4,7 +4,7 @@
 <html>
   <head>
     
-    <title>后台管理系统</title>
+    <title>时代枫企业管理平台</title>
 	 <jsp:include page="../common/top.jsp" flush="true" /> 
 	  <script type="text/javascript">
 	  /* ########配置菜单的url时需要注意：要配置菜单url的全局路径，可以在数据库设置时设置为如"/user/basic.jsp"，
@@ -142,7 +142,7 @@
        	 <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut" onclick="logout()">安全退出</a>
         </span>
 
-        <span style="padding-left:10px; font-size: 26px; float:left;">后台管理系统</span>
+        <span style="padding-left:10px; font-size: 26px; float:left;">时代枫企业管理平台</span>
     </div>
     <div region="south" split="false" style="height: 30px; background: #D2E0F2; ">
         <div class="footer"><center>时代枫传媒@2015</center></div>
@@ -158,7 +158,7 @@
         <div id="tabs" class="easyui-tabs"  fit="true" border="false" >
 			<div title="欢迎使用" style="padding:20px;overflow:hidden;" id="home">
 				
-			<h1>欢迎进入后台管理系统！</h1>
+			<h1>欢迎进入时代枫企业管理平台</h1>
 
 			</div>
 		</div>

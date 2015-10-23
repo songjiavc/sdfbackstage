@@ -145,5 +145,32 @@
 	        </div>
     		</form>
        </div>
+       
+       
+    <div id="selectRoleDiv" class="easyui-dialog"  title="角色选择" style="width:800px;height:600px;padding:0px;border:0;" data-options="
+                iconCls: 'icon-search',
+                buttons: [{
+                    text:'保存',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        submitSelRoles();
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#selectRoleDiv').dialog('close');
+                    }
+                }]" >
+    	<div class="easyui-layout" style="overflow-y: hidden;height:100%;padding:0;" >
+    	 	<div region="north" style="height:70%;">
+    	 		<input type="hidden" id = "userId" ></input>
+    	 		<table id="selectRoleGrid" class="easyui-datagrid" style="width:98%;height:98%;border:0;" title="待选列表" ></table>
+    	 	</div>
+    	 	<div region="center" style="height:30%;padding:0;">
+    	 		<table id="selectedRoleGrid" class="easyui-datagrid" style="width:98%;height:98%;border:0;" title="已选列表" ></table>
+    	 	</div>
+    	</div>
+ 	</div>  
 </body>
 </html>
