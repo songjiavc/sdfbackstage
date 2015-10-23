@@ -382,8 +382,9 @@ function initDatagrid()
 	        },
 	        dataType: "json",
 	        success: function (data) {
-	        	$.messager.alert('提示', eval("(" + data + ")").message);
+	        	$.messager.alert('提示', data.message);
 	        	closeDialog();
+	        	initDatagrid();
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
 	        	$.messager.alert('提示', errorThrown);
