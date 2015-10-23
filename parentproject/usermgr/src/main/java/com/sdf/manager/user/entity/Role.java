@@ -50,6 +50,9 @@ public class Role extends BaseEntiry implements Serializable
 	@Column(name="PARENT_ROLE",length=45)
 	private String parentRole;
 	
+	@Column(name="ISSYSTEM")
+	private String isSystem;//是否为系统级数据，不可以进行删除等操作
+	
 //	@Column(name="STATUS")
 //	private String status;
 	
@@ -122,6 +125,16 @@ public class Role extends BaseEntiry implements Serializable
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	public String getIsSystem() {
+		return isSystem;
+	}
+
+	public void setIsSystem(String isSystem) {
+		this.isSystem = isSystem;
+	}
+	
+	
 
 
 	

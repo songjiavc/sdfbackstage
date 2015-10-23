@@ -55,6 +55,7 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'isSystem',hidden:true},
 		        {field:'name',width:120,title:'角色名称'},
 				{field:'code',title:'角色编码',width:120,align:'left'},
 				{field:'parentRolename',title:'角色上级角色',width:120,align:'left'},
@@ -74,8 +75,8 @@ function initDatagrid()
 //					},
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
-			                var btn = '<a class="editcls" onclick="updateRole(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-			                	+'<a class="deleterole" onclick="deleteRole(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>'
+			                var btn = '<a class="editcls" onclick="updateRole(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">编辑</a>'
+			                	+'<a class="deleterole" onclick="deleteRole(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">删除</a>'
 			                	+'<a class="manage" onclick="authManage(&quot;'+row.id+'&quot;,&quot;'+row.parentRole+'&quot;)" href="javascript:void(0)">权限设置</a>';
 			                return btn;  
 			            }  
@@ -98,39 +99,47 @@ function initDatagrid()
 /**
  * 角色修改
  */
-function updateRole(id)
+function updateRole(id,isSystem)
 {
 	var url = contextPath + '/role/getDetailRole.action';
 	var data1 = new Object();
 	data1.id=id;//权限的id
 	
-	$.ajax({
-		async: false,   //设置为同步获取数据形式
-        type: "get",
-        url: url,
-        data:data1,
-        dataType: "json",
-        success: function (data) {
-        	
-				$('#ffUpdate').form('load',{
-					id:data.id,
-					code:data.code,
-					name:data.name,
-					parentRole:data.parentRole
-//					status:data.status
-				});
-				
-				getParentRole('update',id,data.parentRole);
+	if("1"!=isSystem)
+	{
+		$.ajax({
+			async: false,   //设置为同步获取数据形式
+	        type: "get",
+	        url: url,
+	        data:data1,
+	        dataType: "json",
+	        success: function (data) {
+	        	
+					$('#ffUpdate').form('load',{
+						id:data.id,
+						code:data.code,
+						name:data.name,
+						parentRole:data.parentRole
+//						status:data.status
+					});
+					
+					getParentRole('update',id,data.parentRole);
+			
+	        	
+	        	
+	        },
+	        error: function (XMLHttpRequest, textStatus, errorThrown) {
+	            alert(errorThrown);
+	        }
+		});
 		
-        	
-        	
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
-        }
-   });
+		$("#updateRole").dialog('open');
+	}
+	else
+	{
+		$.messager.alert('提示',"当前待修改数据是系统数据不可以进行修改操作!");
+	}
 	
-	$("#updateRole").dialog('open');
 }
 
 
@@ -407,44 +416,52 @@ function submitUpdaterole()
  * 删除角色数据
  * @param id
  */
-function deleteRole(id)
+function deleteRole(id,isSystem)
 {
 	var url = contextPath + '/role/deleteRole.action';
 	var data1 = new Object();
 	
-	var codearr = [];
-	codearr.push(id);
-	
-	data1.ids=codearr.toString();
-	
-	var haveChildFlag = checkHaveChildRole(id);//checkHaveChildRole(code);//判断当前待删除角色是否拥有子级角色，若拥有子级角色则不可以删除
-	
-	if(haveChildFlag)
-		{
-			$.messager.alert('提示', "当前待删除角色有子级角色,不可以进行删除操作!");
-		}
+	if("1"!=isSystem)
+	{
+		var codearr = [];
+		codearr.push(id);
+		
+		data1.ids=codearr.toString();
+		
+		var haveChildFlag = checkHaveChildRole(id);//checkHaveChildRole(code);//判断当前待删除角色是否拥有子级角色，若拥有子级角色则不可以删除
+		
+		if(haveChildFlag)
+			{
+				$.messager.alert('提示', "当前待删除角色有子级角色,不可以进行删除操作!");
+			}
+		else
+			{
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+			        if (r) {  
+				        	$.ajax({
+				        		async: false,   //设置为同步获取数据形式
+				                type: "post",
+				                url: url,
+				                data:data1,
+				                dataType: "json",
+				                success: function (data) {
+				                	initDatagrid();
+				                	$.messager.alert('提示', data.message);
+				                },
+				                error: function (XMLHttpRequest, textStatus, errorThrown) {
+				                    alert(errorThrown);
+				                }
+				           });
+				        	
+			        }  
+			    });  
+			}
+	}
 	else
-		{
-			$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
-			        	
-		        }  
-		    });  
-		}
+	{
+		$.messager.alert('提示',"当前待删除数据是系统数据不可以进行删除操作!");
+	}
+	
 }
 
 /**
@@ -562,12 +579,21 @@ function deleteRoleList()
 		//判断当前角色是否有子级角色
 		var haveChildFlag = checkHaveChildRole(rows[i].id);
 		
+		var issystem = rows[i].isSystem;//当前数据的是否为系统数据的标志位
+		
 		if(haveChildFlag)
 			{
 				$.messager.alert('提示', "当前待删除角色:'"+rows[i].name+"'拥有子级角色,不可以进行删除操作!");
 				deleteFlag = false;
 				break;
 			}
+		else
+			if("1"==issystem)
+				{
+					$.messager.alert('提示', "当前待删除角色:'"+rows[i].authName+"'是系统数据,不可以进行删除操作!");
+					deleteFlag = false;
+					break;
+				}
 	}
 	
 	if(deleteFlag)//选中的待删除权限中没有拥有子级权限的权限时可以进行删除操作
@@ -576,7 +602,7 @@ function deleteRoleList()
 			{
 				data1.ids=codearr.toString();//将id数组转换为String传递到后台
 				
-				$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
 			        if (r) {  
 			        	
 				        	$.ajax({

@@ -215,6 +215,7 @@ public class MenuController {
 			authority.setUrl(url);
 			authority.setAuthImg(authImg);
 			authority.setStatus(status);
+			authority.setIsSystem("0");//页面中操作添加的权限都是非系统数据
 			authority.setCreater("admin");
 			authority.setCreaterTime(new Timestamp(System.currentTimeMillis()));
 			authority.setModify("admin");
