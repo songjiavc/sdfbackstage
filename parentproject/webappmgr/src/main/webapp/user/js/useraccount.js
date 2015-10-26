@@ -314,6 +314,8 @@ function initDatagrid()
     	});
     	return index;
 	}
+	
+	
 	function initSelectedRoleGrid(id){
 		$('#selectedRoleGrid').datagrid({
 			singleSelect:false,
@@ -382,15 +384,24 @@ function initDatagrid()
 	        },
 	        dataType: "json",
 	        success: function (data) {
-	        	$.messager.alert('提示', eval("(" + data + ")").message);
+	        	$.messager.alert('提示', data .message);
 	        	closeDialog();
+	        	initDatagrid();
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
 	        	$.messager.alert('提示', errorThrown);
 	        }
 	   });
 	}
-	//
+	//  初始化角色选择dialog
+	
+	function selectRoleBeforeClose(){
+		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
+		$.each(selectedRows,function(i,selectedRow){
+			$('#selectedRoleGrid').datagrid('deleteRow',0);
+		});
+	}
+	
 /**
  * 自定义校验code
  */

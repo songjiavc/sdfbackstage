@@ -96,7 +96,6 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
 	}
 
 	public QueryResult<T> getScrollDataBySql(String sql, Object[] queryParams, Pageable pageable) {
-		// TODO Auto-generated method stub
 		//查询记录数
 		QueryResult<T> qr = new QueryResult<T>();
 		Query query = em.createNativeQuery(sql);
