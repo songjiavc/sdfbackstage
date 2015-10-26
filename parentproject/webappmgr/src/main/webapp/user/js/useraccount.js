@@ -314,6 +314,8 @@ function initDatagrid()
     	});
     	return index;
 	}
+	
+	
 	function initSelectedRoleGrid(id){
 		$('#selectedRoleGrid').datagrid({
 			singleSelect:false,
@@ -391,7 +393,15 @@ function initDatagrid()
 	        }
 	   });
 	}
-	//
+	//  初始化角色选择dialog
+	
+	function selectRoleBeforeClose(){
+		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
+		$.each(selectedRows,function(i,selectedRow){
+			$('#selectedRoleGrid').datagrid('deleteRow',0);
+		});
+	}
+	
 /**
  * 自定义校验code
  */

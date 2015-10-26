@@ -23,6 +23,11 @@ public class Authority extends BaseEntiry implements Serializable
 {
 	
 	
+	/** 
+	  * @Fields serialVersionUID : TODO(用一句话描述这个变量表示什么) 
+	  */ 
+	private static final long serialVersionUID = -6158098346204363173L;
+
 	@Id
 	@Column(name="ID", nullable=false, length=45)
 	@GenericGenerator(name="idGenerator", strategy="uuid")//uuid由机器生成的主键
@@ -50,9 +55,6 @@ public class Authority extends BaseEntiry implements Serializable
 	@Column(name="ISSYSTEM")
 	private String isSystem;//是否为系统级数据，不可以进行删除等操作
 
-	
-	
-	
 	public String getId() {
 		return id;
 	}

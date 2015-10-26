@@ -15,7 +15,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.mapping.Set;
 import org.springframework.data.annotation.Transient;
 
 /** 

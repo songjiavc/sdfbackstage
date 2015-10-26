@@ -99,7 +99,7 @@ public class MenuController {
 		mb1.setMenuid("111");
 		mb1.setIcon("icon-nav");
 		mb1.setMenuname("站点管理");
-		mb1.setUrl("/user/basic.jsp");
+		mb1.setUrl("/station/stationmanager.jsp");
 		menus.add(mb1);
 		
 		MenuBean mb2 = new MenuBean();
