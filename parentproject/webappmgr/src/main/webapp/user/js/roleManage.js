@@ -199,7 +199,7 @@ function authManage(id,parentRole)
 	if(null != parentRole&&""!=parentRole)
 		{
 			//设置根节点不可用，直接关联子节点
-			var authId = '1';//树根节点的id是‘1’（%待完成%：将写死的变量 写成静态变量，改为从后台获取，之后好维护）
+			var authId = getOriginAuthId();//树根节点的id是‘1’（将写死的变量 写成静态变量，改为从后台获取，获取方法在MenuController）
 			var node0 = zTree.getNodeByParam("id",authId);
 			
 			/**禁用 或 解禁 某个节点的 checkbox / radio [setting.check.enable = true 时有效]
@@ -226,6 +226,35 @@ function authManage(id,parentRole)
 		}
 	
 	$('#w').dialog('open');//打开弹框
+}
+
+/**
+ * 获取权限树根节点数据
+ */
+function getOriginAuthId()
+{
+	var url = contextPath + '/menu/getConstant.action';
+	var data1 = new Object();
+	data1.constantName='ORIGIN_AUTH_ID';//权限根节点名称
+	
+	var authId = '';
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "get",
+        url: url,
+        data:data1,
+        dataType: "json",
+        success: function (data) {
+        	
+        	authId = data.message;
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	return authId;
 }
 
 /**

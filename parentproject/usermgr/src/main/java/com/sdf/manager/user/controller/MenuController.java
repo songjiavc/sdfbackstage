@@ -53,6 +53,28 @@ public class MenuController {
     
     @Autowired
     private UserService userService;
+    
+    
+    /**
+	 * 
+	* @Description: TODO(根据静态变量名称获取变量名称值，方便对静态变量值的统一管理) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月30日 下午1:36:41
+	 */
+	@RequestMapping(value = "/getConstant", method = RequestMethod.GET)
+	public @ResponseBody ResultBean getConstant(HttpSession httpSession,
+			@RequestParam(value="constantName",required=true) String constantName,
+			ModelMap model) throws Exception {
+		ResultBean resultBean = new ResultBean ();
+		
+		if("ORIGIN_AUTH_ID".equals(constantName))//获取权限表的虚拟根节点值
+		{
+			resultBean.setMessage(Constants.ORIGIN_AUTH_ID);
+		}
+		
+		return resultBean;
+		
+	}
 	
     /**
 	 * demo登录提交后跳转方法
