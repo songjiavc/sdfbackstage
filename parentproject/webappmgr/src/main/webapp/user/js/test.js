@@ -1,35 +1,48 @@
 var _menus;
 
 $(function() {
+	
+	var message = $("#message").val();//获取登录返回信息
 	 openPwd();
-
-     $('#editpass').click(function() {
-         $('#w').window('open');
-     });
-
-     $('#btnEp').click(function() {
-         serverLogin();
-     })
-
-		$('#btnCancel').click(function(){closePwd();})
-
-   
+	
+	if("success" == message)//登录信息正确
+		{
+	
+		     $('#editpass').click(function() {
+		         $('#w').window('open');
+		     });
+	
+		     $('#btnEp').click(function() {
+		         serverLogin();
+		     })
+	
+				$('#btnCancel').click(function(){closePwd();})
+	
+		   
+			
+			
+			tabClose();
+			tabCloseEven();
+			
+	
+			// 导航菜单绑定初始化
+			$("#wnav").accordion( {
+				animate : true
+			});
+			
+			
+			initMenu();//加载菜单
+			
+			
+			InitLeftMenu();
+		}
+	else
+		{
+			//登录失败，跳转回登录页
+			window.location.href=contextPath+"/index.jsp?alertmsg="+message;
+		}
 	
 	
-	tabClose();
-	tabCloseEven();
-	
-
-	// 导航菜单绑定初始化
-	$("#wnav").accordion( {
-		animate : true
-	});
-	
-	
-	initMenu();//加载菜单
-	
-	
-	InitLeftMenu();
 });
 
 //加载导航菜单数据

@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
@@ -7,73 +7,7 @@
     <title>时代枫企业管理平台</title>
 	 <jsp:include page="../common/top.jsp" flush="true" /> 
 	  <script type="text/javascript">
-	  /* ########配置菜单的url时需要注意：要配置菜单url的全局路径，可以在数据库设置时设置为如"/user/basic.jsp"，
-	  然后统一在前台进行与contextPath的拼接 ################*/
-	  /* var _menus = {
-				basic : [ {
-					"menuid" : "10",
-					"icon" : "icon-sys",
-					"menuname" : "用户",
-					"menus" : [ {
-						"menuid" : "111",
-						"menuname" : "站点管理",
-						"icon" : "icon-nav",
-						"url" : contextPath+"/user/basic.jsp"
-					}, {
-						"menuid" : "113",
-						"menuname" : "添加站点",
-						"icon" : "icon-nav",
-						"url" : "#"
-					}, {
-						"menuid" : "115",
-						"menuname" : "中心管理员管理",
-						"icon" : "icon-nav",
-						"url" : "#"
-					}, {
-						"menuid" : "117",
-						"menuname" : "专员管理",
-						"icon" : "icon-nav",
-						"url" : "#"
-					}, {
-						"menuid" : "119",
-						"menuname" : "市场管理员管理",
-						"icon" : "icon-nav",
-						"url" : "em/enterpriseChannelObtend.action"
-					} ]
-				}, {
-					"menuid" : "20",
-					"icon" : "icon-sys",
-					"menuname" : "商品",
-					"menus" : [ {
-						"menuid" : "211",
-						"menuname" : "商品管理",
-						"icon" : "icon-nav",
-						"url" : "#"
-					}, {
-						"menuid" : "213",
-						"menuname" : "购买商品",
-						"icon" : "icon-nav",
-						"url" : "#"
-					} ]
-				} ],
-				point : [{
-					"menuid" : "20",
-					"icon" : "icon-sys",
-					"menuname" : "积分管理",
-					"menus" : [ {
-						"menuid" : "211",
-						"menuname" : "积分用途",
-						"icon" : "icon-nav",
-						"url" : "#"
-					}, {
-						"menuid" : "213",
-						"menuname" : "积分调整",
-						"icon" : "icon-nav",
-						"url" : "#"
-					} ]
-
-				}]
-			}; */
+	 
         //设置登录窗口
         function openPwd() {
             $('#w').window({
@@ -129,7 +63,8 @@
 <script type="text/javascript" src="<%=request.getContextPath() %>/user/js/test.js"></script>  
 </head>
 <body class="easyui-layout" style="overflow-y: hidden"  scroll="no">
-<input type="hidden" name="menuId" id="menuId" value="${menuId}">
+<!-- message中存放的是登录信息 -->
+<input type="hidden" name="message" id="message" value="${message}">
 
 <noscript>
 <div style=" position:absolute; z-index:100000; height:2046px;top:0px;left:0px; width:100%; background:white; text-align:center;">

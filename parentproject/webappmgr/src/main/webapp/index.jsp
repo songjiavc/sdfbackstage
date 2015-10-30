@@ -24,8 +24,8 @@ Boolean useMaskCode = (Boolean)request.getAttribute("useMaskCode");
 		function setFocus(){
 			document.login.username.focus();
 		}
-		function submitForm(){
-			   document.login.submit();
+		function submit(){//点击登录按钮提交
+			submitForm();
 		}
 		function resetForm(){
 			document.login.reset();
@@ -34,40 +34,79 @@ Boolean useMaskCode = (Boolean)request.getAttribute("useMaskCode");
 		function changeimage(obj,path){
 		    obj.src=path;
 		}
-		function submitLoginForm(){
+		function submitLoginForm(){//回车提交
 		 if(event.keyCode==13)
-		  document.login.submit();
+			 submitForm();
 		}
+		//提交表单方法
+		function submitForm()
+		{
+			
+		}
+		
+		$(document).ready(function()
+				{
+					var alertmsg = getQueryString('alertmsg');
+					if(null != alertmsg)
+						{
+							var msg = "";
+							switch(alertmsg)
+							{
+								case '0':msg="当前登录名不存在，请确认后登录!";break;
+								case '1':msg="登录密码不可以为空!";break;
+								case '2':msg="登录密码不正确，请确认后登录!";break;
+								default:msg="登录信息错误，请确认后登录!";
+							}
+							$("#err").html(msg);
+						}
+					
+				});
+		
 </script>
+
+<style>
+	.submitBut{
+		background-image: url("images/bt1.gif");
+		color:white;
+		cursor:pointer; 
+	}
+</style>
+
 </head>
-<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+<body bgcolor="#FFFFFF" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" >
+	
 <center>
-  <form method="post" name="login" style="margin:0px" action="<%=request.getContextPath() %>/menu/getNewPage.action">
-    <table id="__01" width="1000" height="600" border="0" cellpadding="0" cellspacing="0" background="/images/login/lz_dl.jpg">
+  <form method="post" name="login" style="margin:0px" action="<%=request.getContextPath() %>/menu/getNewPage.action"><!-- <%=request.getContextPath() %>/account/Login.action -->
+    <table id="__01" width="1000" height="600" border="0" cellpadding="0" cellspacing="0" background="images/bg_01.gif">
       <tr>
         <td colspan="3" height="100">&nbsp;</td>
       </tr>
       <tr>
         <td>&nbsp;</td>
         <td width="578"><div align="center">
+        	<div align="right">
+        		<span style="float:left;font-size:30px;font-family:隶书">时代枫企业管理平台</span>
+        	</div>
+        
             <TABLE align="right" cellSpacing=0 cellPadding=0 width="40%" border="0">
               <TBODY>
-                <tr><td colspan="2" height="250">&nbsp;</td></tr> 
-                <TR>
+                <!-- <TR>
                   <TD class="px12-1" align="right" width="28%" height="25">
                   <div align="center"><font color="#0066CC">类&nbsp;&nbsp;型：</font></div></TD>
                   <TD width="57%">
                   
                   </TD>
-                </TR>
+                </TR> -->
                 <TR>
-                  <TD width="28%" height=25 align=right class=px12-1><div align="center"><font color="#0066CC">用户名：</font></div></TD>
-                  <TD><INPUT name="userName" style="width:130px"></TD>
+                  <TD width="28%" height=25 align=right class=px12-1><div align="center">
+                  	<font color="#0066CC" >登录名：</font></div>
+                  	</TD>
+                  <TD><INPUT name="code" id="username" style="width:130px"></TD>
                 </TR>
                 <TR>
                   <TD class=px12-1 align=right width="28%"
                         height=25><div align="center"><font color="#0066CC">密&nbsp;&nbsp;码：</font></div></TD>
-                  <TD width="57%"><INPUT type=password name="password" style="width:130px"></TD>
+                  <TD width="57%"><INPUT type=password id="password" name="password" style="width:130px"></TD>
                 </TR>
                 
                <!--  <TR>
@@ -79,14 +118,18 @@ Boolean useMaskCode = (Boolean)request.getAttribute("useMaskCode");
         
                 <TR>
                   <TD height=40 colspan="2" align=center><br>
-                	<button onclick="submitForm()">提交</button>
+                	<button onclick="submit()" class="submitBut">登录</button>
                  
                   </TD>
                 </TR>
                 
               </TBODY>
             </TABLE>
-          </div></td>
+          </div>
+          	<div id="err" align="center"  id="error" style="color: red;float:right;font-weight:bold; font-size: 12px; height: 16px; margin-top: 10px;">
+          	
+          	</div>
+          </td>
         <td>&nbsp;</td>
       </tr>
       <tr>

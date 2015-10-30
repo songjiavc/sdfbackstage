@@ -199,7 +199,7 @@ function authManage(id,parentRole)
 	if(null != parentRole&&""!=parentRole)
 		{
 			//设置根节点不可用，直接关联子节点
-			var authId = '1';//树根节点的id是‘1’
+			var authId = '1';//树根节点的id是‘1’（%待完成%：将写死的变量 写成静态变量，改为从后台获取，之后好维护）
 			var node0 = zTree.getNodeByParam("id",authId);
 			
 			/**禁用 或 解禁 某个节点的 checkbox / radio [setting.check.enable = true 时有效]
