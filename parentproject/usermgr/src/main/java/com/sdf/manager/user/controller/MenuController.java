@@ -3,10 +3,15 @@ package com.sdf.manager.user.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +26,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.MenuBean;
+import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.AuthorityBean;
 import com.sdf.manager.user.entity.Authority;
+import com.sdf.manager.user.entity.Role;
+import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.AuthService;
+import com.sdf.manager.user.service.UserService;
 
 /** 
   * @ClassName: MenuController 
@@ -39,6 +50,9 @@ import com.sdf.manager.user.service.AuthService;
 public class MenuController {
     @Autowired
 	private AuthService authService;
+    
+    @Autowired
+    private UserService userService;
 	
     /**
 	 * demo登录提交后跳转方法
@@ -49,14 +63,35 @@ public class MenuController {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/getNewPage", method = RequestMethod.POST)
-	public String getNewPage(
-			@RequestParam(value="userName",required=false) String userName,
+	public String getNewPage(HttpSession httpSession,
+			@RequestParam(value="code",required=false) String code,//登录名是user表中的code
 			@RequestParam(value="password",required=false) String password,
 			ModelMap model) throws Exception {
 
-
-		model.addAttribute("menuId", "1");
-		return "user/test";
+		String message ="success";
+		
+		User user = userService.getUserByCode(code);
+		if(null == user)
+		{
+			message = "0";//当前登录名不存在，请确认后登录!
+		}
+		else if("".equals(password))
+		{
+			message = "1";//登录密码不可以为空!
+		}
+		else if(null != user && !user.getPassword().equals(password))
+		{
+			message = "2";//登录密码不正确，请确认后登录!
+		}
+		else
+		{
+			//向session中写入登录信息
+			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName());
+		}
+		
+		
+		model.addAttribute("message", message);
+		return "user/test";//"user/test"
 	}
     
     
@@ -75,13 +110,61 @@ public class MenuController {
 	 */
 	@RequestMapping(value = "/getMenuData", method = RequestMethod.POST)
 	public @ResponseBody Map<String,Object> getMenuData(ModelMap model,HttpSession httpSession) throws Exception {
+		
+		/**
+		 * 动态获取菜单实现
+		 * 1.从session中获取当前登录人员的code，根据code获取当前用户对应的角色
+		 * 2.便利角色，根据角色获取当前角色对应的权限数据
+		 * 3.整理权限数据，将权限数据去重展示
+		 * 4.%“baisic”根不动，前台获取也是根据这边name来获取的%
+		 */
+		//获取session中的登录数据
+		String code = LoginUtils.getAuthenticatedUserCode(httpSession);
+		User user = userService.getUserByCode(code);
+		//获取当前登录人员的角色list
+		List<Role> roles = user.getRoles();
+		
+		Set<Authority> authorities = new HashSet<Authority> ();
+		
+		for (Role role : roles) {
+			
+			List<Authority> authin = new ArrayList<Authority> ();
+			authin = role.getAuthorities();
+			authorities.addAll(authin);
+		}
+		
 		Map<String,Object> child = new HashMap<String,Object> ();
 		List<MenuBean> menubeans = new ArrayList<MenuBean> ();
-		List<MenuBean> menus = new ArrayList<MenuBean> ();
-		List<MenuBean> menus2 = new ArrayList<MenuBean> ();
 		child.put("basic", menubeans);
 		
-		MenuBean mb = new MenuBean();
+		Iterator<Authority> it = authorities.iterator();
+		String parentId ;
+		while(it.hasNext())
+		{
+			Authority authin = it.next();
+			//如果父节点是根节点的则是菜单的一级菜单
+			if(Constants.ORIGIN_AUTH_ID.equals(authin.getParentAuth()))//Constants.ORIGIN_AUTH_ID:权限树的树根节点写死我“1”
+			{
+				parentId = authin.getId();
+				
+				List<MenuBean> menus = new ArrayList<MenuBean> ();//下级菜单
+				MenuBean mb = new MenuBean();
+				mb.setMenuid(authin.getId());//权限id
+				mb.setIcon(authin.getAuthImg());//权限图片
+				mb.setMenuname(authin.getAuthName());//权限名称
+				mb.setMenus(menus);
+				menubeans.add(mb);
+				
+				menus = getChildMenu(parentId, authorities, menus);//获取下级菜单
+				
+				
+				
+			}
+		}
+		
+		
+		
+		/*MenuBean mb = new MenuBean();
 		mb.setMenuid("10");
 		mb.setIcon("icon-sys");
 		mb.setMenuname("用户");
@@ -142,9 +225,46 @@ public class MenuController {
 		mb22.setIcon("icon-nav");
 		mb22.setMenuname("购买商品");
 		mb22.setUrl("#");
-		menus2.add(mb22);
+		menus2.add(mb22);*/
 		
 		return child;
+	}
+	
+	/**
+	 * 
+	* @Description: TODO(获取下级菜单) 
+	* @author bann@sdfcp.com
+	* @date 2015年10月29日 下午2:09:16
+	 */
+	private List<MenuBean> getChildMenu(String parentAuthId,Set<Authority> authorities,List<MenuBean> menus)
+	{
+		
+		Iterator<Authority> itin = authorities.iterator();
+		
+		while(itin.hasNext())
+		{
+			Authority authchild = itin.next();
+			if(parentAuthId.equals(authchild.getParentAuth()))//Constants.ORIGIN_AUTH_ID:权限树的树根节点写死我“1”
+			{
+				
+				MenuBean mb5 = new MenuBean();
+				mb5.setMenuid(authchild.getId());
+				mb5.setIcon(authchild.getAuthImg());
+				mb5.setMenuname(authchild.getAuthName());
+				mb5.setUrl(authchild.getUrl());
+				
+				List<MenuBean> menuChilds = new ArrayList<MenuBean> ();
+				menuChilds = getChildMenu(authchild.getId(), authorities, menuChilds);
+				if(null != menuChilds &&menuChilds.size()>0)
+				{
+					mb5.setMenus(menuChilds);
+				}
+				
+				menus.add(mb5);
+			}
+		}
+		
+		return menus;
 	}
 	
 	/**
