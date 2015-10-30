@@ -13,6 +13,16 @@
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/locale/easyui-lang-zh_CN.js"></script> 
 <script>
 	var contextPath = '<%=request.getContextPath() %>';
+	
+	//从一个页面获取另一个页面的url
+    function getQueryString(name) {
+    	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    	var r = window.location.search.substr(1).match(reg);
+    	if (r != null) 
+    		return unescape(r[2]); 
+    	return null;
+    }
+	
 	$.extend($.fn.validatebox.defaults.rules, {
         CHS: {
           validator: function (value, param) {
