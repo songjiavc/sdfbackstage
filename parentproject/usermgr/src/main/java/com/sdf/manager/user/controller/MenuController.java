@@ -443,8 +443,8 @@ public class MenuController {
 		
 		if(null != code && !"".equals(code))
 		{
-			params.add(code);//只查询有效的数据
-			buffer.append(" and  code != ?").append(params.size());
+			params.add(code);//不查询自身数据，前台标记唯一一条数据使用的是id
+			buffer.append(" and  id != ?").append(params.size());
 		}
 		
 		if(null != status && !"".equals(status))
