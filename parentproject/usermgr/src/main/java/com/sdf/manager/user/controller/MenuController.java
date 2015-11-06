@@ -72,6 +72,11 @@ public class MenuController {
 			resultBean.setMessage(Constants.ORIGIN_AUTH_ID);
 		}
 		
+		if("PROVINCE_ALL".equals(constantName))//获取省份全部的code
+		{
+			resultBean.setMessage(Constants.PROVINCE_ALL);
+		}
+		
 		return resultBean;
 		
 	}
