@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.RoleAuthBean;
 import com.sdf.manager.user.entity.Authority;
@@ -94,7 +95,7 @@ public class RoleController
 			   role.setName(name);
 			   role.setParentRole(parentRole);//上级角色名称
 //			   role.setStatus(status);
-			   role.setModify("admin");
+			   role.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   role.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   role.setParentRolename(parentRolename);
 			   roleService.update(role);
@@ -112,9 +113,9 @@ public class RoleController
 			   role.setParentRolename(parentRolename);//上级角色名称
 			   role.setIsSystem("0");//页面中操作添加的角色都是非系统数据
 //			   role.setStatus(status);
-			   role.setCreater("admin");
+			   role.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   role.setCreaterTime(new Timestamp(System.currentTimeMillis()));
-			   role.setModify("admin");
+			   role.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   role.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   role.setIsDeleted("1");
 			   roleService.save(role);
@@ -148,7 +149,7 @@ public class RoleController
 				role = new Role();
 				role =  roleService.getRoleById(id);
 				role.setIsDeleted("0");;//设置当前数据为已删除状态
-				role.setModify("admin");
+				role.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				role.setModifyTime(new Timestamp(System.currentTimeMillis()));
 				roleService.update(role);//保存更改状态的角色实体
 			}

@@ -327,7 +327,7 @@ public class MenuController {
 			authority.setAuthImg(authImg);
 			String originStatus = authority.getStatus();//记录修改前的权限状态
 			authority.setStatus(status);
-			authority.setModify("admin");
+			authority.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			//修改权限数据
 			authService.save(authority);
@@ -342,7 +342,7 @@ public class MenuController {
 					for (Authority authority2 : authList) 
 					{
 						authority2.setStatus(status);
-						authority2.setModify("admin");
+						authority2.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 						authority2.setModifyTime(new Timestamp(System.currentTimeMillis()));
 						authService.save(authority2);
 					}
@@ -363,9 +363,9 @@ public class MenuController {
 			authority.setAuthImg(authImg);
 			authority.setStatus(status);
 			authority.setIsSystem("0");//页面中操作添加的权限都是非系统数据
-			authority.setCreater("admin");
+			authority.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setCreaterTime(new Timestamp(System.currentTimeMillis()));
-			authority.setModify("admin");
+			authority.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			authority.setIsDeleted("1");
 			//保存权限数据
@@ -558,7 +558,7 @@ public class MenuController {
 			authority = new Authority();
 			authority =  authService.getAuthorityByCode(code);//code传递进去的参数实际是id
 			authority.setIsDeleted("0");;//设置当前数据为已删除状态
-			authority.setModify("admin");
+			authority.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			authService.save(authority);//保存更改状态的权限实体
 		}

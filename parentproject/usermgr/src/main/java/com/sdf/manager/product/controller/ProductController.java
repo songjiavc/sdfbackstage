@@ -23,6 +23,7 @@ import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
+import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.product.application.dto.ProductDto;
 import com.sdf.manager.product.entity.City;
@@ -196,7 +197,7 @@ public class ProductController
 			   product.setCpzlDm(cpzl);
 			   product.setCpxlDm(cpxl);
 			   product.setProductDesprition(productDesprition);
-			   product.setModify("admin");
+			   product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   product.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   productService.update(product);
 			   resultBean.setMessage("修改产品信息成功!");
@@ -215,9 +216,9 @@ public class ProductController
 			   product.setCpzlDm(cpzl);
 			   product.setCpxlDm(cpxl);
 			   product.setProductDesprition(productDesprition);
-			   product.setCreater("admin");
+			   product.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   product.setCreaterTime(new Timestamp(System.currentTimeMillis()));
-			   product.setModify("admin");
+			   product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   product.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   product.setIsDeleted("1");//当前数据为有效数据的标记为
 			   productService.save(product);
@@ -252,7 +253,7 @@ public class ProductController
 				product = new Product();
 				product =  productService.getProductById(id);
 				product.setIsDeleted("0");;//设置当前数据为已删除状态
-				product.setModify("admin");
+				product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				product.setModifyTime(new Timestamp(System.currentTimeMillis()));
 				productService.update(product);//保存更改状态的产品实体
 			}
