@@ -33,6 +33,13 @@
 		<artifactId>jstl</artifactId>
 		<version>1.2</version>
 	</dependency>
+	
+	<!-- commons-beanutils1.8.3 版本 -->
+	<dependency>
+    <groupId>commons-beanutils</groupId>
+    <artifactId>commons-beanutils-core</artifactId>
+    <version>1.8.3</version>
+	</dependency>
     
    	<!-- spring3 start -->
 	<dependency>
