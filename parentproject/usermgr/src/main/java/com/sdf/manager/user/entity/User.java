@@ -73,7 +73,7 @@ public class User extends BaseEntiry implements Serializable
 	
 	@Transient
 	//@ManyToMany注释表示Teacher是多对多关系的一端。
-    //@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
+    //@JoinTable描d述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
     //中间表Teacher_Student的Teacher_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Student)的外键关系。
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "RELA_SDF_USER_ROLE", 
