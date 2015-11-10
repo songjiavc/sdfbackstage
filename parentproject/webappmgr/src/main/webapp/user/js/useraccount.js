@@ -384,7 +384,7 @@ function initDatagrid()
 	        },
 	        dataType: "json",
 	        success: function (data) {
-	        	$.messager.alert('提示', data .message);
+	        	$.messager.alert('提示', data .message)	;
 	        	closeDialog();
 	        	initDatagrid();
 	        },
@@ -409,12 +409,12 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkCodes: {//自定义校验code
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-    		rules.checkCodes.message = "当前权限编码已存在"; 
+    		rules.checkCodes.message = "用户编码已存在"; 
             return !checkCode($("#"+param[1]).val(),value,'');
         }
     },
     equalTo: { 
     	validator: function (value, param) { 
-    		return $(param[0]).val() == value; 
-    		}, message: '字段不匹配' }
+    		return $(param[0]).val() == value;
+    		}, message: '两次密码输入不一致！' }
 });
