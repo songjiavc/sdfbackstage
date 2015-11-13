@@ -23,5 +23,11 @@ public class Constants {
 	public static final String PRODUCT_ZL_ALL = "all";//产品中类别的“全部”选项对应的值
 	
 	public static final String PRODUCT_ZL_ALL_NAME = "全部";//产品中类别的“全部”选项对应的显示名称
+	
+	public static final String GOODS_SHELVES = "0";//商品上架
+	
+	public static final String GOODS_OFF_SHELVES = "1";//商品下架
+	
+	public static final String GOODS_STAY_ON_SHELVES = "2";//商品待上架
 
 }

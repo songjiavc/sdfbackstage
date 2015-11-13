@@ -1,6 +1,9 @@
 package com.sdf.manager.product.application.dto;
 
 import java.util.Date;
+import java.util.List;
+
+import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 
 /**
  * ※DTO是用来传递数据的，所以无论是前台的数据传递还是前台和后台的数据交互都应该是用dto进行交互而不是bean※
@@ -38,6 +41,40 @@ public class ProductDto {
 	
 	private String productDesprition;//产品描述
 	
+	private String sellPrice;//销售价格
+	
+	private String probation;//试用期
+	
+	private boolean isChecked;//是否为当前商品的对应产品
+	
+	
+	
+	
+
+	public boolean isChecked() {
+		return isChecked;
+	}
+
+	public void setChecked(boolean isChecked) {
+		this.isChecked = isChecked;
+	}
+
+	public String getSellPrice() {
+		return sellPrice;
+	}
+
+	public void setSellPrice(String sellPrice) {
+		this.sellPrice = sellPrice;
+	}
+
+	public String getProbation() {
+		return probation;
+	}
+
+	public void setProbation(String probation) {
+		this.probation = probation;
+	}
+
 	public String getPrice() {
 		return price;
 	}

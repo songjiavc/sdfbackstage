@@ -25,6 +25,10 @@ import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.goods.entity.Goods;
+import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
+import com.sdf.manager.goods.service.GoodsService;
+import com.sdf.manager.goods.service.RelaProAndGoodsService;
 import com.sdf.manager.product.application.dto.ProductDto;
 import com.sdf.manager.product.entity.City;
 import com.sdf.manager.product.entity.Product;
@@ -62,6 +66,12 @@ public class ProductController
 	 @Autowired
 	 private ProductLBService productLBService;
 	 
+	 @Autowired
+	 private RelaProAndGoodsService relaProAndGoodsService;
+	 
+	 @Autowired
+	 private GoodsService goodsService;
+	 
 	/**
 	 * 
 	* @Description: 根据产品id获取产品信息详情
@@ -93,6 +103,7 @@ public class ProductController
 				@RequestParam(value="province",required=false) String province,//模糊查询所选省
 				@RequestParam(value="procode",required=false) String procode,//模糊查询产品编码
 				@RequestParam(value="city",required=false) String city,//模糊查询所选市
+//				@RequestParam(value="orCity",required=false) String orCity,//查询当前
 				@RequestParam(value="productName",required=false) String productName,//模糊查询填写的产品名称
 				@RequestParam(value="productDesprition",required=false) String productDesprition,//模糊查询填写的产品描述
 				ModelMap model,HttpSession httpSession) throws Exception
@@ -115,6 +126,17 @@ public class ProductController
 				params.add(province);//根据省份查询产品数据
 				buffer.append(" and provinceDm = ?").append(params.size());
 			}
+			
+//			if(null != orCity && !"".equals(orCity))
+//			{
+//				List<String> paraArr = new ArrayList<String> ();
+//				paraArr.add(orCity);
+//				paraArr.add(Constants.CITY_ALL);
+//				params.add(paraArr);
+//				// JPQL(javax.persistence.Query)的IN查询参数必须是集合Collection(用List)类型，而HQL还可以是数组类型；
+//				buffer.append(" and cityDm in ?").append(params.size());
+//				
+//			}
 			
 			if(null != city && !"".equals(city) && !Constants.CITY_ALL.equals(city))
 			{
@@ -152,7 +174,7 @@ public class ProductController
 			Long totalrow = productlist.getTotalRecord();
 			
 			//将实体转换为dto
-			List<ProductDto> productDtos = this.toDTOS(products);
+			List<ProductDto> productDtos = productService.toDTOS(products);
 			
 			returnData.put("rows", productDtos);
 			returnData.put("total", totalrow);
@@ -236,7 +258,8 @@ public class ProductController
 	
 	 /**
 	  * 
-	 * @Description: 删除产品信息 
+	 * @Description: 删除产品信息（由于产品和商品是关联的，且产品是构成商品的基本元素，所以在删除产品要对商品造成影响
+	 * 暂定删除规则为：删除产品同时要删除同时在产品--商品关联表中的相关当前删除产品的数据，并置相关的商品的商品状态为下架） 
 	 * @author bann@sdfcp.com
 	 * @date 2015年11月3日 上午10:07:51
 	  */
@@ -248,6 +271,7 @@ public class ProductController
 			ResultBean resultBean = new ResultBean();
 			
 			Product product ;
+			Goods goods;
 			for (String id : ids) 
 			{
 				product = new Product();
@@ -256,6 +280,19 @@ public class ProductController
 				product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				product.setModifyTime(new Timestamp(System.currentTimeMillis()));
 				productService.update(product);//保存更改状态的产品实体
+				
+				//置相关商品状态位为“下架”
+				for (RelaSdfGoodProduct relaSdfGoodProduct : product.getGoodAndproduct()) {
+					
+					goods = relaSdfGoodProduct.getGoods();
+					goods.setStatus(Constants.GOODS_OFF_SHELVES);
+					goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+					goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
+					goodsService.update(goods);
+				}
+				
+				//删除产品--商品关联数据
+				relaProAndGoodsService.deleteRelapGoodsList(product.getGoodAndproduct());
 			}
 			
 			
@@ -498,104 +535,5 @@ public class ProductController
 			
 		}
 	 
-	 /************Assembler class***************/
-	 /**
-		 * 
-		* @Description: 将产品entity 转换为dto
-		* @author bann@sdfcp.com
-		* @date 2015年11月5日 上午10:51:38
-		 */
-		private  ProductDto toDTO(Product entity) {
-			ProductDto dto = new ProductDto();
-			try {
-				BeanUtil.copyBeanProperties(dto, entity);
-				
-				//处理实体中的特殊转换值
-				if(null != entity.getCreaterTime())//创建时间
-				{
-					dto.setCreateTime(DateUtil.formatDate(entity.getCreaterTime(), DateUtil.FULL_DATE_FORMAT));
-				}
-				if(null != entity.getProvinceDm())//省级区域
-				{
-					Province province = new Province();
-					province = provinceService.getProvinceByPcode(entity.getProvinceDm());
-					dto.setProvinceName(null != province?province.getPname():"");
-				}
-				if(null != entity.getCityDm())//市级区域
-				{
-					if(Constants.CITY_ALL.equals(entity.getCityDm()))
-					{
-						dto.setCityName(Constants.CITY_ALL_NAME);
-					}
-					else
-					{
-						City city = new City();
-						city = cityService.getCityByCcode(entity.getCityDm());
-						dto.setCityName(null != city?city.getCname():"");
-					}
-					
-				}
-				if(null != entity.getCpdlDm())//产品大类
-				{
-					ProductDL productDL = new ProductDL();
-					productDL = productLBService.getProductDLByCode(entity.getCpdlDm());
-					dto.setCpdlName(null != productDL?productDL.getName():"");
-				}
-				
-				if(null != entity.getCpzlDm())//产品中类
-				{
-					if(Constants.PRODUCT_ZL_ALL.equals(entity.getCpzlDm()))
-					{
-						dto.setCpzlName(Constants.PRODUCT_ZL_ALL_NAME);
-					}
-					else
-					{
-						ProductZL productZL = new ProductZL();
-						productZL = productLBService.getProductZLByCode(entity.getCpzlDm());
-						dto.setCpzlName(null != productZL?productZL.getName():"");
-					}
-					
-				}
-				
-				if(null != entity.getCpxlDm())//产品小类
-				{
-					if(Constants.PRODUCT_XL_ALL.equals(entity.getCpxlDm()))
-					{
-						dto.setCpxlName(Constants.PRODUCT_XL_ALL_NAME);
-					}
-					else
-					{
-						ProductXL productXL = new ProductXL();
-						productXL = productLBService.getProductXLByCode(entity.getCpxlDm());
-						dto.setCpxlName(null != productXL?productXL.getName():"");
-					}
-					
-				}
-				
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-						
-			return dto;
-		}
-		
-		/**
-		 * 
-		* @Description:批量将产品实体转换为dto
-		* @author bann@sdfcp.com
-		* @date 2015年11月5日 上午10:52:35
-		 */
-		private  List<ProductDto> toDTOS(List<Product> entities) {
-			List<ProductDto> dtos = new ArrayList<ProductDto>();
-			ProductDto dto;
-			for (Product entity : entities) 
-			{
-				dto = toDTO(entity);
-				dtos.add(dto);
-			}
-			return dtos;
-		}
-	 
+	
 }

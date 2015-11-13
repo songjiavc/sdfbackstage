@@ -1,15 +1,19 @@
 package com.sdf.manager.product.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.user.entity.BaseEntiry;
 
 
@@ -58,6 +62,21 @@ public class Product extends BaseEntiry implements Serializable{
 	
 	@Column(name="PRODUCT_DESPRITION")
 	private String productDesprition;//产品描述
+	
+	
+	@OneToMany(mappedBy = "product", fetch = FetchType.LAZY) 
+	private List<RelaSdfGoodProduct> goodAndproduct;
+	
+	
+	
+
+	public List<RelaSdfGoodProduct> getGoodAndproduct() {
+		return goodAndproduct;
+	}
+
+	public void setGoodAndproduct(List<RelaSdfGoodProduct> goodAndproduct) {
+		this.goodAndproduct = goodAndproduct;
+	}
 
 	public String getId() {
 		return id;
