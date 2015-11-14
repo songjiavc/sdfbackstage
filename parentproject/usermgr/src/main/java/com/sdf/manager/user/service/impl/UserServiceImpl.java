@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRelaRoleBean;
@@ -120,7 +121,7 @@ public class UserServiceImpl implements UserService {
 			accountBean.setStatus(user.getStatus());
 			accountBean.setTelephone(user.getTelephone());
 			accountBean.setCreater(user.getCreater());
-			accountBean.setCreaterTime(user.getCreaterTime());
+			accountBean.setCreaterTime(DateUtil.formatDate(user.getCreaterTime(), DateUtil.FULL_DATE_FORMAT));
 			List<UserRelaRoleBean> roleBeanList = new ArrayList<UserRelaRoleBean>();
 			for(Role role : user.getRoles()){
 				UserRelaRoleBean userRelaRoleBean = new UserRelaRoleBean();

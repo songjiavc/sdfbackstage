@@ -1,12 +1,11 @@
 package com.sdf.manager.station.service;
 
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.station.bean.StationBean;
 import com.sdf.manager.station.entity.Station;
 
@@ -21,14 +20,6 @@ import com.sdf.manager.station.entity.Station;
   */
 public interface StationService {
 	
-	/** 
-	  * @Description: 获取权限表所有数据
-	  * @author songj@sdfcp.com
-	  * @date 2015年9月25日 上午8:58:51 
-	  * @return 
-	  */
-	public List<Station> findAll();
-
 	/** 
 	  * @Description: 保存更新用户信息
 	  * @author songj@sdfcp.com
@@ -55,17 +46,6 @@ public interface StationService {
 	  */
 	public Station getStationByCode(String code);
 
-	/** 
-	  * @Description:分页查询
-	  * @author songj@sdfcp.com
-	  * @date 2015年10月13日 下午1:25:25 
-	  * @param whereJpql
-	  * @param queryParams
-	  * @param orderby
-	  * @param pageable
-	  * @return 
-	  */
-	public Map<String,Object>  getScrollDataByJpql(Class<Station> entityClass,String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable);
 	
 	/** 
 	  * @Description: 删除帐号
@@ -75,4 +55,18 @@ public interface StationService {
 	  * @throws BizException 
 	  */
 	public void deleteStationByIds(String[] ids) throws BizException;
+	
+	/** 
+	  * @Description:  获取站点列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月13日 下午1:42:20 
+	  * @param entityClass
+	  * @param whereJpql
+	  * @param queryParams
+	  * @param orderby
+	  * @param pageable
+	  * @return 
+	  */
+	public QueryResult<Station> getStationList(Class<Station> entityClass, String whereJpql, Object[] queryParams, 
+			LinkedHashMap<String, String> orderby, Pageable pageable);
 }
