@@ -817,9 +817,10 @@ function deleteGoods(id)
 
 
 /**
- * 批量删除商品数据
+ * 批量操作商品数据状态
+ * @param operaType:操作类别（0：删除 1：上架 2：下架）
  */
-function deleteGoodsList()
+function deleteGoodsList(operaType)
 {
 	var url = contextPath + '/goods/deleteGoods.action';
 	var data1 = new Object();
@@ -834,13 +835,24 @@ function deleteGoodsList()
 		codearr.push(rows[i].id);//code
 	}
 	
-	if(deleteFlag)//选中的待删除权限中没有拥有子级权限的权限时可以进行删除操作
+	if(deleteFlag)
 		{
 			if(codearr.length>0)
 			{
-				data1.ids=codearr.toString();//将id数组转换为String传递到后台
+				data1.ids=codearr.toString();//将id数组转换为String传递到后台data
+				data1.operaType = operaType;
 				
-				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+				var alertMsg = "您确认删除选中数据？";//默认的提示信息为删除数据的提示信息
+				if('1'==operaType)
+					{
+						alertMsg = "您确认上架选中数据？";
+					}
+				else if("2"==operaType)
+					{
+						alertMsg = "您确认下架选中数据？";
+					}
+				
+				$.messager.confirm("提示", alertMsg, function (r) {  
 			        if (r) {  
 			        	
 				        	$.ajax({

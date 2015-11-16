@@ -24,7 +24,19 @@
   	    text:'批量删除商品',
   	    iconCls:'icon-remove',
   	    handler:function(){
-  	    	deleteGoodsList();
+  	    	deleteGoodsList('0');
+  	    	}
+  	},{
+  	    text:'批量上架',
+  	    iconCls:'icon-redo',
+  	    handler:function(){
+  	    	deleteGoodsList('1');
+  	    	}
+  	},{
+  	    text:'批量下架',
+  	    iconCls:'icon-undo',
+  	    handler:function(){
+  	    	deleteGoodsList('2');
   	    	}
   	}];
   	  

@@ -404,31 +404,68 @@ public class GoodsController {
 	
 	 /**
 	  * 
-	 * @Description: 删除商品信息 
+	 * @Description: 批量操作商品数据状态
 	 * @author bann@sdfcp.com
 	 * @date 2015年11月9日 上午10:07:51
 	  */
 	 @RequestMapping(value = "/deleteGoods", method = RequestMethod.POST)
 		public @ResponseBody ResultBean deleteGoods(
 				@RequestParam(value="ids",required=false) String[] ids,
+				@RequestParam(value="operaType",required=false) String operaType,//操作类别（0：删除 1：上架 2：下架）
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 			ResultBean resultBean = new ResultBean();
 			
-			Goods goods ;
-			for (String id : ids) 
+			if("0".equals(operaType))//操作类别（0：删除 1：上架 2：下架）
 			{
-				goods = new Goods();
-				goods =  goodsService.getGoodsById(id);
-				goods.setIsDeleted("0");;//设置当前数据为已删除状态
-				goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
-				goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
-				goodsService.update(goods);//保存更改状态的商品实体
+				Goods goods ;
+				for (String id : ids) 
+				{
+					goods = new Goods();
+					goods =  goodsService.getGoodsById(id);
+					goods.setIsDeleted("0");;//设置当前数据为已删除状态
+					goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+					goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
+					goodsService.update(goods);//保存更改状态的商品实体
+				}
+			}
+			else
+			{
+				Goods goods ;
+				String updateStatus = Constants.GOODS_OFF_SHELVES;//默认更新状态为下架
+				if("1".equals(operaType))//操作类别（0：删除 1：上架 2：下架）
+				{
+					updateStatus = Constants.GOODS_SHELVES;
+				}
+				else
+					if("2".equals(operaType))
+					{
+						updateStatus = Constants.GOODS_OFF_SHELVES;
+					}
+				for (String id : ids) 
+				{
+					goods = new Goods();
+					goods =  goodsService.getGoodsById(id);
+					goods.setStatus(updateStatus);
+					goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+					goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
+					goodsService.update(goods);//保存更改状态的商品实体
+				}
 			}
 			
 			
+			String returnMsg = "删除成功!";
+			if("1".equals(operaType))//操作类别（0：删除 1：上架 2：下架）
+			{
+				returnMsg = "商品上架成功!";
+			}
+			else
+				if("2".equals(operaType))
+				{
+					returnMsg =  "商品下架成功!";
+				}
 			resultBean.setStatus("success");
-			resultBean.setMessage("删除成功!");
+			resultBean.setMessage(returnMsg);
 			
 			return resultBean;
 		}
