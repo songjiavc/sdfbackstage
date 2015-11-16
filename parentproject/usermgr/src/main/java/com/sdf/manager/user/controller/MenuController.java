@@ -157,7 +157,14 @@ public class MenuController {
 			
 			List<Authority> authin = new ArrayList<Authority> ();
 			authin = role.getAuthorities();
-			authorities.addAll(authin);
+			for (Authority authority : authin) {
+				if(Constants.IS_NOT_DELETED.equals(authority.getIsDeleted()))//Constants.IS_NOT_DELETED:未删除的权限数据
+				{
+					authorities.add(authority);
+				}
+				
+			}
+			
 		}
 		
 		Map<String,Object> child = new HashMap<String,Object> ();
