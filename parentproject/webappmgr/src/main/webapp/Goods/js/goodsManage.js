@@ -407,7 +407,7 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 	        var selectedRows = $('#'+productDatagrid).datagrid('getRows');
 	        if("productDatagridU" == productDatagrid)//修改商品
 	        	{
-		            pdList = checkProducts(params.goodsId,productDatagrid);
+		            var  pdList = checkProducts(params.goodsId,productDatagrid);
 			        for(var i=0;i<pdList.length;i++)
 					{
 			        	var	proId = pdList[i].productId;
@@ -618,6 +618,7 @@ function checkEditorProbation(value)
  */
 function updateGoods(id)
 {
+	clearProductList();
 	var url = contextPath + '/goods/getDetailGoods.action';
 	var data1 = new Object();
 	data1.id=id;//权限的id
@@ -686,31 +687,6 @@ function checkProducts(id,productDatagrid)
         	
         	proList = returndata;
         	
-        	/*if(returndata.length>0)
-        		{
-        			var proId = "";
-        			var probation = "";
-        			var price = "";
-        			for(var i=0;i<returndata.length;i++)
-        				{
-        					proId = returndata[i].productId;
-        					probation = returndata[i].probation; 
-        					price  = returndata[i].price;
-        					var rows = $('#'+productDatagrid).datagrid('getRows');
-        					
-        					for(var i=0 ;i<rows.length;i++)
-        						{
-        							var row = rows[i];
-        							var id = row.id;
-        							alert(proId==id);
-        							if(proId==id)
-        							{
-        								$('#'+productDatagrid).datagrid('selectRow',i);
-        							}
-        						}
-        					
-        				}
-        		}*/
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {

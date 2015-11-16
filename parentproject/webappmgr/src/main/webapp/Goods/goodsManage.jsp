@@ -14,6 +14,7 @@
   	    iconCls:'icon-add',
   	    handler:function(){
   	    	 //初始化上级权限下拉框值
+  	    	clearProductList();
   	    	initProvince('add','privinceA','');//默认选中全部，则全部下是没有市数据的
   	    	initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
   	    	$("#addProduct").dialog('open');
