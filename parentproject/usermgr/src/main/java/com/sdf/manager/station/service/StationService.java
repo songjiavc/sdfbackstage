@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.station.bean.StationBean;
+import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
 
 
@@ -26,7 +26,7 @@ public interface StationService {
 	  * @date 2015年10月12日 上午11:16:13 
 	  * @param user 
 	  */
-	public void saveOrUpdate(StationBean stationBean) throws BizException;
+	public void saveOrUpdate(StationFormDto stationFormDto,String userId) throws BizException;
 
 	/** 
 	  * @Description: TODO(这里用一句话描述这个类的作用)
@@ -54,7 +54,7 @@ public interface StationService {
 	  * @param ids
 	  * @throws BizException 
 	  */
-	public void deleteStationByIds(String[] ids) throws BizException;
+	public void deleteStationByIds(String[] ids,String userId) throws BizException;
 	
 	/** 
 	  * @Description:  获取站点列表

@@ -13,7 +13,7 @@ public class StationDto {
 	//站点登录号
 	private String stationCode;
 	//站点号
-	private String stationNumber;//产品编码
+	private String stationNumber;
 	//省份
 	private String province;
 	//市

@@ -10,8 +10,12 @@ package com.sdf.manager.common.enums;
 public enum BizExceptionEnum {
     //所有业务异常描述放在这里
     SDF_USER_REPEAT_CODE(0101, "用户编码冲突!"),
+  
+    SDF_STATION_REPEAT_CODE(0201, "站点编码冲突!"),
     
 	SDF_USER_DELETE_NOT_EXIST(0102, "没有要删除的帐号或是帐号已经被删除!"),
+	
+	SDF_STATION_DELETE_NOT_EXIST(0202, "没有要删除的站点或是站点已经被删除!"),
 	
 	SDF_USER_ID_NOT_EXIST(0103, "数据库中不存在对应的ID内容!");
     // 成员变量  

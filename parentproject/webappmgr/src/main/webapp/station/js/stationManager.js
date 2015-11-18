@@ -1,7 +1,7 @@
 $(document).ready(
 		function()
 		{
-			//initDatagrid();
+			initDatagrid();
 			closeDialog();
 			initQueryProvince();//初始化模糊查询省数据
 		}
@@ -93,6 +93,33 @@ function initProvince(addOrUpdate,pcode)
             		 	$("#addFormCity").combobox('select', oldccode);
             		 }
         	 }
+         },
+         onSelect: function(rec){
+          	var url = contextPath+'/product/getRegionList.action?ccode='+rec.ccode;
+		        $('#addFormRegion').combobox('reload', url);
+		    }
+	}); 
+	//初始化乡镇区combo
+	$('#addFormRegion').combobox({
+		queryParams:data,
+		valueField:'acode',
+		textField:'aname',
+		 onLoadSuccess: function (data) { //数据加载完毕事件
+             if (data.length > 0 && "add" == addOrUpdate) 
+             {
+            	 $("#addFormRegion").combobox('select',data[data.length-1].ccode);
+             }
+             else
+        	 {
+            	 if(data.length > 0 &&"update" == addOrUpdate&&"" == oldccode)
+            		 {
+            		 	$("#addFormRegion").combobox('select',data[data.length-1].ccode);
+            		 }
+            	 else
+            		 {
+            		 	$("#addFormRegion").combobox('select', oldccode);
+            		 }
+        	 }
 				
          }
 	}); 
@@ -103,10 +130,21 @@ function initProvince(addOrUpdate,pcode)
  */
 function initDatagrid()
 {
+	//获取查询form中所有值
+	var queryParams = {
+			searchFormNumber : $('#searchFormNumber').val(),
+			searchFormStyle : $('#searchFormStyle').val(),
+			searchFormProvince : $('#searchFormProvince').val(),
+			searchFormCity : $('#searchFormCity').val(),
+			searchFormName : $('#searchFormName').val(),
+			searchFormTelephone : $('#searchFormTelephone').val(),
+			searchFormAgent : $('#searchFormAgent').val()
+	};
+	//渲染列表
 	$('#stationDataGrid').datagrid({
 		singleSelect:false,
-//		queryParams: params,
-		url: contextPath + '/station/getUserList.action',
+		queryParams: queryParams,
+		url: contextPath + '/station/getStationList.action',
 		method:'get',
 		border:false,
 		fit:true,
@@ -115,48 +153,29 @@ function initDatagrid()
 		pageSize:10,
 		striped:true,
 		columns:[[
-				{field:'id',checkbox:true	},
-				{field:'code',title:'登录帐号',width:'10%',align:'center'},
-				{field:'name',title:'名称',width:'10%',align:'center'},
-				{field:'telephone',title:'电话',width:'15%',align:'center'},
-				{field:'creater',title:'录入人',width:'10%',align:'center'},
-				{field:'createrTime',title:'录入时间',width:'10%',align:'center'},
-				{field:'status',title:'启用',align:'center',width:'5%',
-					formatter:function(value,row,index){
-					var showStatus = "";
-					if("1" == row.status)
-						{
-							showStatus = "是";
-						}
-					else
-						{
-							showStatus = "否";
-						}
-						return showStatus;
-					}
-				},
-				{field:'roles',title:'角色',align:'center',width:'15%',
-					formatter:function(value,row,index){
-						if(value!= undefined){
-							var lis = '<ol 	style="padding:0 0 0 15;">';
-							$.each(value,function(i,data){
-								lis=lis+'<li style="align:left">'+data.roleName;
-			                });
-							return lis+'</ol>';
-						}
-					}
-				},
-				{field:'opt',title:'操作',width:'150',align:'center', 
+				{field:'id',checkbox:true},
+				{field:'stationCode',title:'登录帐号',width:'10%',align:'center'},
+				{field:'stationNumber',title:'站点号',width:'10%',align:'center'},
+				{field:'province',title:'省',width:'10%',align:'center'},
+				{field:'city',title:'市',width:'10%',align:'center'},
+				{field:'stationStyle',title:'站点类型',width:'10%',align:'center'},
+				{field:'name',title:'站主名称',width:'10%',align:'center'},
+				{field:'telephone',title:'站主电话',width:'10%',align:'center'},
+				{field:'stationCode',title:'登录帐号',width:'10%',align:'center'},
+				{field:'createTime',title:'录入时间',width:'10%',align:'center'},
+				{field:'opt',title:'操作',width:'130',align:'center', 
 		            formatter:function(value,row,index){
-		                var btn = '<a class="editcls" onclick="updatestation(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
-		                	+'<a class="setRoles" onclick="setRoles(&quot;'+row.id+'&quot;,&quot;'+row.roles+'&quot;)" href="javascript:void(0)"></a>';
+		                var btn = '<a class="editcls" onclick="updateStation(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
+		                	+'<a class="delcls" onclick="delStationById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
+		                	+'<a class="setOrder" onclick="setOrder(&quot;'+row+'&quot;)" href="javascript:void(0)"></a>';
 		                return btn;
 		            }
 		        }
 		    ]],
 	    onLoadSuccess:function(data){  
-	        $('.editcls').linkbutton({text:'编辑',plain:true,iconCls:'icon-edit'});
-	        $('.setRoles').linkbutton({text:'设置角色',plain:true,iconCls:'icon-search'});
+	        $('.editcls').linkbutton({plain:true,iconCls:'icon-edit'});
+	        $('.delcls').linkbutton({plain:true,iconCls:'icon-remove'});
+	        $('.setOrder').linkbutton({plain:true,iconCls:'icon-search'});
 	    }  
 	});
 }
@@ -164,19 +183,21 @@ function initDatagrid()
 
 	//关闭弹框
 	function closeDialog()
-	{
-		$("#addStation").dialog('close'); 
+	{	
+		$("#addOrUpdateStation").dialog('close');
+		$("#setOrder").dialog('close');
 	}
 
 	/**
 	 * 权限修改
 	 */
-	function updatestation(id)
+	function updateStation(id)
 	{
 			/**
-			 * 用户修改
+			 * 站点修改
 			 */
-			var url = contextPath + '/station/getDetailstation.action';
+			$('.panel-title.panel-with-icon').html('修改站点');
+			var url = contextPath + '/station/getStationDetail.action';
 			var paramData = new Object();
 			paramData.id=id;
 			$.ajax({
@@ -187,35 +208,39 @@ function initDatagrid()
 		        data:paramData,
 		        dataType: "json",
 		        success: function (data) {
-					$('#updatestationForm').form('load',{
-						id:data.id,
-						code:data.code,
-						name:data.name,
-						password:data.password,
-						confirmPassword:data.password,
-						telephone:data.telephone,
-						status:data.status
-					});
+					$('#addOrUpdateStationForm').form('load',data);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);
 		        }
 			});
-			$("#updatestation").dialog("open");//打开修改用户弹框
+			
+			$("#addOrUpdateStation").dialog("open");//打开修改用户弹框
 	}
 
-
-	//提交添加权限form表单
-	function submitAddstation()
+	/**
+	 * 商品选购入口，留给班娜补充
+	 */
+	function setOrder(row)
 	{
-		$('#addstationForm').form('submit',{
+			/*
+			 *   row = {
+			 *   	
+			 *   }
+			 */
+			$("#setOrder").dialog("open");
+	}
+	//提交添加权限form表单
+	function submitAddStation()
+	{
+		$('#addOrUpdateStationForm').form('submit',{
 			url:contextPath+'/station/saveOrUpdate.action',
 			onSubmit:function(param){
-				return $('#addstationForm').form('validate');
+				return $('#addOrUpdateStationForm').form('validate');
 			},
 			success:function(data){
 				$.messager.alert('提示', eval("(" + data + ")").message);
-	        	closeDialog();
+				closeDialog();
 	        	initDatagrid();
 			}
 		});
@@ -224,7 +249,7 @@ function initDatagrid()
 	//修改帐号form表单
 	function submitUpdatestation()
 	{
-		$('#updatestationForm').form('submit',{
+		$('#addOrUpdateStationForm').form('submit',{
 			url:contextPath+'/station/saveOrUpdate.action',
 			onSubmit:function(param){
 				return $('#updatestationForm').form('enableValidation').form('validate');
@@ -268,14 +293,40 @@ function initDatagrid()
 	   });
 		return flag;
 	}
-
+/**
+ * 删除单个记录
+ */
+	function delStationById(id){
+		var url = contextPath + '/station/deleteStationByIds.action';
+		$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
+	        if (r) {  
+		        	$.ajax({
+		        		async: false,   //设置为同步获取数据形式
+		                type: "post",
+		                url: url,
+		                data:{
+		                	ids : id
+		                },
+		                dataType: "json",
+		                success: function (data) {
+		                	initDatagrid('');
+		                	$.messager.alert('提示', data.message);
+		                },
+		                error: function (XMLHttpRequest, textStatus, errorThrown) {
+		                    alert(errorThrown);
+		                }
+		           });
+	        	}  
+	    	});  
+		}
 	/**
+	 * 
 	 * 批量删除
 	 * @param code
 	 */
 	function deletestationByIds()
 	{
-		var url = contextPath + '/station/deletestationByIds.action';
+		var url = contextPath + '/station/deleteStationByIds.action';
 		var paramObj = new Object();
 		
 		var idArr = new Array();
@@ -301,9 +352,7 @@ function initDatagrid()
 			                dataType: "json",
 			                success: function (data) {
 			                	initDatagrid('');
-			                	//批量删除权限后重新加载树
 			                	$.messager.alert('提示', data.message);
-			                	
 			                },
 			                error: function (XMLHttpRequest, textStatus, errorThrown) {
 			                    alert(errorThrown);
@@ -312,186 +361,13 @@ function initDatagrid()
 			        	
 		        }  
 		    });  
-			
 		}
 		else
 		{
 			$.messager.alert('提示', "请选择数据后操作!");
 		}
 	}
-	
-	
-	function initRoleGrid(){
-		$('#selectRoleGrid').datagrid({
-			singleSelect:false,
-			rownumbers:false,
-			url:contextPath + '/role/getRoleList.action',//'datagrid_data1.json',
-			method:'get',
-			border:false,
-			singleSelect:false,
-			fitColumns:true,
-			pagination:true,
-			collapsible:false,
-//				pageSize:10,
-//				striped:true,
-			columns:[[
-					{field:'ck',checkbox:true},
-					{field:'id',hidden:true},
-			        {field:'name',width:120,title:'角色名称'},
-					{field:'code',title:'角色编码',width:120,align:'left'},
-					{field:'parentRolename',title:'角色上级角色',width:120,align:'left'}
-			    ]],  
-		    onLoadSuccess:function(data){  
-		    	if(data.rows.length==0){
-					var body = $(this).data().datagrid.dc.body2;
-					body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
-				}else{
-					//获取已经选择的角色数据
-					var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
-					//获取待选择的角色列表
-					var selectRows = $('#selectRoleGrid').datagrid('getRows');
-					$.each(selectedRows,function(i,selectedRow){
-						$.each(selectRows,function(j,selectRow){
-							if(selectedRow.id == selectRow.id){
-								$('#selectRoleGrid').datagrid('checkRow',j);
-							}
-						});
-					});
-				}
-		    },
-		    onCheck : function(rowIndex,rowData){
-		    	//var index = $('#selectedRoleGrid').datagrid('getRowIndex',rowData);//获取某行的行号
-		    	var index = getRowIndex(rowData);
-		    	if(index == -1){
-			    	$('#selectedRoleGrid').datagrid('insertRow',{
-			            row : rowData
-			            });//这url是想动态获取一条数据，怎么弄。？
-		    	}
-		    },
-		    onUncheck : function(rowIndex,rowData){
-		    	var index = getRowIndex(rowData);
-		    	 $('#selectedRoleGrid').datagrid('deleteRow',index);
-		    },
-		    onCheckAll : function(rows){
-		    	$.each(rows,function(i,row){
-		    		var index = getRowIndex(row);
-		    		if(index == -1){
-			    		$('#selectedRoleGrid').datagrid('insertRow',{
-				            row: rowData
-				        });//这url是想动态获取一条数据，怎么弄。？
-		    		}
-                });
-		    	
-		    },
-		    onUncheckAll : function(rows){
-		    	$.each(rows,function(i,row){
-		    		var index = getRowIndex(row);
-		    		if(index != -1){
-			    		$('#selectedRoleGrid').datagrid('deleteRow',index);
-		    		}
-		    });
-		}
-	});
-	}
-	///扩展datagrid的方法  处理当翻页时getRowIndex方法失效的问题	
-	function getRowIndex(row){
-		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
-    	var index = -1;
-    	$.each(selectedRows,function(i,selectedRow){
-    		if(row.id == selectedRow.id){
-    			index = i;
-    		}
-    	});
-    	return index;
-	}
-	
-	
-	function initSelectedRoleGrid(id){
-		$('#selectedRoleGrid').datagrid({
-			singleSelect:false,
-			rownumbers:false,
-			url:contextPath + '/station/getUserRelaRoleList.action',//'datagrid_data1.json',
-			// url: contextPath + '/station/getUserRelaRoleList.action',     //初始化的时候查找已经存在的关联关系，并在该列表中显示。
-			method:'get',
-			queryParams : {
-				id : id
-			},
-			border:false,
-			fitColumns:true,
-			collapsible:false,
-			columns:[[
-					{field:'id',hidden:true},    //userRelaRole 关联关系表主键
-					{field:'userId',hidden:true},	//userId  用户主键
-					{field:'roleId',hidden:true},	//角色主键
-			        {field:'name',width:120,title:'角色名称'},
-					{field:'code',title:'角色编码',width:120,align:'left'},
-					{field:'parentRolename',title:'角色上级角色',width:120,align:'left'}
-			    ]],  
-		    onLoadSuccess:function(data){
-		    	if(data.rows.length==0){
-					var body = $(this).data().datagrid.dc.body2;
-					body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
-				}else{
-					//获取已经选择的角色数据
-					var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
-					//获取待选择的角色列表
-					var selectRows = $('#selectRoleGrid').datagrid('getRows');
-					$.each(selectedRows,function(i,selectedRow){
-						$.each(selectRows,function(j,selectRow){
-							if(selectedRow.id == selectRow.id){
-								$('#selectRoleGrid').datagrid('checkRow',j);
-							}
-						});
-					});
-				}
-		    }
-		});
-	}
-	
-	/**
-	 * @desc 设置角色
-	 * @param userId
-	 * @param roles
-	 */
-	function setRoles(userId,roles){
-		initRoleGrid();
-		initSelectedRoleGrid(userId);
-		$("#userId").val(userId);
-		$("#selectRoleDiv").dialog("open");     //设定权限
-	}
 
-	function submitSelRoles(){
-		//undo 保存选择角色列表
-		var rows = $('#selectedRoleGrid').datagrid('getRows');
-		var userId = 	$("#userId").val();
-		$.ajax({
-			async: false,   //设置为同步获取数据形式
-	        type: "post",
-	        url: contextPath+'/station/saveUserRleaRole.action',
-	        data: {
-	        	userId : userId,                  //传入将要设定角色的用户
-	        	roleList : JSON.stringify(rows)	//传入已经选择好的用户
-	        },
-	        dataType: "json",
-	        success: function (data) {
-	        	$.messager.alert('提示', data.message);
-	        	closeDialog();
-	        	initDatagrid();
-	        },
-	        error: function (XMLHttpRequest, textStatus, errorThrown) {
-	        	$.messager.alert('提示', errorThrown);
-	        }
-	   });
-	}
-	//  初始化角色选择dialog
-	
-	function selectRoleBeforeClose(){
-		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
-		$.each(selectedRows,function(i,selectedRow){
-			$('#selectedRoleGrid').datagrid('deleteRow',0);
-		});
-	}
-	
 /**
  * 自定义校验code
  */

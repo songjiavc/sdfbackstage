@@ -32,10 +32,12 @@ import com.sdf.manager.product.entity.ProductDL;
 import com.sdf.manager.product.entity.ProductXL;
 import com.sdf.manager.product.entity.ProductZL;
 import com.sdf.manager.product.entity.Province;
+import com.sdf.manager.product.entity.Region;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProductLBService;
 import com.sdf.manager.product.service.ProductService;
 import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.product.service.RegionService;
 
 
 /**
@@ -58,6 +60,13 @@ public class ProductController
 	 
 	 @Autowired
 	 private CityService cityService;
+	 
+	 /** 
+	  * @author songjia 
+	  * @Fields regionService : 
+	  */ 
+	@Autowired
+	 private RegionService regionService;
 	 
 	 @Autowired
 	 private ProductLBService productLBService;
@@ -313,6 +322,29 @@ public class ProductController
 		 	cities.add(cityall);
 		 	
 		 	return cities;
+		}
+	
+	 /** 
+	  * @Description: 获取乡镇代码表
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月16日 下午1:14:45 
+	  * @param pcode
+	  * @param model
+	  * @param httpSession
+	  * @return
+	  * @throws Exception 
+	  */
+	@RequestMapping(value = "/getRegionList", method = RequestMethod.POST)
+		public @ResponseBody List<Region> getRegionList(
+				@RequestParam(value="ccode",required=false) String ccode,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<Region> regions = regionService.findRegionsOfCity(ccode);
+		 	Region regionAll = new Region();
+		 	regionAll.setAcode(Constants.REGION_ALL);
+		 	regionAll.setAname(Constants.REGION_ALL_NAME);
+		 	regions.add(regionAll);
+		 	return regions;
 		}
 	 
 	 

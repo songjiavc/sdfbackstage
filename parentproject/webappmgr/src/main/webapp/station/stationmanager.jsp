@@ -15,7 +15,9 @@
 	  	    handler:function(){
 	  	    	 //初始化上级权限下拉框值
 	  	    	initProvince('add','addFormProvince','');//默认选中全部，则全部下是没有市数据的
-	  	    	$("#addStation").dialog('open');
+	  	    	$('.panel-title.panel-with-icon').html('添加站点');
+	  	    	$('#addOrUpdateStationForm').form('clear');
+	  	    	$("#addOrUpdateStation").dialog('open');
 	  	    }
 	  	},{
 	  	    text:'删除',
@@ -50,37 +52,37 @@
 		    	<tr style="margin:10;">
 		    		<td colspan="1" class="td_font">站点号：</td>
 		    		<td colspan="2">
-		    			<input id="productNameC" class="input_border"  type="text" name="productNameC"  />  
+		    			<input id="searchFormNumber" class="input_border"  type="text" name="searchFormNumber"  />  
 		    		</td>
 		    		<td colspan="1" class="td_font">站点类型：</td>
 		    		<td colspan="2">
-		    			<select class="easyui-combobox" name="searchFormStationStyle" style="width:200px;">
+		    			<select class="easyui-combobox" id="searchFormStyle" name="searchFormStyle" style="width:200px;">
 							<option value="1">体彩</option>
 							<option value="2">福彩</option>
 						</select>
 		    		</td>
-		    		<td colspan="1"  class="td_font">产品地域：</td>
+		    		<td colspan="1"  class="td_font">站点地域：</td>
 		    		<td colspan="2">
-		    			 <label for="privinceC">省:</label>
+		    			 <label for="searchFormProvince">省:</label>
 		    			 <select class="easyui-combobox " id="searchFormProvince" name="searchFormProvince" style="width:150px;" >
-						</select>
-						 <label for="cityC">市:</label>
-						<select class="easyui-combobox " id="searchFormCity" name="searchFormCity"  style="width:150px;" >
+						 </select>
+						 <label for="searchFormCity">市:</label>
+								<select class="easyui-combobox " id="searchFormCity" name="searchFormCity"  style="width:150px;" >
 						</select>
 		    		</td>
 		    		</tr>
 		    		<tr>
-		    		<td colspan="1" class="td_font">站长姓名：</td>
+		    		<td colspan="1" class="td_font">站主姓名：</td>
 		    		<td colspan="2">
-		    			<input id="productNameC" class="input_border"  type="text" name="searchStationName"  />  
+		    			<input id="searchFormName" class="input_border"  type="text" name="searchFormName"  />  
 		    		</td>
-		    		<td colspan="1" class="td_font">站长电话：</td>
+		    		<td colspan="1" class="td_font">站主电话：</td>
 		    		<td colspan="2">
-		    			<input id="productNameC" class="input_border"  type="text" name="searchStationTelephone"  />  
+		    			<input id="searchFormTelephone" class="input_border"  type="text" name="searchFormTelephone"  />  
 		    		</td>
 		    		<td colspan="1" class="td_font">所属代理：</td>
 		    		<td colspan="1">
-		    			<input id="agent" class="input_border"  type="text" name="agent"  />  
+		    			<input id="searchFormAgent" class="input_border"  type="text" name="searchFormAgent"  />  
 		    		</td>
 		    		<td class="td_font" colspan="2">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'"  type="button" value="查询" onclick="initDatagrid()">
@@ -88,13 +90,14 @@
 		    		</td>
 		    	</tr>
 	    	</table>	
+	    	</form>
 	</div>
 	<div data-options="region:'center'" style="height:100px;">
 		<table id="stationDataGrid" class="easyui-datagrid" title="站点列表"  data-options="toolbar:toolbar" >
 		</table>
 	</div>
-	    <!-- 添加权限弹框 -->
-  	<div id="addStation" class="easyui-dialog" title="添加站点" style="width:480px;height:450px;padding:20px;"
+	    <!-- 添加站点 -->
+  	<div id="addOrUpdateStation" class="easyui-dialog" title="站点编辑" style="width:480px;height:530px;padding:20px;"
             data-options="
                 iconCls: 'icon-save',
                 buttons: [{
@@ -107,7 +110,7 @@
                     text:'取消',
                     iconCls:'icon-cancel',
                     handler:function(){
-                        $('#addStation').dialog('close');
+                        $('#addOrUpdateStation').dialog('close');
                     }
                 }]
             ">
@@ -117,7 +120,7 @@
 	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
 	              missingMessage="站点编码不可以为空" invalidMessage="站点编码长度不可以超过20个字符"></input>
 	        </div>
-	        <div class="ftitle">d
+	        <div class="ftitle">
 	            <label for="addFormStationStyle">站点类型:</label>
 	            <select class="easyui-combobox" name="addFormStationStyle" style="width:200px;">
 					<option value="1">体彩</option>
@@ -139,23 +142,33 @@
 	        	<input id="addFormCity" class="easyui-combobox textbox"   />
 	        </div>
 	        <div class="ftitle">
+	        	<label for="addFormRegion">区:</label>
+	        	<input id="addFormRegion" class="easyui-combobox textbox"   />
+	        </div>
+	        <div class="ftitle">
+	            <label for="addFormAddress" >详细地址:</label>
+	            <input class="easyui-validatebox textbox" type="text" name="addFormAddress"  data-options="multiline:true,required:true,validType:['length[0,40]']"  missingMessage="站点详细地址"></input>
+	        </div>
+	        <div class="ftitle">
 	            <label for="addFormName" >站主姓名:</label>
 	            <input class="easyui-validatebox textbox" type="text" name="addFormName"  data-options="required:true,validType:['CHS','length[0,20]']"  missingMessage="站主真实姓名"></input>
 	        </div>
 	        <div class="ftitle">
 	        	<label for="addFormTelephone" >站主手机号:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="addFormTelephone"  data-options="required:true,validType:['mobile']" validType="" missingMessage="站主手机号"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="addFormTelephone"  data-options="required:true,validType:['mobile']" missingMessage="站主手机号"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
 	            <input class="easyui-validatebox textbox" type="password" id="password" name="password" data-options="required:true"
-	            validType="length[1,20]"   missingMessage="密码不可以为空" ></input>
+	            validType="length[6,15]"   ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="confirmPassword" >确认密码:</label>
 	            <input class="easyui-validatebox textbox" type="password" name ="confirmPassword"  data-options="required:true" validType="equalTo['#password']" invalidMessage="两次输入密码不匹配"></input>
 	        </div>
           </form>
-     </div>  
+     </div> 
+     <!-- 添加权限弹框 -->
+  	 <div id="setOrder" class="easyui-dialog" title="购买商品" style="width:480px;height:450px;padding:20px;" ></div>
 </body>
 </html>

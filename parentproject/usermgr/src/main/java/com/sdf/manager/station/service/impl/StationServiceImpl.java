@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.station.bean.StationBean;
+import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.repository.StationRepository;
 import com.sdf.manager.station.service.StationService;
@@ -37,36 +37,42 @@ public class StationServiceImpl implements StationService {
 	 * @throws BizException 
 	* @date 2015年10月15日 下午1:33:45
 	 */
-	public void saveOrUpdate(StationBean stationBean) throws BizException {
-		if(StringUtils.isEmpty(stationBean.getId())){
+	public void saveOrUpdate(StationFormDto stationFormDto,String userId) throws BizException {
+		if(StringUtils.isEmpty(stationFormDto.getId())){
 			//如果是新增判断帐号是否表内重复
-			Station stationCode = this.getStationByCode(stationBean.getCode());
+			Station stationCode = this.getStationByCode(stationFormDto.getAddFormStationCode());
 			if(null == stationCode){
-				Station user = new Station();
-				user.setCode(stationBean.getCode());
-				user.setName(stationBean.getName());
-				user.setPassword(stationBean.getPassword());
-				user.setTelephone(stationBean.getTelephone());
-				user.setStatus(stationBean.getStatus());
-				user.setIsDeleted(Constants.IS_NOT_DELETED);
-				user.setCreater("admin");
-				user.setCreaterTime(new Date());
-				user.setModify("admin");
-				user.setModifyTime(new Date());
-				stationRepository.save(user);
+				Station station = new Station();
+				station.setCode(stationFormDto.getAddFormStationCode());
+				station.setOwner(stationFormDto.getAddFormName());
+				station.setStationNumber(stationFormDto.getAddFormStationNumber());
+				station.setAddress(stationFormDto.getAddFormAddress());
+				station.setProvinceCode(stationFormDto.getAddFormProvince());
+				station.setCityCode(stationFormDto.getAddFormCity());
+				station.setRegionCode(stationFormDto.getAddFormRegion());
+				station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
+				station.setStationType(stationFormDto.getAddFormStationStyle());
+				station.setIsDeleted(Constants.IS_NOT_DELETED);
+				station.setCreater(userId);
+				station.setCreaterTime(new Date());
+				station.setModify(userId);
+				station.setModifyTime(new Date());
+				stationRepository.save(station);
 			}else{
-				throw new BizException(0101);
+				throw new BizException(0201);
 			}
 		}else{
-			// user.setCode(StationBean.getCode());   修改时登录帐号不允许修改
-			Station user = this.getStationById(stationBean.getId());
-			user.setName(stationBean.getName());
-			user.setPassword(stationBean.getPassword());
-			user.setTelephone(stationBean.getTelephone());
-			user.setStatus(stationBean.getStatus());
-			user.setModify("admin");
-			user.setModifyTime(new Date());
-			stationRepository.save(user);
+			Station station = this.getStationById(stationFormDto.getId());
+			station.setOwner(stationFormDto.getAddFormName());
+			station.setStationNumber(stationFormDto.getAddFormStationNumber());
+			station.setAddress(stationFormDto.getAddFormAddress());
+			station.setProvinceCode(stationFormDto.getAddFormProvince());
+			station.setCityCode(stationFormDto.getAddFormCity());
+			station.setRegionCode(stationFormDto.getAddFormRegion());
+			station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
+			station.setModify("admin");
+			station.setModifyTime(new Date());
+			stationRepository.save(station);
 		}
 	}
 
@@ -103,17 +109,17 @@ public class StationServiceImpl implements StationService {
 	 * @throws BizException 
 	 * @see com.sdf.manager.user.service.UserService#deleteStationByIds(java.lang.String[]) 
 	 */
-	public void deleteStationByIds(String[] ids) throws BizException{
+	public void deleteStationByIds(String[] ids,String userId) throws BizException{
 		if(ids.length > 0){
 			for(String id : ids){
 				Station station = this.getStationById(id);
 				station.setIsDeleted(Constants.IS_DELETED);
-				station.setModify("admin");
+				station.setModify(userId);
 				station.setModifyTime(new Date());
 				stationRepository.save(station);
 			}
 		}else{
-			throw new BizException(0102);
+			throw new BizException(0202);
 		}
 	}
 

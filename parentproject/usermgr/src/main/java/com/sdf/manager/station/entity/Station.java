@@ -40,17 +40,11 @@ public class Station extends BaseEntiry implements Serializable
 	@Column(name="CODE")
 	private String code;
 	
-	@Column(name="STATION_CODE")
-	private String stationCode;
-	
-	@Column(name="NAME")
-	private String name;
+	@Column(name="STATION_NUMBER")
+	private String stationNumber;
 	
 	@Column(name="PASSWORD")
 	private String password;
-	
-	@Column(name="TELEPHONE")
-	private String telephone;
 	
 	@Column(name="PROVINCE_CODE")
 	private String provinceCode;
@@ -90,14 +84,6 @@ public class Station extends BaseEntiry implements Serializable
 
 	public void setCode(String code) {
 		this.code = code;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getPassword() {
@@ -140,14 +126,12 @@ public class Station extends BaseEntiry implements Serializable
 		this.address = address;
 	}
 
-	
-
-	public String getStationCode() {
-		return stationCode;
+	public String getStationNumber() {
+		return stationNumber;
 	}
 
-	public void setStationCode(String stationCode) {
-		this.stationCode = stationCode;
+	public void setStationNumber(String stationNumber) {
+		this.stationNumber = stationNumber;
 	}
 
 	public String getOwner() {
@@ -172,15 +156,6 @@ public class Station extends BaseEntiry implements Serializable
 
 	public void setStationType(String stationType) {
 		this.stationType = stationType;
-	}
-
-
-	public String getTelephone() {
-		return telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
 	}
 
 	public String getStatus() {
