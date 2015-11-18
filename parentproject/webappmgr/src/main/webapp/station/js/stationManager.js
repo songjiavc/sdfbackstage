@@ -324,7 +324,7 @@ function initDatagrid()
 	 * 批量删除
 	 * @param code
 	 */
-	function deletestationByIds()
+	function deleteStationByIds()
 	{
 		var url = contextPath + '/station/deleteStationByIds.action';
 		var paramObj = new Object();

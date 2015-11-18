@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
@@ -52,6 +53,7 @@ public class StationServiceImpl implements StationService {
 				station.setRegionCode(stationFormDto.getAddFormRegion());
 				station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
 				station.setStationType(stationFormDto.getAddFormStationStyle());
+				station.setPassword(MD5Util.MD5(stationFormDto.getPassword()));
 				station.setIsDeleted(Constants.IS_NOT_DELETED);
 				station.setCreater(userId);
 				station.setCreaterTime(new Date());
@@ -70,7 +72,8 @@ public class StationServiceImpl implements StationService {
 			station.setCityCode(stationFormDto.getAddFormCity());
 			station.setRegionCode(stationFormDto.getAddFormRegion());
 			station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
-			station.setModify("admin");
+			station.setPassword(MD5Util.MD5(stationFormDto.getPassword()));
+			station.setModify(userId);
 			station.setModifyTime(new Date());
 			stationRepository.save(station);
 		}

@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
+import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRelaRoleBean;
@@ -66,6 +67,7 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(accountBean.getPassword());
 				user.setTelephone(accountBean.getTelephone());
 				user.setStatus(accountBean.getStatus());
+				user.setPassword(MD5Util.MD5(accountBean.getPassword()));
 				user.setIsDeleted(Constants.IS_NOT_DELETED);
 				user.setCreater("admin");
 				user.setCreaterTime(new Date());
@@ -82,6 +84,7 @@ public class UserServiceImpl implements UserService {
 			user.setPassword(accountBean.getPassword());
 			user.setTelephone(accountBean.getTelephone());
 			user.setStatus(accountBean.getStatus());
+			user.setPassword(MD5Util.MD5(accountBean.getPassword()));
 			user.setModify("admin");
 			user.setModifyTime(new Date());
 			userRepository.save(user);
