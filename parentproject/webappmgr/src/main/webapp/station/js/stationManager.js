@@ -187,8 +187,8 @@ function initDatagrid()
 	//关闭弹框
 	function closeDialog()
 	{	
-		$("#addOrUpdateStation").dialog('close');
 		$("#setOrder").dialog('close');
+		$("#addOrUpdateStation").dialog('close');
 	}
 
 	/**

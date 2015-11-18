@@ -22,6 +22,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.LoginUtils;
+import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
@@ -55,10 +57,11 @@ public class AccountController {
 	@RequestMapping(value = "/saveOrUpdate", method = RequestMethod.POST)
 	public @ResponseBody ResultBean saveOrUpdate(
 			AccountBean accountBean,
-			ModelMap model)   {
+			ModelMap model,HttpSession httpSession)   {
 			ResultBean resultBean = new ResultBean();
 			try{
-				userService.saveOrUpdate(accountBean);
+				String userId = LoginUtils.getAuthenticatedUserCode(httpSession);
+				userService.saveOrUpdate(accountBean,userId);
 				resultBean.setMessage("操作成功!");
 				resultBean.setStatus("success");
 			}catch(BizException bizEx){
@@ -147,7 +150,8 @@ public class AccountController {
 	{
 		ResultBean resultBean = new ResultBean();
 		try {
-			userService.deleteAccountByIds(ids);
+			String userId = LoginUtils.getAuthenticatedUserCode(httpSession);
+			userService.deleteAccountByIds(ids,userId);
 			resultBean.setStatus("success");
 			resultBean.setMessage("删除成功!");
 		}catch(BizException bizEx){
@@ -211,5 +215,25 @@ public class AccountController {
 		}finally{
 			return resultBean;
 		}
+	}
+	
+	@SuppressWarnings("finally")
+	@RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+	public @ResponseBody ResultBean  saveUserRleaRole(
+			@RequestParam(value="password",required=true) String newPassword,
+			ModelMap model,HttpSession httpSession) throws Exception{
+		ResultBean resultBean = new ResultBean();
+		try {
+			String userCode = LoginUtils.getAuthenticatedUserCode(httpSession);
+			userService.savePassword(newPassword, userCode);
+			resultBean.setStatus("success");
+			resultBean.setMessage("密码修改成功!");
+		}catch (Exception e) {
+			resultBean.setStatus("failure");
+			resultBean.setMessage(e.getMessage());
+		}finally{
+			return resultBean;
+		}
+		
 	}
 }

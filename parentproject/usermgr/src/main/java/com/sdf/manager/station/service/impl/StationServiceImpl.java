@@ -53,7 +53,7 @@ public class StationServiceImpl implements StationService {
 				station.setRegionCode(stationFormDto.getAddFormRegion());
 				station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
 				station.setStationType(stationFormDto.getAddFormStationStyle());
-				station.setPassword(MD5Util.MD5(stationFormDto.getPassword()));
+				station.setPassword(stationFormDto.getPassword());
 				station.setIsDeleted(Constants.IS_NOT_DELETED);
 				station.setCreater(userId);
 				station.setCreaterTime(new Date());
@@ -72,7 +72,7 @@ public class StationServiceImpl implements StationService {
 			station.setCityCode(stationFormDto.getAddFormCity());
 			station.setRegionCode(stationFormDto.getAddFormRegion());
 			station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
-			station.setPassword(MD5Util.MD5(stationFormDto.getPassword()));
+			station.setPassword(stationFormDto.getPassword());
 			station.setModify(userId);
 			station.setModifyTime(new Date());
 			stationRepository.save(station);

@@ -35,7 +35,7 @@ public interface UserService {
 	  * @date 2015年10月12日 上午11:16:13 
 	  * @param user 
 	  */
-	public void saveOrUpdate(AccountBean accountBean) throws BizException;
+	public void saveOrUpdate(AccountBean accountBean,String userId) throws BizException;
 
 	/** 
 	  * @Description: TODO(这里用一句话描述这个类的作用)
@@ -74,7 +74,7 @@ public interface UserService {
 	  * @param ids
 	  * @throws BizException 
 	  */
-	public void deleteAccountByIds(String[] ids) throws BizException;
+	public void deleteAccountByIds(String[] ids,String userId) throws BizException;
 	
 	/** 
 	  * @Description: 根据userid
@@ -93,4 +93,13 @@ public interface UserService {
 	  * @return 
 	  */
 	public List<UserRelaRole> findUserRelaRoleByUserId(String userId);
+	
+	/** 
+	  * @Description: 修改保存方法
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月18日 下午2:05:03 
+	  * @param newPassword
+	  * @param userCode 
+	  */
+	public void savePassword(String newPassword,String userCode);
 }
