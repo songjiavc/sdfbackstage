@@ -21,6 +21,6 @@ public interface StationRepository extends GenericRepository<Station, String>  {
 	  * @param code
 	  * @return 
 	  */
-	@Query("select u from Station u where u.code =?1")
+	@Query("select u from Station u where u.code =?1 and u.isDeleted=1")
 	public Station getStationByCode(String code);
 }
