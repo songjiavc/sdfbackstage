@@ -31,6 +31,9 @@ public class StationFormDto {
 	private String addFormTelephone;
 	//密码
 	private String password;
+	//确认密码
+	private String confirmPassword;
+	
 	
 	public String getId() {
 		return id;
@@ -98,7 +101,11 @@ public class StationFormDto {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 	
 }
