@@ -57,6 +57,7 @@
 		    		<td colspan="1" class="td_font">站点类型：</td>
 		    		<td colspan="2">
 		    			<select class="easyui-combobox" id="searchFormStyle" name="searchFormStyle" style="width:200px;">
+							<option value="">全部</option>
 							<option value="1">体彩</option>
 							<option value="2">福彩</option>
 						</select>
@@ -115,6 +116,7 @@
                 }]
             ">
 		<form id="addOrUpdateStationForm" method="post" >
+	        <input type="hidden" name="id" />
 	        <div class="ftitle">
 	            <label for="addFormStationCode">站点编码:</label>
 	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
@@ -122,7 +124,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="addFormStationStyle">站点类型:</label>
-	            <select class="easyui-combobox" name="addFormStationStyle" style="width:200px;">
+	            <select class="easyui-combobox" id="addFormStationStyle" name="addFormStationStyle" style="width:200px;">
 					<option value="1">体彩</option>
 					<option value="2">福彩</option>
 				</select>
@@ -135,15 +137,15 @@
 	        
 	        <div class="ftitle">
 	            <label for="addFormProvince">省:</label>
-	            <input id="addFormProvince" class="easyui-combobox textbox"  />
+	            <input id="addFormProvince" name="addFormProvince" class="easyui-combobox textbox"  />
 	        </div>
 	        <div class="ftitle">
 	        	<label for="addFormCity">市:</label>
-	        	<input id="addFormCity" class="easyui-combobox textbox"   />
+	        	<input id="addFormCity" name="addFormCity" class="easyui-combobox textbox"   />
 	        </div>
 	        <div class="ftitle">
 	        	<label for="addFormRegion">区:</label>
-	        	<input id="addFormRegion" class="easyui-combobox textbox"   />
+	        	<input id="addFormRegion" name="addFormRegion" class="easyui-combobox textbox"   />
 	        </div>
 	        <div class="ftitle">
 	            <label for="addFormAddress" >详细地址:</label>

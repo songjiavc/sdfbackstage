@@ -43,7 +43,7 @@ function initQueryProvince()
  * @param provinceId:当前操作的省份combobox标签的id
  * @param pcode:应该选中的省份的code
  */
-function initProvince(addOrUpdate,pcode)
+function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 {
 	$('#addFormProvince').combobox('clear');//清空combobox值
 	
@@ -63,11 +63,11 @@ function initProvince(addOrUpdate,pcode)
                  else
             	 {
                 	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
-            	 	$("#addFormProvince").combobox('setValue', pcode);
+                	 $("#addFormProvince").combobox('select', pcode);
             	 }
              },
              onSelect: function(rec){
-             	var url = contextPath+'/product/getCityList.action?pcode='+rec.pcode;
+            	 var url = contextPath+'/product/getCityList.action?pcode='+rec.pcode;
  		        $('#addFormCity').combobox('reload', url);
  		    }
 		});
@@ -83,14 +83,14 @@ function initProvince(addOrUpdate,pcode)
              }
              else
         	 {
-            	 
             	 if(data.length > 0 &&"update" == addOrUpdate&&"" == oldccode)
             		 {//在修改表单中级联加载市级数据时也要默认选中全部
-            		 	$("#addFormCity").combobox('select',data[data.length-1].ccode);
+            		 $("#addFormCity").combobox('select',data[data.length-1].ccode);
             		 }
             	 else
             		 {//当修改产品初始化市级数据时设置选中当前数据值
             		 	$("#addFormCity").combobox('select', oldccode);
+            		 	oldccode = "";
             		 }
         	 }
          },
@@ -107,17 +107,18 @@ function initProvince(addOrUpdate,pcode)
 		 onLoadSuccess: function (data) { //数据加载完毕事件
              if (data.length > 0 && "add" == addOrUpdate) 
              {
-            	 $("#addFormRegion").combobox('select',data[data.length-1].ccode);
+            	 $("#addFormRegion").combobox('select',data[data.length-1].acode);
              }
              else
         	 {
-            	 if(data.length > 0 &&"update" == addOrUpdate&&"" == oldccode)
+            	 if(data.length > 0 &&"update" == addOrUpdate&&"" == oldacode)
             		 {
-            		 	$("#addFormRegion").combobox('select',data[data.length-1].ccode);
+            		 	$("#addFormRegion").combobox('select',data[data.length-1].acode);
             		 }
             	 else
             		 {
-            		 	$("#addFormRegion").combobox('select', oldccode);
+            		 	$("#addFormRegion").combobox('select', oldacode);
+            		 	oldacode = "";
             		 }
         	 }
 				
@@ -125,17 +126,19 @@ function initProvince(addOrUpdate,pcode)
 	}); 
 }
 
+
+
 /*
  * 	@desc	 
  */
 function initDatagrid()
 {
-	//获取查询form中所有值
+	//获取查询form中所有值   $('#com').combobox('getValue')
 	var queryParams = {
 			searchFormNumber : $('#searchFormNumber').val(),
-			searchFormStyle : $('#searchFormStyle').val(),
-			searchFormProvince : $('#searchFormProvince').val(),
-			searchFormCity : $('#searchFormCity').val(),
+			searchFormStyle : $('#searchFormStyle').combobox('getValue'),
+			searchFormProvince : $('#searchFormProvince').combobox('getValue'),
+			searchFormCity : $('#searchFormCity').combobox('getValue'),
 			searchFormName : $('#searchFormName').val(),
 			searchFormTelephone : $('#searchFormTelephone').val(),
 			searchFormAgent : $('#searchFormAgent').val()
@@ -196,7 +199,7 @@ function initDatagrid()
 			/**
 			 * 站点修改
 			 */
-			$('.panel-title.panel-with-icon').html('修改站点');
+			$('.panel-title.panel-with-icon').html('修改站点信息');
 			var url = contextPath + '/station/getStationDetail.action';
 			var paramData = new Object();
 			paramData.id=id;
@@ -209,12 +212,12 @@ function initDatagrid()
 		        dataType: "json",
 		        success: function (data) {
 					$('#addOrUpdateStationForm').form('load',data);
+					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);
 		        }
 			});
-			
 			$("#addOrUpdateStation").dialog("open");//打开修改用户弹框
 	}
 
@@ -324,7 +327,7 @@ function initDatagrid()
 	 * 批量删除
 	 * @param code
 	 */
-	function deletestationByIds()
+	function deleteStationByIds()
 	{
 		var url = contextPath + '/station/deleteStationByIds.action';
 		var paramObj = new Object();

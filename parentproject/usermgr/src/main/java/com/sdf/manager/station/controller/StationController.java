@@ -30,7 +30,6 @@ import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
 import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.application.dto.StationFormDto;
-import com.sdf.manager.station.bean.StationBean;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.service.StationService;
 
@@ -135,18 +134,13 @@ public class StationController {
 		if(null != searchFormName && !"".equals(searchFormName))
 		{
 			params.add("%"+searchFormName+"%");//根据产品描述模糊查询产品数据
-			buffer.append(" and owner = ?").append(params.size());
+			buffer.append(" and owner  like ?").append(params.size());
 		}
 		
 		if(null != searchFormTelephone && !"".equals(searchFormTelephone))
 		{
 			params.add("%"+searchFormTelephone+"%");//根据产品描述模糊查询产品数据
-			buffer.append(" and telephone = ?").append(params.size());
-		}
-		if(null != searchFormTelephone && !"".equals(searchFormTelephone))
-		{
-			params.add(searchFormAgent);//根据产品描述模糊查询产品数据
-			buffer.append(" and telephone = ?").append(params.size());
+			buffer.append(" and ownerTelephone = ?").append(params.size());
 		}
 		QueryResult<Station> stationList = stationService.getStationList(Station.class, buffer.toString(), params.toArray(),
 				orderBy, pageable);
@@ -164,6 +158,7 @@ public class StationController {
 	{
 		StationFormDto stationFormDto = new StationFormDto();
 		Station station = stationService.getSationById(id);
+		stationFormDto.setId(station.getId());
 		stationFormDto.setAddFormStationCode(station.getCode());
 		stationFormDto.setAddFormName(station.getOwner());
 		stationFormDto.setAddFormStationNumber(station.getStationNumber());
@@ -173,6 +168,8 @@ public class StationController {
 		stationFormDto.setAddFormStationStyle(station.getStationType());
 		stationFormDto.setAddFormAddress(station.getAddress());
 		stationFormDto.setAddFormTelephone(station.getOwnerTelephone());
+		stationFormDto.setPassword(station.getPassword());
+		stationFormDto.setConfirmPassword(station.getPassword());
 		return stationFormDto;
 	}
 	
@@ -277,7 +274,7 @@ public class StationController {
 		stationDto.setStationNumber(station.getStationNumber());
 		stationDto.setName(station.getOwner());
 		stationDto.setTelephone(station.getOwnerTelephone());
-		stationDto.setStationStyle(station.getStationType() == "1"?"体彩":"福彩");
+		stationDto.setStationStyle("1".equals(station.getStationType()) ?"体彩":"福彩");
 		//处理实体中的特殊转换值
 		if(null != station.getCreaterTime())//创建时间
 		{

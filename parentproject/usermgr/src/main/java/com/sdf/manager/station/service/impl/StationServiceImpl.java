@@ -52,6 +52,7 @@ public class StationServiceImpl implements StationService {
 				station.setRegionCode(stationFormDto.getAddFormRegion());
 				station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
 				station.setStationType(stationFormDto.getAddFormStationStyle());
+				station.setPassword(stationFormDto.getPassword());
 				station.setIsDeleted(Constants.IS_NOT_DELETED);
 				station.setCreater(userId);
 				station.setCreaterTime(new Date());
