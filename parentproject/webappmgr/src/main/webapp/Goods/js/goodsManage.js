@@ -290,9 +290,9 @@ function initDatagrid()
 							var showStatus = "";
 							switch(row.status)
 							{
-								case '0':showStatus="上架";break;
-								case '1':showStatus="下架";break;
-								case '2':showStatus="待上架";break;
+								case '0':showStatus="待上架";break;
+								case '1':showStatus="上架";break;
+								case '2':showStatus="下架";break;
 							}
 							return showStatus;
 						}
@@ -317,14 +317,14 @@ function initDatagrid()
 	        
 	    },
 	    rowStyler:function(index,row){//设置行样式
-	        if (row.status==0){//上架
+	        if (row.status==1){//上架
 	    	 		 return 'background-color:#cbdcf8;color:black;';
 			}
-    	 	else	if (row.status==1){//下架
+    	 	else	if (row.status==2){//下架
 				 return 'background-color:#dddcdc;color:black;';
 			}
     	 	
-			else  if (row.status==2){//待上架
+			else  if (row.status==0){//待上架
 				return 'background-color:#6293BB;color:black;';
 			}
 				

@@ -118,6 +118,7 @@ public class GoodsController {
 		public @ResponseBody Map<String,Object> getGoodsList(
 				@RequestParam(value="page",required=false) int page,
 				@RequestParam(value="rows",required=false) int rows,
+				@RequestParam(value="status",required=false) String status,//商品状态
 				@RequestParam(value="province",required=false) String province,//模糊查询所选省
 				@RequestParam(value="goodscode",required=false) String goodscode,//模糊查询商品编码
 				@RequestParam(value="city",required=false) String city,//模糊查询所选市
@@ -166,6 +167,12 @@ public class GoodsController {
 			{
 				params.add("%"+goodsDesprition+"%");//根据商品描述模糊查询商品数据
 				buffer.append(" and goodsDesprition like ?").append(params.size());
+			}
+			
+			if(null != status && !"".equals(status))
+			{
+				params.add(status);//根据商品描述模糊查询商品数据
+				buffer.append(" and status = ?").append(params.size());
 			}
 			
 			//排序

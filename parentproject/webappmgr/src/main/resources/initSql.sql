@@ -25,6 +25,8 @@ values ('4028813a506a4de701506a79c6990000','admin','2015-10-15 15:49:37','admin'
 */
 insert  into `t_sdf_roles`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`MODIFY_TIME`,`CODE`,`NAME`,`PARENT_ROLE`,`PARENT_ROLENAME`,`ISSYSTEM`) 
 values ('0','admin','2015-10-13 14:53:00','1','admin','2015-10-20 10:20:38','1','超级管理员','','','1');
+insert  into `t_sdf_roles`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`MODIFY_TIME`,`CODE`,`NAME`,`PARENT_ROLE`,`PARENT_ROLENAME`,`ISSYSTEM`) 
+values ('1','admin','2015-10-13 14:53:00','1','admin','2015-10-20 10:20:38','2','财务管理员','0','超级管理员','1');
 
 /*
 	初始化用户表数据
@@ -44,14 +46,16 @@ VALUES ('4028813a50b2024b0150b203b0b90000','0','0');
 	初始化角色权限关联表数据
 */
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','1');
+values ('0','1');/*超级管理员权限*/
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','4028813a505fe87201505ff93aa80002');
+values ('0','4028813a505fe87201505ff93aa80002');/*超级管理员权限*/
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','4028813a506a4de701506a79c6990000');
+values ('0','4028813a506a4de701506a79c6990000');/*超级管理员权限*/
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','4028813a506536910150653be3ed0001');
+values ('0','4028813a506536910150653be3ed0001');/*超级管理员权限*/
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','4028813a506515ad01506519e1720002');
+values ('0','4028813a506515ad01506519e1720002');/*超级管理员权限*/
 insert  into `rela_sdf_authority_role`(`ROLE_ID`,`authority_ID`) 
-values ('0','4028813a506515ad01506519290a0001');
+values ('0','4028813a506515ad01506519290a0001');/*超级管理员权限*/
+insert into `rela_sdf_authority_role` (`ROLE_ID`, `authority_ID`)
+values('1','4028813a506515ad01506519e1720002');/*财务管理员权限*/

@@ -24,10 +24,14 @@ public class Constants {
 	
 	public static final String PRODUCT_ZL_ALL_NAME = "全部";//产品中类别的“全部”选项对应的显示名称
 	
-	public static final String GOODS_SHELVES = "0";//商品上架
+	public static final String GOODS_SHELVES = "1";//商品上架
 	
-	public static final String GOODS_OFF_SHELVES = "1";//商品下架
+	public static final String GOODS_OFF_SHELVES = "2";//商品下架
 	
-	public static final String GOODS_STAY_ON_SHELVES = "2";//商品待上架
+	public static final String GOODS_STAY_ON_SHELVES = "0";//商品待上架
+	
+	public static final String PAY_MODE_ONE = "0";//支付方式：现金支付
+	
+	public static final String PAY_MODE_TWO = "1";//支付方式：转账支付
 
 }

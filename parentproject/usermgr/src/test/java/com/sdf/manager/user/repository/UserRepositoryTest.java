@@ -1,20 +1,15 @@
-package com.sdf.manager.user.repository;
+/*package com.sdf.manager.user.repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.user.entity.User;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:applicationContext.xml"})
@@ -38,3 +33,4 @@ public class UserRepositoryTest {
 	}
 
 }
+*/

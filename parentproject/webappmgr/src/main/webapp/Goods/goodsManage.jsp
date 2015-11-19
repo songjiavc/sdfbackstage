@@ -171,9 +171,9 @@
 	        <div class="ftitle">
 	            <label for="status">状态:</label>
 	            <div style="float:left;margin-left: 10%;">
-		            <input class="easyui-validatebox" type="radio" name="status"  value="0" checked>上架</input>
-		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="1">下架</input>
-		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="2">待上架</input>
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" >上架</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="2">下架</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0" checked>待上架</input>
 	        	</div>
 	        </div>
 	         <div class="ftitle">
@@ -243,9 +243,9 @@
 	        <div class="ftitle">
 	            <label for="status">状态:</label>
 	            <div style="float:left;margin-left: 10%;">
-		            <input class="easyui-validatebox" type="radio" name="status"  value="0" checked>上架</input>
-		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="1">下架</input>
-		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="2">待上架</input>
+		            <input class="easyui-validatebox" type="radio" name="status"  value="1" checked>上架</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="2">下架</input>
+		            <input class="easyui-validatebox" style="margin-left:10px;" type="radio" name="status" value="0" checked>待上架</input>
 	        	</div>
 	        </div>
 	         <div class="ftitle">
