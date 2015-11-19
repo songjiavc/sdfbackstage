@@ -13,7 +13,7 @@ $(function() {
 		     });
 	
 		     $('#btnEp').click(function() {
-		         serverLogin();
+		    	 updatePassword();
 		     })
 	
 				$('#btnCancel').click(function(){closePwd();})
@@ -324,3 +324,32 @@ function clockon() {
 
 	var timer = setTimeout("clockon()", 200);
 }
+
+/*
+ * 修改密码模块涉及到的部分
+ */
+
+	//修改密码提交内容
+	function updatePassword()
+	{
+		$('#updatePasswordForm').form('submit',{
+			onSubmit:function(param){
+				return $('#updatePasswordForm').form('validate');
+			},
+			success:function(data){
+				$.messager.alert('提示', eval("(" + data + ")").message);
+				$('#updatePasswordForm').form('clear');
+				$("#w").dialog('close');
+				window.location.href=contextPath+"/index.jsp";
+			}
+		});
+	}
+/**
+ * 自定义校验code
+ */
+$.extend($.fn.validatebox.defaults.rules, {
+    equalTo: { 
+    	validator: function (value, param) { 
+    		return $(param[0]).val() == value;
+    		}, message: '两次密码输入不一致！' }
+});

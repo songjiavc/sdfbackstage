@@ -24,7 +24,7 @@ public class AccountBean
 	
 	private String creater;
 	
-	private Date createrTime;
+	private String createrTime;
 	
 	public String getId() {
 		return id;
@@ -90,11 +90,11 @@ public class AccountBean
 		this.creater = creater;
 	}
 
-	public Date getCreaterTime() {
+	public String getCreaterTime() {
 		return createrTime;
 	}
 
-	public void setCreaterTime(Date createrTime) {
+	public void setCreaterTime(String createrTime) {
 		this.createrTime = createrTime;
 	}
 

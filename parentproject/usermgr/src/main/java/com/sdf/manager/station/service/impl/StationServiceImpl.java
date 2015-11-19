@@ -1,11 +1,7 @@
 package com.sdf.manager.station.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +12,12 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.station.bean.StationBean;
+import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.repository.StationRepository;
 import com.sdf.manager.station.service.StationService;
-import com.sdf.manager.user.bean.UserRelaRoleBean;
 /** 
   * @ClassName: AuthServiceImpl 
   * @Description: 
@@ -34,13 +30,6 @@ import com.sdf.manager.user.bean.UserRelaRoleBean;
 public class StationServiceImpl implements StationService {
 	@Autowired
 	private StationRepository stationRepository;
-	
-	/**
-	 * @return
-	 */
-	public List<Station> findAll() {
-		return stationRepository.findAll();
-	}
 
 	/**
 	 * 
@@ -49,36 +38,44 @@ public class StationServiceImpl implements StationService {
 	 * @throws BizException 
 	* @date 2015年10月15日 下午1:33:45
 	 */
-	public void saveOrUpdate(StationBean stationBean) throws BizException {
-		if(StringUtils.isEmpty(stationBean.getId())){
+	public void saveOrUpdate(StationFormDto stationFormDto,String userId) throws BizException {
+		if(StringUtils.isEmpty(stationFormDto.getId())){
 			//如果是新增判断帐号是否表内重复
-			Station stationCode = this.getStationByCode(stationBean.getCode());
+			Station stationCode = this.getStationByCode(stationFormDto.getAddFormStationCode());
 			if(null == stationCode){
-				Station user = new Station();
-				user.setCode(stationBean.getCode());
-				user.setName(stationBean.getName());
-				user.setPassword(stationBean.getPassword());
-				user.setTelephone(stationBean.getTelephone());
-				user.setStatus(stationBean.getStatus());
-				user.setIsDeleted(Constants.IS_NOT_DELETED);
-				user.setCreater("admin");
-				user.setCreaterTime(new Date());
-				user.setModify("admin");
-				user.setModifyTime(new Date());
-				stationRepository.save(user);
+				Station station = new Station();
+				station.setCode(stationFormDto.getAddFormStationCode());
+				station.setOwner(stationFormDto.getAddFormName());
+				station.setStationNumber(stationFormDto.getAddFormStationNumber());
+				station.setAddress(stationFormDto.getAddFormAddress());
+				station.setProvinceCode(stationFormDto.getAddFormProvince());
+				station.setCityCode(stationFormDto.getAddFormCity());
+				station.setRegionCode(stationFormDto.getAddFormRegion());
+				station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
+				station.setStationType(stationFormDto.getAddFormStationStyle());
+				station.setPassword(stationFormDto.getPassword());
+				station.setIsDeleted(Constants.IS_NOT_DELETED);
+				station.setCreater(userId);
+				station.setCreaterTime(new Date());
+				station.setModify(userId);
+				station.setModifyTime(new Date());
+				stationRepository.save(station);
 			}else{
-				throw new BizException(0101);
+				throw new BizException(0201);
 			}
 		}else{
-			// user.setCode(accountBean.getCode());   修改时登录帐号不允许修改
-			Station user = this.getStationById(stationBean.getId());
-			user.setName(stationBean.getName());
-			user.setPassword(stationBean.getPassword());
-			user.setTelephone(stationBean.getTelephone());
-			user.setStatus(stationBean.getStatus());
-			user.setModify("admin");
-			user.setModifyTime(new Date());
-			stationRepository.save(user);
+			Station station = this.getStationById(stationFormDto.getId());
+			station.setOwner(stationFormDto.getAddFormName());
+			station.setStationNumber(stationFormDto.getAddFormStationNumber());
+			station.setAddress(stationFormDto.getAddFormAddress());
+			station.setProvinceCode(stationFormDto.getAddFormProvince());
+			station.setCityCode(stationFormDto.getAddFormCity());
+			station.setRegionCode(stationFormDto.getAddFormRegion());
+			station.setOwnerTelephone(stationFormDto.getAddFormTelephone());
+			station.setPassword(stationFormDto.getPassword());
+			station.setModify(userId);
+			station.setModifyTime(new Date());
+			stationRepository.save(station);
 		}
 	}
 
@@ -97,46 +94,10 @@ public class StationServiceImpl implements StationService {
 	}
 	
 
-	public Map<String,Object>  getScrollDataByJpql(Class<Station> entityClass,String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable)
+	public QueryResult<Station>  getStationList(Class<Station> entityClass,String whereJpql, Object[] queryParams,LinkedHashMap<String, String> orderby, Pageable pageable)
 	{
-		Map<String,Object> returnData = new HashMap<String,Object>();
-		List<StationBean> accountList = new ArrayList<StationBean>();
-		QueryResult<Station> userObj = stationRepository.getScrollDataByJpql(entityClass, whereJpql, queryParams,orderby, pageable);
-		List<Station> userlist = userObj.getResultList();
-		Long totalrow = userObj.getTotalRecord();
-		for(Station user : userlist){
-			StationBean accountBean = new StationBean();
-			accountBean.setId(user.getId());
-			accountBean.setCode(user.getCode());
-			accountBean.setName(user.getName());
-			accountBean.setStatus(user.getStatus());
-			accountBean.setTelephone(user.getTelephone());
-			accountBean.setCreater(user.getCreater());
-			accountBean.setCreaterTime(user.getCreaterTime());
-			List<UserRelaRoleBean> roleBeanList = new ArrayList<UserRelaRoleBean>();
-			/*for(Role role : user.getRoles()){
-				RoleBean roleBean = new RoleBean();
-				roleBean.setRuleId(role.getId());
-				roleBean.setRuleCode(role.getCode());
-				roleBean.setRuleName(role.getName());
-				roleBeanList.add(roleBean);
-			}*/
-			UserRelaRoleBean roleBean1 = new UserRelaRoleBean();
-			roleBean1.setRoleId("111111");
-			roleBean1.setRoleCode("222222");
-			roleBean1.setRoleName("333333");
-			roleBeanList.add(roleBean1);
-			UserRelaRoleBean roleBean2 = new UserRelaRoleBean();
-			roleBean2.setRoleId("444444");
-			roleBean2.setRoleCode("555555");
-			roleBean2.setRoleName("666666");
-			roleBeanList.add(roleBean2);
-			//accountBean.setRoles(roleBeanList);
-			accountList.add(accountBean);
-		}
-		returnData.put("rows", accountList);
-		returnData.put("total", totalrow);
-		return returnData;
+		QueryResult<Station> stationObj = stationRepository.getScrollDataByJpql(entityClass, whereJpql, queryParams,orderby, pageable);
+		return stationObj;
 	}
 
 	public Station getStationByCode(String code) {
@@ -145,34 +106,34 @@ public class StationServiceImpl implements StationService {
 	
 	
 	/* (非 Javadoc) 
-	 * <p>Title: deleteAccountByIds</p> 
+	 * <p>Title: deleteStationByIds</p> 
 	 * <p>Description: </p> 
 	 * @param ids
 	 * @throws BizException 
-	 * @see com.sdf.manager.user.service.UserService#deleteAccountByIds(java.lang.String[]) 
+	 * @see com.sdf.manager.user.service.UserService#deleteStationByIds(java.lang.String[]) 
 	 */
-	public void deleteAccountByIds(String[] ids) throws BizException{
+	public void deleteStationByIds(String[] ids,String userId) throws BizException{
 		if(ids.length > 0){
 			for(String id : ids){
 				Station station = this.getStationById(id);
 				station.setIsDeleted(Constants.IS_DELETED);
-				station.setModify("admin");
+				station.setModify(userId);
 				station.setModifyTime(new Date());
 				stationRepository.save(station);
 			}
 		}else{
-			throw new BizException(0102);
+			throw new BizException(0202);
 		}
 	}
 
+	/* (非 Javadoc) 
+	 * <p>Title: getSationById</p> 
+	 * <p>Description: </p> 
+	 * @param id
+	 * @return 
+	 * @see com.sdf.manager.station.service.StationService#getSationById(java.lang.String) 
+	 */
 	public Station getSationById(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		return stationRepository.getOne(id);
 	}
-
-	public void deleteStationByIds(String[] ids) throws BizException {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

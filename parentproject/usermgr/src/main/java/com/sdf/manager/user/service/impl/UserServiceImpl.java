@@ -16,6 +16,8 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.DateUtil;
+import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRelaRoleBean;
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
 	 * @throws BizException 
 	* @date 2015年10月15日 下午1:33:45
 	 */
-	public void saveOrUpdate(AccountBean accountBean) throws BizException {
+	public void saveOrUpdate(AccountBean accountBean,String userId) throws BizException {
 		if(StringUtils.isEmpty(accountBean.getId())){
 			//如果是新增判断帐号是否表内重复
 			User userCode = this.getUserByCode(accountBean.getCode());
@@ -65,10 +67,11 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(accountBean.getPassword());
 				user.setTelephone(accountBean.getTelephone());
 				user.setStatus(accountBean.getStatus());
+				user.setPassword(MD5Util.MD5(accountBean.getPassword()));
 				user.setIsDeleted(Constants.IS_NOT_DELETED);
-				user.setCreater("admin");
+				user.setCreater(userId);
 				user.setCreaterTime(new Date());
-				user.setModify("admin");
+				user.setModify(userId);
 				user.setModifyTime(new Date());
 				userRepository.save(user);
 			}else{
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
 			user.setPassword(accountBean.getPassword());
 			user.setTelephone(accountBean.getTelephone());
 			user.setStatus(accountBean.getStatus());
+			user.setPassword(MD5Util.MD5(accountBean.getPassword()));
 			user.setModify("admin");
 			user.setModifyTime(new Date());
 			userRepository.save(user);
@@ -120,7 +124,7 @@ public class UserServiceImpl implements UserService {
 			accountBean.setStatus(user.getStatus());
 			accountBean.setTelephone(user.getTelephone());
 			accountBean.setCreater(user.getCreater());
-			accountBean.setCreaterTime(user.getCreaterTime());
+			accountBean.setCreaterTime(DateUtil.formatDate(user.getCreaterTime(), DateUtil.FULL_DATE_FORMAT));
 			List<UserRelaRoleBean> roleBeanList = new ArrayList<UserRelaRoleBean>();
 			for(Role role : user.getRoles()){
 				UserRelaRoleBean userRelaRoleBean = new UserRelaRoleBean();
@@ -149,12 +153,12 @@ public class UserServiceImpl implements UserService {
 	 * @throws BizException 
 	 * @see com.sdf.manager.user.service.UserService#deleteAccountByIds(java.lang.String[]) 
 	 */
-	public void deleteAccountByIds(String[] ids) throws BizException{
+	public void deleteAccountByIds(String[] ids,String userId) throws BizException{
 		if(ids.length > 0){
 			for(String id : ids){
 				User user = this.getUserById(id);
 				user.setIsDeleted(Constants.IS_DELETED);
-				user.setModify("admin");
+				user.setModify(userId);
 				user.setModifyTime(new Date());
 				userRepository.save(user);
 			}
@@ -196,5 +200,18 @@ public class UserServiceImpl implements UserService {
 	  */
 	public List<UserRelaRole> findUserRelaRoleByUserId(String userId){
 		return userRelaRoleRepository.findUserRelaRoleByUserId(userId);
+	}
+	
+	/* (非 Javadoc) 
+	 * <p>Title: savePassword</p> 
+	 * <p>Description: </p> 
+	 * @param newPassword
+	 * @param userId 
+	 * @see com.sdf.manager.user.service.UserService#savePassword(java.lang.String, java.lang.String) 
+	 */
+	public void savePassword(String newPassword,String userCode){
+		User user = this.getUserByCode(userCode);
+		user.setPassword(MD5Util.MD5(newPassword));
+		userRepository.save(user);
 	}
 }

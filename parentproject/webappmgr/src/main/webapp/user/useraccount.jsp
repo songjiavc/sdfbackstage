@@ -79,7 +79,7 @@
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>
 	            <input class="easyui-validatebox textbox" type="password" id="password" name="password" data-options="required:true"
-	            validType="length[1,20]"   missingMessage="密码不可以为空" ></input>
+	            validType="length[6,20]"   missingMessage="密码不可以为空" ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="confirmPassword" >确认密码:</label>

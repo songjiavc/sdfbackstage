@@ -125,7 +125,8 @@ function initDatagrid()
 			},
 			success:function(data){
 				$.messager.alert('提示', eval("(" + data + ")").message);
-	        	closeDialog();
+				$('#addAccountForm').form('clear');
+				closeDialog();
 	        	initDatagrid();
 			}
 		});
