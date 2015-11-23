@@ -144,6 +144,7 @@ public class RoleController
 			ResultBean resultBean = new ResultBean();
 			
 			Role role ;
+			List<Authority> authList = new ArrayList<Authority> ();
 			for (String id : ids) 
 			{
 				role = new Role();
@@ -151,6 +152,7 @@ public class RoleController
 				role.setIsDeleted("0");;//设置当前数据为已删除状态
 				role.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				role.setModifyTime(new Timestamp(System.currentTimeMillis()));
+				role.setAuthorities(authList);//清空角色与权限的关联表数据，因为当前角色已删除，所以关联数据无意义
 				roleService.update(role);//保存更改状态的角色实体
 			}
 			
