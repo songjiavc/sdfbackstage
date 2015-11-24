@@ -49,6 +49,11 @@ public class OrderServiceImpl implements OrderService {
 		return orderRepository.getOrdersById(id);
 	}
 	
+	public Orders getOrdersByCode(String code)
+	{
+		return orderRepository.getOrdersByCode(code);
+	}
+	
 	/**
 	 * 
 	* @Description: 保存订单实体数据

@@ -1,5 +1,5 @@
 var goodsList = new Array();//选中的商品数据
-
+var countPrice = 0;//选中商品总价
 $(document).ready(function(){
 	
 			initGoodsDatagrid('210000', 'all', 'goodsDatagridU');
@@ -15,6 +15,7 @@ $(document).ready(function(){
 function clearGoodsArray()
 {
 	goodsList = new Array();
+	countPrice = 0;//清零商品总价
 }
 
 /**
@@ -141,33 +142,57 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid)
 	    onSelect:function(index,row){
 			
 			var pushFlag = goodListExist(row.id);
+			var price = 0;
 			if(pushFlag)
 				{
 					goodsList.push(row.id);
+					price = parseInt(row.price);//js中将字符串转换为数字
+					countPrice = countPrice+price;
 				}
-			
+			addCountPrice(countPrice);//更新商品总价
 		},
 		onUnselect:function(index,row){
+			var price = 0;
+			price = parseInt(row.price);
 			removeGoodList(row.id);
+			countPrice = countPrice-price;
+			addCountPrice(countPrice);//更新商品总价
+			
 		},
 		onUnselectAll:function(rows){
+			var price = 0;
+			
 			for(var i=0;i<rows.length;i++)
 			{
+				price = parseInt(rows[i].price);
 				removeGoodList(rows[i].id);
+				countPrice = countPrice-price;
 			}
+			addCountPrice(countPrice);//更新商品总价
 			
 		},
 		onSelectAll:function(rows){
+			var price = 0;
 			for(var i=0;i<rows.length;i++)
 			{
+				price = parseInt(rows[i].price);
 				var pushFlag = goodListExist(rows[i].id);
 				if(pushFlag)
 				{
 					goodsList.push(rows[i].id);
+					countPrice = countPrice+price;
 				}
 			}
+			addCountPrice(countPrice);//更新商品总价
 		}
 	});
+}
+
+//填充商品总价显示值
+function addCountPrice(cprice)
+{
+	$("#pricehidden").val(cprice);
+	$("#priceA").textbox('setText',cprice);
 }
 
 /**

@@ -32,6 +32,7 @@ import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.MenuBean;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.AuthorityBean;
+import com.sdf.manager.user.dto.AuthorityDTO;
 import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
@@ -418,7 +419,7 @@ public class MenuController {
 	* @date 2015年10月10日 上午10:16:35
 	 */
 	@RequestMapping(value = "/getDetailAuth", method = RequestMethod.GET)
-	public @ResponseBody Authority getDetailAuth(
+	public @ResponseBody AuthorityDTO getDetailAuth(
 			@RequestParam(value="code",required=false) String code,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
@@ -426,7 +427,9 @@ public class MenuController {
 		
 		authority = authService.getAuthorityByCode(code);
 		
-		return authority;
+		AuthorityDTO authorityDTO = authService.toDTO(authority);
+		
+		return authorityDTO;
 	}
 	
 	
@@ -540,7 +543,9 @@ public class MenuController {
 		List<Authority> authorities = authlist.getResultList();
 		Long totalrow = authlist.getTotalRecord();
 		
-		returnData.put("rows", authorities);
+		List<AuthorityDTO> authorityDTOs = authService.toDTOS(authorities);
+		
+		returnData.put("rows", authorityDTOs);
 		returnData.put("total", totalrow);
 		
 		return returnData;

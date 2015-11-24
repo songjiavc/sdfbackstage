@@ -153,7 +153,7 @@ function authManage(id,parentRole)
 	initZnodes(id);
 	
 	//初始化已拥有的权限
-	var url = contextPath + '/role/getDetailRole.action';
+	var url = contextPath + '/role/getAuthListOfRole.action';
 	var data1 = new Object();
 	data1.id=id;//权限的id
 	var zTree = $.fn.zTree.getZTreeObj("treeDemo");
@@ -168,7 +168,7 @@ function authManage(id,parentRole)
         dataType: "json",
         success: function (data) {
         	
-        	authList = data.authorities;//获取权限
+        	authList = data;//获取权限
         	var node;//ztree树节点变量
         	var flag = false;
         	if(authList.length>0)
@@ -263,7 +263,7 @@ function getOriginAuthId()
  */
 function getParentAuth(parentRole)
 {
-	var url = contextPath + '/role/getDetailRole.action';
+	var url = contextPath + '/role/getAuthListOfRole.action';
 	var data1 = new Object();
 	data1.id=parentRole;//权限的id
 	
@@ -277,7 +277,7 @@ function getParentAuth(parentRole)
         dataType: "json",
         success: function (data) {
         	
-        	returnObject = data.authorities;
+        	returnObject = data;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(errorThrown);

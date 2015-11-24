@@ -13,12 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Transient;
 
 import com.sdf.manager.goods.entity.Goods;
+import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.user.entity.BaseEntiry;
 
 @Entity
@@ -82,10 +84,22 @@ public class Orders extends BaseEntiry implements Serializable
 	private List<Goods> goods ;
 	
 	
+	@OneToMany(mappedBy = "orders", fetch = FetchType.LAZY) 
+	private List<FoundOrderStatus> foundOrderStatus;
 	
 	
 	
 	
+	
+	
+	public List<FoundOrderStatus> getFoundOrderStatus() {
+		return foundOrderStatus;
+	}
+
+	public void setFoundOrderStatus(List<FoundOrderStatus> foundOrderStatus) {
+		this.foundOrderStatus = foundOrderStatus;
+	}
+
 	public String getCreator() {
 		return creator;
 	}

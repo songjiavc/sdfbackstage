@@ -37,5 +37,7 @@ public class Constants {
 	public static final String PAY_MODE_ONE = "0";//支付方式：现金支付
 	
 	public static final String PAY_MODE_TWO = "1";//支付方式：转账支付
+	
+	
 
 }

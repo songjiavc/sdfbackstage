@@ -30,12 +30,22 @@ public class GoodsDTO {
 	
 	private String probation;//试用期
 	
+	private String connectOrders = "0";//是否与有效订单数据关联（0：未关联  1：关联）
+	
 	
 	private List<RelaSdfGoodProduct> goodAndproduct ;
 	
 	
 	
 	
+	public String getConnectOrders() {
+		return connectOrders;
+	}
+
+	public void setConnectOrders(String connectOrders) {
+		this.connectOrders = connectOrders;
+	}
+
 	public List<RelaSdfGoodProduct> getGproducts() {
 		return goodAndproduct;
 	}

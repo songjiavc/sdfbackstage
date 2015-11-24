@@ -24,6 +24,8 @@ import com.sdf.manager.common.bean.TreeBean;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.RoleAuthBean;
+import com.sdf.manager.user.dto.AuthorityDTO;
+import com.sdf.manager.user.dto.RoleDTO;
 import com.sdf.manager.user.entity.Authority;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.service.AuthService;
@@ -56,7 +58,7 @@ public class RoleController
 	 * @date 2015年10月19日 下午2:11:51
 	  */
 	 @RequestMapping(value = "/getDetailRole", method = RequestMethod.GET)
-	 public @ResponseBody Role getDetailRole(
+	 public @ResponseBody RoleDTO getDetailRole(
 			@RequestParam(value="id",required=false) String id,
 			ModelMap model,HttpSession httpSession) throws Exception
 	 {
@@ -64,8 +66,32 @@ public class RoleController
 		
 	 	role = roleService.getRoleById(id);
 	 	
-		return role;
+	 	RoleDTO RoleDTO = roleService.toDTO(role);
+	 	
+		return RoleDTO;
 	 }
+	 
+	 /**
+	  * 
+	 * @Description:获取指定角色对应的权限列表数据
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月24日 上午9:56:29
+	  */
+	 @RequestMapping(value = "/getAuthListOfRole", method = RequestMethod.GET)
+	 public @ResponseBody List<AuthorityDTO> getAuthListOfRole(
+			@RequestParam(value="id",required=false) String id,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		 Role role = new Role();
+			
+		 role = roleService.getRoleById(id);
+		 
+		 List<Authority> authorities = role.getAuthorities();
+		 
+		 List<AuthorityDTO> authorityDTOs = authService.toDTOS(authorities);
+		 
+		 return authorityDTOs;
+	}
 	 
 	 /**
 	  * 
@@ -283,10 +309,12 @@ public class RoleController
 			QueryResult<Role> rolelist = roleService.getRolelist(Role.class, buffer.toString(),
 					params.toArray(), orderBy, pageable);
 			//处理返回数据
-			List<Role> authorities = rolelist.getResultList();
+			List<Role> roles = rolelist.getResultList();
 			Long totalrow = rolelist.getTotalRecord();
 			
-			returnData.put("rows", authorities);
+			List<RoleDTO> roleDTOs = roleService.toDTOS(roles);
+			
+			returnData.put("rows", roleDTOs);
 			returnData.put("total", totalrow);
 			
 			return returnData;

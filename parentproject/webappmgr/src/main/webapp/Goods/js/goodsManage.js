@@ -278,6 +278,7 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'connectOrders',hidden:true},//是否与有效订单关联
 				{field:'code',title:'商品编码',width:120,align:'left'},
 		        {field:'name',width:120,title:'商品名称'},
 				{field:'price',title:'价格(元)',width:80,align:'left'},
@@ -300,7 +301,7 @@ function initDatagrid()
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
 			                var btn = '<a class="editcls" onclick="updateGoods(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-			                	+'<a class="deleterole" onclick="deleteGoods(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
+			                	+'<a class="deleterole" onclick="deleteGoods(&quot;'+row.id+'&quot;,&quot;'+row.status+'&quot;,&quot;'+row.connectOrders+'&quot;)" href="javascript:void(0)">删除</a>';
 			                return btn;  
 			            }  
 			        }  
@@ -775,43 +776,61 @@ function submitUpdategoods()
 /**
  * 删除商品数据
  * @param id
+ * @param status:当前待删除商品状态（0：待上架，1：上架 2：下架）
+ * @param connectOrders:是否与有效订单数据关联
  */
-function deleteGoods(id)
+function deleteGoods(id,status,connectOrders)
 {
 	var url = contextPath + '/goods/deleteGoods.action';
 	var data1 = new Object();
+	var deleteFlag = true;
 	
 	var codearr = [];
 	codearr.push(id);
 	
 	data1.ids=codearr.toString();
-		
-	if(codearr.length>0)
+	
+	if(codearr.length == 0)
+		{
+			$.messager.alert('提示',"请选择数据后操作!");
+			deleteFlag = false;
+		}
+	else
+		if('1' == status)//商品当前状态为“上架”
+			{
+				$.messager.alert('提示',"当前待删除商品已上架,不可删除!");
+				deleteFlag = false;
+			}
+	else
+		if('1' == connectOrders)//商品与有效订单数据有关联
+			{
+				$.messager.alert('提示',"当前待删除商品已被购买,不可删除!");
+				deleteFlag = false;
+			}
+	
+	if(deleteFlag)
 	{
 		$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
-			        	
-		        }  
-		    });  
+	        if (r) {  
+		        	$.ajax({
+		        		async: false,   //设置为同步获取数据形式
+		                type: "post",
+		                url: url,
+		                data:data1,
+		                dataType: "json",
+		                success: function (data) {
+		                	initDatagrid();
+		                	$.messager.alert('提示', data.message);
+		                },
+		                error: function (XMLHttpRequest, textStatus, errorThrown) {
+		                    alert(errorThrown);
+		                }
+		           });
+		        	
+	        }  
+	    });  
 	}
-	else
-	{
-		$.messager.alert('提示',"请选择数据后操作!");
-	}
+		
 	
 }
 
@@ -833,6 +852,22 @@ function deleteGoodsList(operaType)
 	for(var i=0; i<rows.length; i++)
 	{
 		codearr.push(rows[i].id);//code
+		
+		if('0' == operaType)
+			{
+				if('1' == rows[i].status)//商品当前状态为“上架”
+					{
+						deleteFlag = false;
+						$.messager.alert('提示', "当前待删除商品编码为:"+rows[i].code+"的商品已上架,不可进行删除操作!");
+						break;
+					}
+				else
+					if('1' == rows[i].connectOrders)//商品与有效订单数据有关联
+						{
+							$.messager.alert('提示',"当前待删除商品编码为:"+rows[i].code+"已被购买,不可进行删除操作!");
+							deleteFlag = false;
+						}
+			}
 	}
 	
 	if(deleteFlag)

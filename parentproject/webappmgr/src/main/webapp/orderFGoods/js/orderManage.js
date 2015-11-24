@@ -1,5 +1,5 @@
-var goodsList = new Array();//选中的产品数据
-
+var goodsList = new Array();//选中的商品数据
+var countPrice = 0;//选中商品总价
 $(document).ready(function(){
 	
 			closeDialog();//页面加载时关闭弹框
@@ -15,6 +15,7 @@ $(document).ready(function(){
 function clearGoodsArray()
 {
 	goodsList = new Array();
+	countPrice = 0;//清零商品总价
 }
 
 /**
@@ -77,10 +78,11 @@ function reset()
 function closeDialog()
 {
 	$("#updateOrders").dialog('close');
+	$("#detailOrders").dialog('close');
 }
 
 /**
- * 初始化商品列表数据
+ * 初始化订单列表数据
  */
 function initDatagrid()
 {
@@ -104,7 +106,7 @@ function initDatagrid()
 				{field:'id',hidden:true},
 				{field:'code',title:'订单编码',width:120,align:'left'},
 		        {field:'name',width:120,title:'订单名称'},
-				{field:'price',title:'订单金额(元)',width:80,align:'left'},
+				{field:'price',title:'订单金额(元)',width:60,align:'left'},
 				{field:'payMode',title:'支付方式',width:100,align:'left',  
 		            formatter:function(value,row,index){  
 		                var showPaymode = "";
@@ -118,22 +120,31 @@ function initDatagrid()
 		                	}
 		                return showPaymode;  
 		            }  },
-				{field:'creator',title:'创建人',width:100,align:'left'},
+				{field:'creator',title:'创建人',width:70,align:'left'},
 				{field:'createTime',title:'创建时间',width:130,align:'left'},
-				{field:'operator',title:'操作人',width:120,align:'left'},
-				{field:'statusName',title:'状态',width:80,align:'left'},
-				{field:'opt',title:'操作',width:160,align:'center',  
+				{field:'operator',title:'操作人',width:70,align:'left'},
+				{field:'statusName',title:'状态',width:100,align:'left'},
+				{field:'opt',title:'操作',width:200,align:'center',  
 		            formatter:function(value,row,index){  
-		                var btn = '<a class="editcls" onclick="updateOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="deleterole" onclick="deleteOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
-		                //※(还没做)订单列表还要根据权限显示”提交“和”审批“按钮
+		                var btn = '<a class="editcls" onclick="updateOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="编辑">编辑</a>'//代理编辑
+		                	+'<a class="deleterole" onclick="deleteOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="删除">删除</a>'//代理删除
+		                	+'<a class="submitOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,1)" href="javascript:void(0)" title="提交">提交</a>'//代理提交
+		                	+'<a class="detailcls" onclick="viewOrdersDetail(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="查看详情">详情</a>'//财务管理员可以查看订单详情但是不可以修改内容，可以审批
+		                	+'<a class="rejectOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,3)" href="javascript:void(0)" title="审批驳回">驳回</a>'//财务管理员驳回
+		                	+'<a class="stopOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,4)" href="javascript:void(0)" title="不通过">不通过</a>'//财务管理员不通过，终止订单的审批流程且流程不可恢复
+		                	+'<a class="throughOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,2)" href="javascript:void(0)" title="审批通过">通过</a>';//财务管理员审批通过
 		                return btn;  
 		            }  
 		        }  
 		    ]],  
 	    onLoadSuccess:function(data){  
 	        $('.editcls').linkbutton({text:'编辑',plain:true,iconCls:'icon-edit'}); 
+	        $('.detailcls').linkbutton({text:'详情',plain:true,iconCls:'icon-edit'}); 
+	        $('.submitOrder').linkbutton({text:'提交',plain:true,iconCls:'icon-edit'});  
 	        $('.deleterole').linkbutton({text:'删除',plain:true,iconCls:'icon-remove'});  
+	        $('.rejectOrder').linkbutton({text:'驳回',plain:true,iconCls:'icon-remove'});  
+	        $('.throughOrder').linkbutton({text:'通过',plain:true,iconCls:'icon-remove'});
+	        $('.stopOrder').linkbutton({text:'不通过',plain:true,iconCls:'icon-remove'});  
 	        
 	        if(data.rows.length==0){
 				var body = $(this).data().datagrid.dc.body2;
@@ -144,8 +155,97 @@ function initDatagrid()
 	    },
 	    rowStyler:function(index,row){//设置行样式
 	    		
-	    	},
+	    	}
 	});
+}
+
+/**
+ * 处理订单状态
+ * @param orderId
+ * @param operortype（1：代理提交  2：财管审批通过 3：财管审批驳回 4：财管不通过）
+ */
+function approveOrders(orderId,operortype)
+{
+	var data1 = new Object();
+	
+	data1.operortype = operortype;
+	data1.orderId = orderId;
+	
+	var url = contextPath + '/order/approveOrders.action';
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: url,
+        data:data1,
+        dataType: "json",
+        success: function (data) {
+        	initDatagrid();
+        	$.messager.alert('提示', data.message);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+}
+
+/**
+ * 财管在弹框中审批订单
+ * @param operortype
+ */
+function approveOrdersInDialog(operortype)
+{
+	var orderId = $("#idD").val();
+	approveOrders(orderId, operortype);
+	$('#detailOrders').dialog('close');//关闭查看订单详情的dialog
+	initDatagrid();
+	clearGoodsArray();
+}
+
+/**
+ * 查看订单详情（财务管理员权限）
+ * @param orderId
+ */
+function viewOrdersDetail(orderId)
+{
+	clearGoodsArray();
+	var url = contextPath + '/order/getDetailOrders.action';
+	var data1 = new Object();
+	data1.id=orderId;//订单id
+	
+		$.ajax({
+			async: false,   //设置为同步获取数据形式
+	        type: "get",
+	        url: url,
+	        data:data1,
+	        dataType: "json",
+	        success: function (data) {
+	        	
+					$('#ffDetail').form('load',{
+						id:data.id,
+						code:data.code,
+						name:data.name,
+						creator:data.creator,
+						price:data.price,
+						payMode:data.payMode=='0'?'现金支付':'转账支付',
+						receiveAddr:data.receiveAddr,
+						receiveTele:data.receiveTele
+//						transCost:data.transCost
+					});
+					
+					
+					//选中当前商品对应产品,并在商品列表加载完成后选中商品
+					initGoodsDetailDatagrid('210000', 'all', 'goodsDatagridD');
+			
+					
+	        },
+	        error: function (XMLHttpRequest, textStatus, errorThrown) {
+	            alert(errorThrown);
+	        }
+		});
+		
+		
+	
+	$('#detailOrders').dialog('open');//打开查看订单详情的dialog
 }
 
 /**
@@ -445,21 +545,273 @@ function updateOrders(id)
 					});
 					
 					
-					
+					//选中当前商品对应产品,并在商品列表加载完成后选中商品
+					initGoodsDatagrid('210000', 'all', 'goodsDatagridU');
 			
-	        	
+					
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
 	            alert(errorThrown);
 	        }
 		});
 		
-		//选中当前商品对应产品
-//		checkProducts(id,'productDatagridU');
 		
 		$("#updateOrders").dialog('open');
 	
-		
+}
+
+/**
+ * 选中当前订单配置的商品
+ * @param id
+ */
+function checkedGoodsOfOrder(id,productDatagrid)
+{
+	var data = new Object();
+	data.id = id;
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/order/getGoodsOfOrder.action',
+        data:data,
+        dataType: "json",
+        success: function (data) {
+        	if(data.length>0)
+        		{
+        			var selectedRows = $('#'+productDatagrid).datagrid('getRows');
+        			for(var i=0;i<data.length;i++)
+        				{
+        					var goods = data[i];
+	        				$.each(selectedRows,function(j,selectedRow){
+	        					var	goodId = goods.id;
+	        					var price = parseInt(goods.price);
+								if(selectedRow.id == goodId)
+								{
+									 $('#'+productDatagrid).datagrid('selectRow',j);
+//									goodsList.push(goodId);
+								}
+				        	});
+        				}
+        			
+        		}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+}
+
+//填充商品总价显示值
+function addCountPrice(cprice)
+{
+	$("#pricehidden").val(cprice);
+	$("#priceA").textbox('setText',cprice);
+}
+
+/**
+ * 初始化商品列表
+ * @param provinceId
+ * @param cityId
+ * @param productDatagrid
+ */
+function initGoodsDatagrid(provinceId,cityId,productDatagrid)
+{
+	var params = new Object();
+	params.province = provinceId;
+	params.city = cityId;
+	params.status = '1';//上架商品
+	
+	$('#'+productDatagrid).datagrid({
+		singleSelect:false,
+		rownumbers:false,
+		queryParams: params,
+		url:contextPath + '/goods/getGoodsList.action',//'datagrid_data1.json',
+		method:'get',
+		border:false,
+		singleSelect:false,
+		fitColumns:true,
+		pagination:true,
+		collapsible:false,
+		pageSize:5,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
+		pageList:[5,10],
+		columns:[[
+				{field:'ck',checkbox:true},
+				{field:'id',hidden:true},
+				{field:'code',title:'商品编码',width:120,align:'left'},
+		        {field:'name',width:120,title:'商品名称'},
+				{field:'price',title:'价格(元)',width:80,align:'left'},
+				{field:'provinceName',title:'省级区域',width:100,align:'left'},
+				{field:'cityName',title:'市级区域',width:100,align:'left'},
+				{field:'createTime',title:'创建时间',width:130,align:'left'},
+				{field:'goodsDesprition',title:'商品描述',width:120,align:'left'}
+		    ]],  
+	    onLoadSuccess:function(data){  
+	        if(data.rows.length==0){
+				var body = $(this).data().datagrid.dc.body2;
+				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
+			}
+	       /* else
+	        	{
+	        		for(var i=0;i<data.rows.length;i++)
+	        			{
+	        				$('#'+productDatagrid).datagrid('beginEdit', i);
+	        			}
+	        	}*/
+	        
+	        //选中（写入后台读取的产品数据进行选中）
+	        var selectedRows = $('#'+productDatagrid).datagrid('getRows');
+	        var idU = $("#idU").val();
+	        checkedGoodsOfOrder(idU,productDatagrid);
+	        //写入和选中当前数据选中的产品（写入productlist选中的）
+	        if(goodsList.length>0)
+	        	{
+	        		for(var i=0;i<goodsList.length;i++)
+	        			{
+	        				$.each(selectedRows,function(j,selectedRow){
+	        					var	goodId = goodsList[i];
+								if(selectedRow.id == goodId){
+									
+									 $('#'+productDatagrid).datagrid('selectRow',j);
+								}
+				        	});
+	        			}
+	        	}
+	        
+	       
+	        
+	        
+	    },
+	    onSelect:function(index,row){
+			
+			var pushFlag = goodListExist(row.id);
+			var price = 0;
+			if(pushFlag)
+				{
+					goodsList.push(row.id);
+					price = parseInt(row.price);//js中将字符串转换为数字
+					countPrice = countPrice+price;
+				}
+			addCountPrice(countPrice);//更新商品总价
+		},
+		onUnselect:function(index,row){
+			var price = 0;
+			price = parseInt(row.price);
+			removeGoodList(row.id);
+			countPrice = countPrice-price;
+			addCountPrice(countPrice);//更新商品总价
+			
+		},
+		onUnselectAll:function(rows){
+			var price = 0;
+			
+			for(var i=0;i<rows.length;i++)
+			{
+				price = parseInt(rows[i].price);
+				removeGoodList(rows[i].id);
+				countPrice = countPrice-price;
+			}
+			addCountPrice(countPrice);//更新商品总价
+			
+		},
+		onSelectAll:function(rows){
+			var price = 0;
+			for(var i=0;i<rows.length;i++)
+			{
+				price = parseInt(rows[i].price);
+				var pushFlag = goodListExist(rows[i].id);
+				if(pushFlag)
+				{
+					goodsList.push(rows[i].id);
+					countPrice = countPrice+price;
+				}
+			}
+			addCountPrice(countPrice);//更新商品总价
+		}
+	});
+}
+
+/**
+ * 初始化订单详情中的商品列表
+ * @param provinceId
+ * @param cityId
+ * @param productDatagrid
+ */
+function initGoodsDetailDatagrid(provinceId,cityId,productDatagrid)
+{
+	var params = new Object();
+	params.province = provinceId;
+	params.city = cityId;
+	params.status = '1';//上架商品
+	
+	$('#'+productDatagrid).datagrid({
+//		singleSelect:false,
+		rownumbers:false,
+		queryParams: params,
+		url:contextPath + '/goods/getGoodsList.action',//'datagrid_data1.json',
+		method:'get',
+		border:false,
+		singleSelect:false,
+		fitColumns:true,
+		pagination:true,
+		collapsible:false,
+		pageSize:5,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
+		pageList:[5,10],
+		columns:[[
+//				{field:'ck',checkbox:true},
+				{field:'id',hidden:true},
+				{field:'code',title:'商品编码',width:120,align:'left'},
+		        {field:'name',width:120,title:'商品名称'},
+				{field:'price',title:'价格(元)',width:80,align:'left'},
+				{field:'provinceName',title:'省级区域',width:100,align:'left'},
+				{field:'cityName',title:'市级区域',width:100,align:'left'},
+				{field:'createTime',title:'创建时间',width:130,align:'left'},
+				{field:'goodsDesprition',title:'商品描述',width:120,align:'left'}
+		    ]],  
+	    onLoadSuccess:function(data){  
+	        if(data.rows.length==0){
+				var body = $(this).data().datagrid.dc.body2;
+				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
+			}
+	        
+	        var idU = $("#idD").val();
+	        checkedGoodsOfOrder(idU,productDatagrid);
+	    }
+	        
+	});
+}
+
+
+
+/**
+ * goodList中是否有这个值
+ * @param value
+ */
+function goodListExist(value)
+{
+	var pushFlag = true;
+	for(var i=0;i<goodsList.length;i++)
+		{
+			if(value == goodsList[i])
+				{
+					pushFlag= false;
+				}
+		}
+	return pushFlag;
+}
+
+/**
+ * 移除goodList的内容
+ * @param value
+ */
+function removeGoodList(value)
+{
+	for(var i=0;i<goodsList.length;i++)
+	{
+		if(value == goodsList[i])
+			{
+				goodsList.splice(i,1);
+			}
+	}
 }
 
 /**
@@ -502,14 +854,14 @@ function submitUpdateOrders(operatype)
 	$('#ffUpdate').form('submit',{
 		url:contextPath+'/order/saveOrUpdate.action',
 		onSubmit:function(param){
-//			param.goodsList = JSON.stringify(goodsList);
+			param.goodsList = JSON.stringify(goodsList);
 			param.operatype = operatype;//0:保存 1：保存并提交
 			var flag = false;
-			if($('#ffUpdate').form('enableValidation').form('validate'))// && goodsList.keys.length>0
+			if($('#ffUpdate').form('enableValidation').form('validate')&& goodsList.length>0)
 				{
 					flag = true;
 				}
-			else if(productList.keys.length==0)
+			else if(goodsList.length==0)
 			{
 				$.messager.alert('提示', "请为当前订单选择商品!");
 			}
@@ -544,25 +896,34 @@ function deleteOrders(id)
 		
 	if(codearr.length>0)
 	{
-		$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
-			        	
-		        }  
-		    });  
+		var finishFlag = checkOrderFinish(id);
+		if(!finishFlag)
+			{
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+			        if (r) {  
+				        	$.ajax({
+				        		async: false,   //设置为同步获取数据形式
+				                type: "post",
+				                url: url,
+				                data:data1,
+				                dataType: "json",
+				                success: function (data) {
+				                	initDatagrid();
+				                	$.messager.alert('提示', data.message);
+				                },
+				                error: function (XMLHttpRequest, textStatus, errorThrown) {
+				                    alert(errorThrown);
+				                }
+				           });
+				        	
+			        }  
+			    });  
+			}
+		else
+			{
+				$.messager.alert('提示', "待删除订单已完成审批，不可进行删除操作!");
+			}
+		
 	}
 	else
 	{
@@ -585,8 +946,16 @@ function deleteOrdersList()
 	
 	var deleteFlag = true;
 	
+	
 	for(var i=0; i<rows.length; i++)
 	{
+		var finishFlag = checkOrderFinish(rows[i].id);
+		if(finishFlag)
+			{
+				deleteFlag = false;
+				$.messager.alert('提示', "待删除订单中订单编码为："+rows[i].code+"已完成审批，不可以被删除");
+				break;
+			}
 		codearr.push(rows[i].id);//code
 	}
 	
@@ -673,6 +1042,35 @@ $.extend($.fn.validatebox.defaults.rules, {
     }
 });
 
+/**
+ * 校验当前订单是否审批完成
+ * @param id
+ * @returns {Boolean}
+ */
+function checkOrderFinish(id)
+{
+	var flag = false;//当前值可用，不存在
+	var data = new Object();
+	
+	data.id = id;
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/order/checkOrderStatus.action',
+        data:data,
+        dataType: "json",
+        success: function (data) {
+        	
+        	flag = data.exist;//true:订单审批已完成
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	return flag;
+}
 
 
 

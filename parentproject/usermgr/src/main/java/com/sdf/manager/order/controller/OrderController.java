@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +22,20 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.goods.dto.GoodsDTO;
 import com.sdf.manager.goods.entity.Goods;
 import com.sdf.manager.goods.service.GoodsService;
 import com.sdf.manager.order.dto.OrdersDTO;
+import com.sdf.manager.order.entity.FoundOrderStatus;
+import com.sdf.manager.order.entity.OrderNextStatus;
+import com.sdf.manager.order.entity.OrderStatus;
 import com.sdf.manager.order.entity.Orders;
+import com.sdf.manager.order.service.FoundOrderStatusService;
 import com.sdf.manager.order.service.OrderService;
+import com.sdf.manager.order.service.OrderStatusService;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
 
@@ -58,7 +64,30 @@ public class OrderController
 	 @Autowired
 	 private GoodsService goodsService;
 	 
+	 @Autowired
+	 private FoundOrderStatusService foundOrderStatusService;//状态跟踪表的service层
+	 
+	 @Autowired
+	 private OrderStatusService orderStatusService;//订单状态service层
+	 
 	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
+	 
+	 public static final String OPERORTYPE_SAVE = "0";//代理编辑页面，保存
+	 public static final String OPERORTYPE_SAVEANDCOMMIT = "1";//代理编辑页面，保存并提交
+	
+	 /***订单状态静态变量 start***/
+	 public static final String PROXY_SAVE_ORDER = "01";//代理购买商品形成订单时，代理保存的状态码
+	 public static final String ORDER_FINISH = "21";//审批完成且已归档的订单状态
+	 public static final String ORDER_STOP = "31";//审批不通过，终止订单审批状态
+	 /***订单状态静态变量 end***/
+	
+	 public static final String DIRECTION_GO = "1";//前进方向标志位
+	 public static final String DIRECTION_BACK = "1";//后退方向标志位
+	 
+	 public static final String PAGE_OPERORTYPE_SAVE = "1";//代理订单列表，提交
+	 public static final String PAGE_OPERORTYPE_PASS = "2";//财管订单列表，审批通过
+	 public static final String PAGE_OPERORTYPE_REJECT = "3";//财管订单列表，审批驳回
+	 public static final String PAGE_OPERORTYPE_STOP = "4";//财管订单列表，不通过
 	 
 	/**
 	 * 
@@ -67,20 +96,22 @@ public class OrderController
 	* @date 2015年11月16日 上午9:59:00
 	 */
 	 @RequestMapping(value = "/getDetailOrders", method = RequestMethod.GET)
-	 public @ResponseBody Orders getDetailOrders(
+	 public @ResponseBody OrdersDTO getDetailOrders(
 			@RequestParam(value="id",required=false) String id,
 			ModelMap model,HttpSession httpSession) throws Exception
 	 {
 		 Orders order = new Orders();
-		
+		 
 		 order = orderService.getOrdersById(id);
-	 	
-		 return order;
+		 
+		 OrdersDTO orderDto = orderService.toDTO(order);
+	 	 
+		 return orderDto;
 	 }
 	 
 	/**
 	 * 
-	* @Description:获取订单列表数据
+	* @Description:获取订单列表数据（※根据当前登录人员的信息加载订单数据，代理是加载其下属站点对应的所有订单的数据）
 	* @author bann@sdfcp.com
 	* @date 2015年11月16日 下午3:50:33
 	 */
@@ -180,10 +211,29 @@ public class OrderController
 			   }
 			   
 			   order.setGoods(goods);
-			   
+			   String currentStatus = order.getStatus();
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {//保存
+				   currentStatus = order.getStatus();
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				   //根据当前状态获取下一状态
+				   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(order.getStatus(), "1");
+				   currentStatus = orderNextStatus.getNextStatusId();//代理保存并提交
+				   
+			   }
+			   order.setStatus(currentStatus);
+			   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
 			   orderService.update(order);
 			   resultBean.setMessage("修改订单信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				 //由于状态变化，将变化状态存入到状态流程跟踪表中
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,order);
+			   }
 			   
 		   }
 		   else
@@ -203,7 +253,19 @@ public class OrderController
 			   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   order.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   order.setIsDeleted("1");//有效数据
-			   
+			   String currentStatus = "01";
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {
+				   currentStatus = OrderController.PROXY_SAVE_ORDER;//购买商品形成订单时，代理保存的状态
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				   OrderNextStatus orderNextStatus = orderStatusService.
+						   getOrderNextStatusBycurrentStatusId(OrderController.PROXY_SAVE_ORDER,OrderController.DIRECTION_GO );
+				   currentStatus = orderNextStatus.getNextStatusId();//代理保存并提交
+			   }
+			   order.setStatus(currentStatus);//代理保存订单
+			   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
 			   JSONArray array = JSONArray.parseArray(goodsList);
 			   List<Goods> goods = new ArrayList<Goods>();
 			   for (Object goodId : array) {
@@ -214,8 +276,30 @@ public class OrderController
 			   }
 			   
 			   order.setGoods(goods);
-			   
 			   orderService.save(order);
+			   
+			   
+			   //跟踪订单状态，添加订单状态到订单状态跟踪表中
+			   
+			   /*finishSaveOrder用处：用来做订单跟踪表与订单表的数据关联，因为若不获取，
+			   	则当前操作的订单还不存在，无法存入其状态(订单编码也是全局唯一的！！！)*/
+			   Orders finishSaveOrder = orderService.getOrdersByCode(code);
+			   
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {
+				   currentStatus = OrderController.PROXY_SAVE_ORDER;//购买商品形成订单时，代理保存的状态
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,finishSaveOrder);
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {  /*若代理在购买商品时保存并提交到财务管理员审批时，当前订单是有两个状态变化的，
+				   所以要向订单状态跟踪表中放入两条数据*/
+				  //1.保存“代理保存订单”状态跟踪数据
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),OrderController.PROXY_SAVE_ORDER,order);
+				   
+				   //2.保存“提交财务管理员”状态跟踪数据
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,finishSaveOrder);
+			   }
+			   
 			   resultBean.setMessage("添加订单信息成功!");
 			   resultBean.setStatus("success");
 			   
@@ -227,6 +311,73 @@ public class OrderController
 		   
 		   return resultBean;
 		}
+	 
+	 /**
+	  * 
+	 * @Description: 保存订单状态跟踪表数据
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午1:45:17
+	  */
+	 private void saveFoundOrderStatus(String creator,String currentStatus,Orders order)
+	 {
+		 FoundOrderStatus foundOrderStatus = new FoundOrderStatus();
+	     foundOrderStatus.setCreator(creator);
+	     foundOrderStatus.setStatus(currentStatus);
+	     foundOrderStatus.setStatusSj(new Timestamp(System.currentTimeMillis()));
+	     foundOrderStatus.setOrders(order);
+	     foundOrderStatusService.save(foundOrderStatus);
+	 }
+	 
+	 /**
+	  * 
+	 * @Description: 校验订单是否已审批完成并已归档 
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午2:36:41
+	  */
+	 @RequestMapping(value = "/checkOrderStatus", method = RequestMethod.POST)
+		public @ResponseBody ResultBean checkOrderStatus(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	ResultBean resultBean = new ResultBean();
+		 	boolean orderFinish = false;
+		 	
+		 	Orders order = orderService.getOrdersById(id);
+		 	
+		 	if(OrderController.ORDER_FINISH.equals(order.getStatus()))
+		 	{
+		 		orderFinish = true;
+		 	}
+		 	resultBean.setExist(orderFinish);
+		 	return resultBean;
+		}
+	 
+	 /**
+	  * 
+	 * @Description: 获取当前订单的商品数据 
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午2:55:36
+	  */
+	 @RequestMapping(value = "/getGoodsOfOrder", method = RequestMethod.POST)
+		public @ResponseBody List<GoodsDTO> getGoodsOfOrder(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<Goods> goods = new ArrayList<Goods>();
+		 	
+		 	Orders order = orderService.getOrdersById(id);
+		 	
+		 	if(null != order.getGoods() && order.getGoods().size()>0)
+		 	{
+		 		goods = order.getGoods();
+		 	}
+		 	
+		 	
+		 	List<GoodsDTO> goodsDtos = goodsService.toDTOS(goods);
+		 	
+		 	return goodsDtos;
+		}
+	 
 	 
 	
 	 /**
@@ -243,6 +394,7 @@ public class OrderController
 			ResultBean resultBean = new ResultBean();
 			
 			Orders orders;
+			List<Goods> goods = new ArrayList<Goods>();
 			for (String id : ids) 
 			{
 				orders = new Orders();
@@ -250,6 +402,7 @@ public class OrderController
 				orders.setIsDeleted("0");;//设置当前数据为已删除状态
 				orders.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				orders.setModifyTime(new Timestamp(System.currentTimeMillis()));
+				orders.setGoods(goods);//用来清空订单与商品的关联数据，方便删除商品时判断是否与有效订单关联
 				orderService.update(orders);
 				
 				
@@ -262,6 +415,59 @@ public class OrderController
 			return resultBean;
 		}
 	 
+	 
+	 /**
+	  * 
+	 * @Description: 更新订单状态
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月23日 下午2:48:16
+	  */
+	 @RequestMapping(value = "/approveOrders", method = RequestMethod.POST)
+		public @ResponseBody ResultBean approveOrders(
+				@RequestParam(value="orderId",required=false) String orderId,
+				@RequestParam(value="operortype",required=false) String operortype,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+			ResultBean resultBean = new ResultBean();
+			
+			Orders order = orderService.getOrdersById(orderId);
+		    String currentStatus = order.getStatus();
+		    String directFlag = "1";
+		    if(OrderController.PAGE_OPERORTYPE_SAVE.equals(operortype))
+		    {//代理审批通过
+		    	OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus, directFlag);
+		    	currentStatus = orderNextStatus.getNextStatusId();
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_PASS.equals(operortype))
+		    {//财管订单列表审批通过
+			   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus,directFlag);
+			   currentStatus = orderNextStatus.getNextStatusId();
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_REJECT.equals(operortype))
+		    {//财管订单列表审批驳回
+		       directFlag = "0";
+			   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus,directFlag);
+			   currentStatus = orderNextStatus.getNextStatusId();
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_STOP.equals(operortype))
+		    {//财管订单列表不通过
+			   currentStatus = OrderController.ORDER_STOP;//置订单状态为“不通过”的状态码
+		    }
+		    
+		   order.setStatus(currentStatus);
+		   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
+		   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+		   order.setModifyTime(new Timestamp(System.currentTimeMillis()));
+		   orderService.update(order);
+		   
+		   //由于状态变化，将变化状态存入到状态流程跟踪表中
+			this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,order);
+			
+			resultBean.setStatus("success");
+			resultBean.setMessage("审批订单成功!");
+			
+			return resultBean;
+		}
 	 
 	 /**
 	  * 

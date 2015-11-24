@@ -167,7 +167,7 @@
 	             validType="money"  ></input>
 	        </div> -->
 	         <div class="ftitle">
-	            <label for="priceA">商品总价:</label>
+	            <label for="priceA">商品总价(元):</label>
 	            <div style="float:left;margin-left: 30px;">
 	            	<input name="price" id="pricehidden" type="hidden" >
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
@@ -177,6 +177,99 @@
 	            <label for="product">选择商品:</label>
 	           <div style="float:left;margin-left:30px;width:700px;">
 	            	<table id="goodsDatagridU" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
+					</table>
+	            </div>
+	        </div>
+	      </form>
+    </div>
+    
+     <div id="detailOrders" class="easyui-dialog" title="订单详情" style="width:800px;height:500px;padding:10px;top:40px;"
+            data-options="
+                iconCls: 'icon-save',
+                buttons: [{
+                    text:'审批通过',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        approveOrdersInDialog('2');
+                    }
+                },{
+                    text:'审批驳回',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        approveOrdersInDialog('3');
+                    }
+                },{
+                    text:'不通过',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                       approveOrdersInDialog('4');
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#detailOrders').dialog('close');
+                        clearGoodsArray();
+                    }
+                }]
+            ">
+		<form id="ffDetail" method="get" novalidate>
+	        <div class="ftitle">
+	            <label for="codeU">订单编码:</label>
+	            <input type="hidden" name="id" id="idD"/>
+	            <input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="codeU" name="code" 
+	              ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="creatorU">订单创建人:</label><!-- 读取创建订单的代理人姓名 -->
+	            <input class="easyui-validatebox commonInput" type="text" id="creatorU" name="creator" readonly="readonly"
+	               ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="nameU">订单名称:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="nameU" name="name"  readonly="readonly"></input>
+	        </div>
+	       <div class="ftitle">
+	            <label for="priceU">支付方式:</label>
+	            <div style="float : left;margin-left: 30px;">
+	           		<input class="easyui-validatebox commonInput" type="text" id="payModeC" name="payMode"  readonly="readonly"></input>
+		           <!--  <select class="easyui-combobox" id="payModeC" name="payMode"  
+			          	 		 data-options="editable:false" style="width:150px;" >
+			          	 		<option value="0" checked="checked">现金支付</option>
+			          	 		<option value="1">转账支付</option>
+					</select> -->
+				</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="receiveAddrU">收货人地址:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrU" name="receiveAddr" readonly="readonly"
+	             ></input>
+	        </div>
+	         <div class="ftitle">
+	            <label for="receiveTeleU">联系电话:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveTeleU" name="receiveTele"  readonly="readonly"
+	            ></input>
+	        </div>
+	       <!--  <div class="ftitle">
+	            <label for="subject">配送方式:</label>
+	             <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	      <!--   <div class="ftitle">
+	            <label for="priceU">运费:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	         <div class="ftitle">
+	            <label for="priceA">商品总价(元):</label>
+	            <div style="float:left;margin-left: 30px;">
+	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceD" name="price" style="width:200px" readonly="readonly"/> 
+	           	</div>
+	        </div>
+	        <div class="ftable">
+	            <label for="product">选中的商品列表:</label>
+	           <div style="float:left;margin-left:30px;width:700px;">
+	            	<table id="goodsDatagridD" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
 					</table>
 	            </div>
 	        </div>

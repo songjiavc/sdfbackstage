@@ -114,7 +114,7 @@
 	             validType="money" missingMessage="商品价格不可以为空" ></input>
 	        </div> -->
 	        <div class="ftitle">
-	            <label for="priceA">商品总价:</label>
+	            <label for="priceA">商品总价(元):</label>
 	            <div style="float:left;margin-left: 30px;">
 	            	<input name="price" id="pricehidden" type="hidden" >
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
