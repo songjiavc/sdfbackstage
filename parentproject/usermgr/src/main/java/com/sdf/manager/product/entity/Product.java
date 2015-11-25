@@ -38,6 +38,9 @@ public class Product extends BaseEntiry implements Serializable{
 	@Column(name="NAME")
 	private String name;
 	
+	@Column(name="LOTTERY_TYPE", length=10)
+	private String lotteryType;//彩票种类（0：体彩 1：福彩）
+	
 	
 	@Column(name="STATUS_TIME")
 	private String statusTime;
@@ -69,6 +72,16 @@ public class Product extends BaseEntiry implements Serializable{
 	
 	
 	
+	
+	
+
+	public String getLotteryType() {
+		return lotteryType;
+	}
+
+	public void setLotteryType(String lotteryType) {
+		this.lotteryType = lotteryType;
+	}
 
 	public List<RelaSdfGoodProduct> getGoodAndproduct() {
 		return goodAndproduct;

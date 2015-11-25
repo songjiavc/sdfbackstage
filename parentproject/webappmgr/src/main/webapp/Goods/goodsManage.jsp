@@ -156,6 +156,12 @@
 	             validType="money" missingMessage="商品价格不可以为空" ></input>(元)
 	        </div>
 	        <div class="ftitle">
+	            <label for="goodTypeA">商品彩种:</label>
+	            <input type="hidden" name="goodType" id="goodTypeAhidden"/>
+	            <input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="goodTypeA"  
+	              ></input>
+	        </div>
+	        <div class="ftitle">
 	            <label for="subject">商品地域:</label>
 	            <div style="float:left;margin-left:30px;">
 	           		<!-- <label for="privinceA">省:</label> -->
@@ -226,6 +232,12 @@
 	            <label for="priceU">商品价格:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
 	             validType="money" missingMessage="商品价格不可以为空" ></input>(元)
+	        </div>
+	        <div class="ftitle">
+	            <label for="goodTypeU">商品彩种:</label>
+	             <input type="hidden" name="goodType" id="goodTypeUhidden"/>
+	            <input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="goodTypeU"  
+	              ></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="subject">商品地域:</label>

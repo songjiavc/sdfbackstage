@@ -32,7 +32,7 @@ function bindComboboxChange()
 		onSelect: function (rec) {
 			 //加载市级数据
 			 initCities('add','cityA','',rec.pcode);
-			 initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
+			 initProductDatagrid('privinceA','cityA','productDatagridA','goodTypeAhidden','goodTypeA','goodTypeAhidden','goodTypeA');//初始化待选择产品列表
 		}
 
 		}); 
@@ -42,7 +42,7 @@ function bindComboboxChange()
 		onSelect: function (rec) {
 			//加载市级数据
 			initCities('update','cityU','',rec.pcode);
-			initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+			initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 		}
 
 		}); 
@@ -61,7 +61,7 @@ function bindComboboxChange()
 
 		onSelect: function (rec) {
 			
-				initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
+				initProductDatagrid('privinceA','cityA','productDatagridA','goodTypeAhidden','goodTypeA');//初始化待选择产品列表
 			}
 
 		}); 
@@ -70,7 +70,7 @@ function bindComboboxChange()
 
 		onSelect: function (rec) {
 			
-				initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+				initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 			}
 
 		}); 
@@ -338,7 +338,7 @@ function initDatagrid()
  * @param provinceId
  * @param cityId
  */
-function initProductDatagrid(provinceId,cityId,productDatagrid)
+function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGTId)
 {
 	var params = new Object();
 	params.province = $("#"+provinceId).combobox('getValue');
@@ -370,6 +370,16 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 				{field:'price',title:'参考价格(元)',width:100,align:'center'},
 				{field:'provinceName',title:'省级区域',width:120,align:'center'},
 				{field:'cityName',title:'市级区域',width:120,align:'center'},
+				{field:'lotteryType',width:50,title:'彩种',  
+		            formatter:function(value,row,index){  
+		            	var lotteryTypeName ='';
+		            	switch(value)
+		            	{
+		            		case '0':lotteryTypeName='体彩';break;
+		            		case '1':lotteryTypeName='福彩';break;
+		            	}
+		            	return lotteryTypeName;  
+		            }  },
 				{field:'cpdlName',title:'大类别',width:100,align:'center'},
 				{field:'cpzlName',title:'中类别',width:100,align:'center'},
 //				{field:'cpxlName',title:'小类别',width:100,align:'center'},
@@ -505,7 +515,7 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 			var editors = $('#'+productDatagrid).datagrid('getEditors', index);//获取当前行可编辑的值
 			
 		},*/
-		onCheck:function(index,row){
+	    onSelect:function(index,row){
 			//获取选中行的填写值
 			var editors = $('#'+productDatagrid).datagrid('getEditors', index);//获取当前行可编辑的值
 			var errRow = index;
@@ -548,6 +558,8 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 								if(pushFlag)
 									{
 										productList.put(row.id, editvalue);
+										//更新商品彩种显示
+										fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
 									}
 								else
 									{
@@ -596,10 +608,54 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 				}
 			
 		},
-		onUncheck:function(index,row){
+		onUnselect:function(index,row){
+			
+			if(productList.contain(row.id))//新选中的产品数据
+			{
+				//更新商品彩种显示
+				fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
+			}
 			productList.remove(row.id);
+			
 		}
 	});
+}
+
+/**
+ * 填充商品彩种显示框
+ */
+function fillShowGoodstype(productDatagrid,hiddenId,showId)
+{
+	var gType;
+	var selectedRows = $('#'+productDatagrid).datagrid('getSelections');//获取datagrid中选中的所有行
+	var flag;
+	$.each(selectedRows,function(i,selectedRow){
+		
+		if(i == 0)
+			{
+				flag = selectedRow.lotteryType;
+				gType = selectedRow.lotteryType;
+			}
+		else
+			{
+				if(flag != selectedRow.lotteryType)
+					{
+						gType = '2';//双机
+					}
+			}
+		
+	});
+	
+	
+	var showGoodstypeText = '';
+	$("#"+hiddenId).val(gType);
+	switch(gType)
+	{
+		case '0':showGoodstypeText='体彩';break;
+		case '1':showGoodstypeText='福彩';break;
+		case '2':showGoodstypeText='双机';break;
+	}
+	$("#"+showId).val(showGoodstypeText);
 }
 
 //校验销售价格
@@ -648,7 +704,7 @@ function updateGoods(id)
 					//初始化市级区域combobox
 					initCities('update','cityU',data.cityDm,data.provinceDm);
 					//初始化待选择产品列表
-					initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+					initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 					
 					
 			

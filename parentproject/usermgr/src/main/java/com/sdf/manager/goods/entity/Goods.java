@@ -39,6 +39,9 @@ public class Goods extends BaseEntiry{
 	@Column(name="NAME", length=45)
 	private String name;//商品名称
 	
+	@Column(name="GOODS_TYPE", length=45)
+	private String goodType;//商品彩种（ 0：体彩 1：福彩 2：双机），根据选中的产品的产品彩种来生成
+	
 	
 	@Column(name="STATUS", length=2)
 	private String status;//商品状态(0:待上架;1:上架;2:下架)
@@ -61,6 +64,16 @@ public class Goods extends BaseEntiry{
 	
 	
 	
+	
+	
+	public String getGoodType() {
+		return goodType;
+	}
+
+	public void setGoodType(String goodType) {
+		this.goodType = goodType;
+	}
+
 	public String getGoodsDesprition() {
 		return goodsDesprition;
 	}

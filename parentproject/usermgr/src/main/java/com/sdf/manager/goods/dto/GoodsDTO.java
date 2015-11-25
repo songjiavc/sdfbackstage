@@ -3,6 +3,7 @@ package com.sdf.manager.goods.dto;
 import java.sql.Timestamp;
 import java.util.List;
 
+
 import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 
 public class GoodsDTO {
@@ -11,6 +12,8 @@ public class GoodsDTO {
 
 	private String id;
 	private String name;
+	private String goodType;//商品彩种（ 0：体彩 1：福彩 2：双机），根据选中的产品的产品彩种来生成
+	
 	private String code;//产品编码
 	private String provinceDm;//省份
 	private String cityDm;//市
@@ -38,6 +41,14 @@ public class GoodsDTO {
 	
 	
 	
+	public String getGoodType() {
+		return goodType;
+	}
+
+	public void setGoodType(String goodType) {
+		this.goodType = goodType;
+	}
+
 	public String getConnectOrders() {
 		return connectOrders;
 	}

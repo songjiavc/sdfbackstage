@@ -88,15 +88,17 @@ public class ProductController
 	* @date 2015年11月3日 上午9:59:00
 	 */
 	 @RequestMapping(value = "/getDetailProduct", method = RequestMethod.GET)
-	 public @ResponseBody Product getDetailProduct(
+	 public @ResponseBody ProductDto getDetailProduct(
 			@RequestParam(value="id",required=false) String id,
 			ModelMap model,HttpSession httpSession) throws Exception
 	 {
 		 Product product = new Product();
 		
 		 product = productService.getProductById(id);
+		 
+		 ProductDto productDto = productService.toDTO(product);
 	 	
-		return product;
+		return productDto;
 	 }
 	 
 	 /**
@@ -203,6 +205,7 @@ public class ProductController
 				@RequestParam(value="id",required=false) String id,
 				@RequestParam(value="code",required=false) String code,
 				@RequestParam(value="name",required=false) String name,
+				@RequestParam(value="lotteryType",required=false) String lotteryType,//彩票种类（0：体彩 1：福彩）
 				@RequestParam(value="price",required=false) String price,
 				@RequestParam(value="privince",required=false) String privince,
 				@RequestParam(value="city",required=false) String city,
@@ -221,6 +224,7 @@ public class ProductController
 		   {//产品数据不为空，则进行修改操作
 			  
 			   product.setName(name);
+			   product.setLotteryType(lotteryType);
 			   product.setPrice(price);
 			   product.setProvinceDm(privince);
 			   product.setCityDm(city);
@@ -240,6 +244,7 @@ public class ProductController
 			   product = new Product();
 			   product.setCode(code);
 			   product.setName(name);
+			   product.setLotteryType(lotteryType);
 			   product.setPrice(price);
 			   product.setProvinceDm(privince);
 			   product.setCityDm(city);

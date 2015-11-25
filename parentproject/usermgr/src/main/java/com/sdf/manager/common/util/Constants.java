@@ -38,6 +38,10 @@ public class Constants {
 	
 	public static final String PAY_MODE_TWO = "1";//支付方式：转账支付
 	
+	public static final String ROLE_FINANCIAL_MANAGER_ID = "1";//“财务管理员”角色的id
+	
+	public static final String ROLE_PROXY_ID = "2";//“代理”角色的id
+	
 	
 
 }

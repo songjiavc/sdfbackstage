@@ -18,6 +18,9 @@ public class ProductDto {
 
 	private String id;
 	private String name;
+	private String lotteryType;//彩票种类（0：体彩 1：福彩）
+	
+	private String lotteryTypeName;//彩票种类名称（0：体彩 1：福彩）
 	private String code;//产品编码
 	private String provinceDm;//省份
 	private String cityDm;//市
@@ -50,6 +53,22 @@ public class ProductDto {
 	
 	
 	
+
+	public String getLotteryTypeName() {
+		return lotteryTypeName;
+	}
+
+	public void setLotteryTypeName(String lotteryTypeName) {
+		this.lotteryTypeName = lotteryTypeName;
+	}
+
+	public String getLotteryType() {
+		return lotteryType;
+	}
+
+	public void setLotteryType(String lotteryType) {
+		this.lotteryType = lotteryType;
+	}
 
 	public boolean isChecked() {
 		return isChecked;

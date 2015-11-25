@@ -38,6 +38,10 @@ import com.sdf.manager.order.service.OrderService;
 import com.sdf.manager.order.service.OrderStatusService;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.user.entity.Role;
+import com.sdf.manager.user.entity.User;
+import com.sdf.manager.user.service.RoleService;
+import com.sdf.manager.user.service.UserService;
 
 
 /**
@@ -63,6 +67,12 @@ public class OrderController
 	 
 	 @Autowired
 	 private GoodsService goodsService;
+	 
+	 @Autowired
+	 private UserService userService;
+	 
+	 @Autowired
+	 private RoleService roleService;
 	 
 	 @Autowired
 	 private FoundOrderStatusService foundOrderStatusService;//状态跟踪表的service层
@@ -609,5 +619,49 @@ public class OrderController
 			
 		}
 	 
+	 /**
+	  * 
+	 * @Description: 获取当前登录用户的角色
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月24日 下午2:44:42
+	  */
+	 @RequestMapping(value = "/getLoginuserRole", method = RequestMethod.POST)
+		public @ResponseBody ResultBean getLoginuserRole(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	ResultBean resultBean = new ResultBean();
+		 	
+		 	//获取session中的登录数据
+			String code = LoginUtils.getAuthenticatedUserCode(httpSession);
+			User user = userService.getUserByCode(code);
+			//获取当前登录人员的角色list
+			List<Role> roles = user.getRoles();
+			
+			//根据“代理”和“财政管理员”的角色id获取对应的角色数据，用来判断当前用户的角色中是否有权限
+			Role roleProxy = roleService.getRoleById(Constants.ROLE_PROXY_ID);
+			Role roleFManger = roleService.getRoleById(Constants.ROLE_FINANCIAL_MANAGER_ID);
+			
+			if(roles.contains(roleProxy))
+			{
+				resultBean.setProxy(true);
+			}
+			else
+			{
+				resultBean.setProxy(false);
+			}
+			
+			if(roles.contains(roleFManger))
+			{
+				resultBean.setFinancialManager(true);
+			}
+			else
+			{
+				resultBean.setFinancialManager(false);
+			}
+			
+		 	
+		 	return resultBean;
+		}
 	
 }

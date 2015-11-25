@@ -6,8 +6,44 @@ $(document).ready(function(){
 			initDatagrid();//初始化数据列表
 			bindComboboxChange();//给下拉框绑定选中事件
 			
+			getLoginuserRole();
+			
 			goodsList = new Array();
 		});
+
+/**
+ * 获取当前登录用户的角色
+ */
+function getLoginuserRole()
+{
+	var isProxy = false;//是否拥有代理角色
+	var isFinancialManager = false;//是否拥有财务管理员角色
+	var returnArr = new Array();
+	
+	var data1 = new Object();
+	var url = contextPath + '/order/getLoginuserRole.action';
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: url,
+        data:data1,
+        dataType: "json",
+        success: function (data) {
+        	isProxy = data.proxy;
+        	isFinancialManager = data.financialManager;
+        	
+        	returnArr.push(isProxy);
+        	returnArr.push(isFinancialManager);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+	
+	
+	return returnArr;
+	
+}
 
 /**
  * 清空全局变量
@@ -104,6 +140,7 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'status',hidden:true},
 				{field:'code',title:'订单编码',width:120,align:'left'},
 		        {field:'name',width:120,title:'订单名称'},
 				{field:'price',title:'订单金额(元)',width:60,align:'left'},
@@ -126,13 +163,26 @@ function initDatagrid()
 				{field:'statusName',title:'状态',width:100,align:'left'},
 				{field:'opt',title:'操作',width:200,align:'center',  
 		            formatter:function(value,row,index){  
-		                var btn = '<a class="editcls" onclick="updateOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="编辑">编辑</a>'//代理编辑
-		                	+'<a class="deleterole" onclick="deleteOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="删除">删除</a>'//代理删除
-		                	+'<a class="submitOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,1)" href="javascript:void(0)" title="提交">提交</a>'//代理提交
-		                	+'<a class="detailcls" onclick="viewOrdersDetail(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="查看详情">详情</a>'//财务管理员可以查看订单详情但是不可以修改内容，可以审批
-		                	+'<a class="rejectOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,3)" href="javascript:void(0)" title="审批驳回">驳回</a>'//财务管理员驳回
-		                	+'<a class="stopOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,4)" href="javascript:void(0)" title="不通过">不通过</a>'//财务管理员不通过，终止订单的审批流程且流程不可恢复
-		                	+'<a class="throughOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,2)" href="javascript:void(0)" title="审批通过">通过</a>';//财务管理员审批通过
+		            	
+		            	var roleArr = getLoginuserRole();
+		            	var isProxy = roleArr[0];//是否拥有代理角色
+		            	var isFinancialManager = roleArr[1];//是否拥有财务管理员角色
+		            	var status = row.status;
+		                var btn = ''
+		                	if(isProxy && ('01'==status||'02'==status))//当前角色为“代理”且订单状态为“代理保存订单”或“财务管理员驳回”时，显示以下按钮
+		                		{
+		                			btn=btn+'<a class="editcls" onclick="updateOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="编辑">编辑</a>'//代理编辑
+				                	+'<a class="deleterole" onclick="deleteOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="删除">删除</a>'//代理删除
+				                	+'<a class="submitOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,1)" href="javascript:void(0)" title="提交">提交</a>'//代理提交
+		                		}
+	                		if(isFinancialManager && '11'==status)//当前角色为“财务管理员”且订单状态为“提交财务管理员审批”时，显示以下按钮
+	                			{
+	                				btn=btn+'<a class="detailcls" onclick="viewOrdersDetail(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="查看详情">详情</a>'//财务管理员可以查看订单详情但是不可以修改内容，可以审批
+				                	+'<a class="rejectOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,3)" href="javascript:void(0)" title="审批驳回">驳回</a>'//财务管理员驳回
+				                	+'<a class="stopOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,4)" href="javascript:void(0)" title="不通过">不通过</a>'//财务管理员不通过，终止订单的审批流程且流程不可恢复
+				                	+'<a class="throughOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,2)" href="javascript:void(0)" title="审批通过">通过</a>';//财务管理员审批通过
+	                			}
+		                	
 		                return btn;  
 		            }  
 		        }  

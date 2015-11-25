@@ -15,6 +15,27 @@ public class ResultBean
 	private String status;//返回状态（success of fail）
 	
 	private boolean isExist;//当前值是否存在
+	
+	private boolean isProxy;//是否拥有代理角色
+	
+	private boolean isFinancialManager;//是否拥有财政管理员角色
+	
+
+	public boolean isProxy() {
+		return isProxy;
+	}
+
+	public void setProxy(boolean isProxy) {
+		this.isProxy = isProxy;
+	}
+
+	public boolean isFinancialManager() {
+		return isFinancialManager;
+	}
+
+	public void setFinancialManager(boolean isFinancialManager) {
+		this.isFinancialManager = isFinancialManager;
+	}
 
 	public String getMessage() {
 		return message;

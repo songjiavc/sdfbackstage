@@ -300,6 +300,7 @@ public class GoodsController {
 				@RequestParam(value="id",required=false) String id,
 				@RequestParam(value="code",required=false) String code,
 				@RequestParam(value="name",required=false) String name,
+				@RequestParam(value="goodType",required=false) String goodType,//商品彩种（ 0：体彩 1：福彩 2：双机），根据选中的产品的产品彩种来生成
 				@RequestParam(value="price",required=false) String price,
 				@RequestParam(value="status",required=false) String status,
 				@RequestParam(value="privince",required=false) String privince,
@@ -319,6 +320,7 @@ public class GoodsController {
 		   {//商品数据不为空，则进行修改操作
 			  
 			   goods.setName(name);
+			   goods.setGoodType(goodType);
 			   goods.setPrice(price);
 			   goods.setProvinceDm(privince);
 			   goods.setCityDm(city);
@@ -362,6 +364,7 @@ public class GoodsController {
 			   goods = new Goods();
 			   goods.setCode(code);
 			   goods.setName(name);
+			   goods.setGoodType(goodType);
 			   goods.setPrice(price);
 			   goods.setStatus(status);
 			   goods.setProvinceDm(privince);
