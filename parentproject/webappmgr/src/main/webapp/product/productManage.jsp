@@ -168,8 +168,8 @@
 	            <label for="lotteryTypeA">产品彩种分类:</label>
 	            <select class="easyui-combobox " id="lotteryTypeA" name="lotteryType"  
 		          	  data-options="editable:false" style="width:150px;" >
-		          	  <option value="0" checked>体彩</option>
-		          	  <option value="1" >福彩</option>
+		          	  <option value="1" checked>体彩</option>
+		          	  <option value="2" >福彩</option>
 				</select>
 	        </div>
 	        <div class="ftitle">
@@ -252,8 +252,8 @@
 	            <label for="lotteryTypeU">产品彩种分类:</label>
 	            <select class="easyui-combobox " id="lotteryTypeU" name="lotteryType"  
 		          	  data-options="editable:false" style="width:150px;" >
-		          	  <option value="0" checked>体彩</option>
-		          	  <option value="1" >福彩</option>
+		          	  <option value="1" checked>体彩</option>
+		          	  <option value="2" >福彩</option>
 				</select>
 	        </div>
 	       <div class="ftitle">

@@ -39,7 +39,7 @@ public class Product extends BaseEntiry implements Serializable{
 	private String name;
 	
 	@Column(name="LOTTERY_TYPE", length=10)
-	private String lotteryType;//彩票种类（0：体彩 1：福彩）
+	private String lotteryType;//彩票种类（1：体彩 2：福彩）
 	
 	
 	@Column(name="STATUS_TIME")

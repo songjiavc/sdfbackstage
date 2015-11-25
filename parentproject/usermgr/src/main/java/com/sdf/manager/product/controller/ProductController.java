@@ -205,7 +205,7 @@ public class ProductController
 				@RequestParam(value="id",required=false) String id,
 				@RequestParam(value="code",required=false) String code,
 				@RequestParam(value="name",required=false) String name,
-				@RequestParam(value="lotteryType",required=false) String lotteryType,//彩票种类（0：体彩 1：福彩）
+				@RequestParam(value="lotteryType",required=false) String lotteryType,//彩票种类（1：体彩 2：福彩）
 				@RequestParam(value="price",required=false) String price,
 				@RequestParam(value="privince",required=false) String privince,
 				@RequestParam(value="city",required=false) String city,

@@ -403,8 +403,8 @@ function initDatagrid()
 		            	var lotteryTypeName ='';
 		            	switch(value)
 		            	{
-		            		case '0':lotteryTypeName='体彩';break;
-		            		case '1':lotteryTypeName='福彩';break;
+		            		case '1':lotteryTypeName='体彩';break;
+		            		case '2':lotteryTypeName='福彩';break;
 		            	}
 		            	return lotteryTypeName;  
 		            }  },

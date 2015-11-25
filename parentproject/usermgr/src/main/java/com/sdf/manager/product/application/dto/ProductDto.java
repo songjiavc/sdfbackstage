@@ -18,9 +18,9 @@ public class ProductDto {
 
 	private String id;
 	private String name;
-	private String lotteryType;//彩票种类（0：体彩 1：福彩）
+	private String lotteryType;//彩票种类（1：体彩 2：福彩）
 	
-	private String lotteryTypeName;//彩票种类名称（0：体彩 1：福彩）
+	private String lotteryTypeName;//彩票种类名称（1：体彩2：福彩）
 	private String code;//产品编码
 	private String provinceDm;//省份
 	private String cityDm;//市

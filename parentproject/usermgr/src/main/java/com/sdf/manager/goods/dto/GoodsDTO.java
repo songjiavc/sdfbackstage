@@ -12,7 +12,7 @@ public class GoodsDTO {
 
 	private String id;
 	private String name;
-	private String goodType;//商品彩种（ 0：体彩 1：福彩 2：双机），根据选中的产品的产品彩种来生成
+	private String goodType;//商品彩种（ 1：体彩 2：福彩 0：双机），根据选中的产品的产品彩种来生成
 	
 	private String code;//产品编码
 	private String provinceDm;//省份

@@ -40,7 +40,7 @@ public class Goods extends BaseEntiry{
 	private String name;//商品名称
 	
 	@Column(name="GOODS_TYPE", length=45)
-	private String goodType;//商品彩种（ 0：体彩 1：福彩 2：双机），根据选中的产品的产品彩种来生成
+	private String goodType;//商品彩种（ 1：体彩 2：福彩 0：双机），根据选中的产品的产品彩种来生成
 	
 	
 	@Column(name="STATUS", length=2)

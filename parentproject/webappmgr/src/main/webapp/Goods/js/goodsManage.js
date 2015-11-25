@@ -375,8 +375,8 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 		            	var lotteryTypeName ='';
 		            	switch(value)
 		            	{
-		            		case '0':lotteryTypeName='体彩';break;
-		            		case '1':lotteryTypeName='福彩';break;
+		            		case '1':lotteryTypeName='体彩';break;
+		            		case '2':lotteryTypeName='福彩';break;
 		            	}
 		            	return lotteryTypeName;  
 		            }  },
@@ -640,7 +640,7 @@ function fillShowGoodstype(productDatagrid,hiddenId,showId)
 			{
 				if(flag != selectedRow.lotteryType)
 					{
-						gType = '2';//双机
+						gType = '0';//双机
 					}
 			}
 		
@@ -651,9 +651,9 @@ function fillShowGoodstype(productDatagrid,hiddenId,showId)
 	$("#"+hiddenId).val(gType);
 	switch(gType)
 	{
-		case '0':showGoodstypeText='体彩';break;
-		case '1':showGoodstypeText='福彩';break;
-		case '2':showGoodstypeText='双机';break;
+		case '1':showGoodstypeText='体彩';break;
+		case '2':showGoodstypeText='福彩';break;
+		case '0':showGoodstypeText='双机';break;
 	}
 	$("#"+showId).val(showGoodstypeText);
 }
