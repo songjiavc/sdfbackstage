@@ -141,10 +141,10 @@ function initDatagrid()
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
 				{field:'status',hidden:true},
-				{field:'code',title:'订单编码',width:120,align:'left'},
+				{field:'code',title:'订单编码',width:120,align:'center'},
 		        {field:'name',width:120,title:'订单名称'},
-				{field:'price',title:'订单金额(元)',width:60,align:'left'},
-				{field:'payMode',title:'支付方式',width:100,align:'left',  
+				{field:'price',title:'订单金额(元)',width:60,align:'center'},
+				{field:'payMode',title:'支付方式',width:100,align:'center',  
 		            formatter:function(value,row,index){  
 		                var showPaymode = "";
 		                if("0"==value)
@@ -157,10 +157,10 @@ function initDatagrid()
 		                	}
 		                return showPaymode;  
 		            }  },
-				{field:'creator',title:'创建人',width:70,align:'left'},
-				{field:'createTime',title:'创建时间',width:130,align:'left'},
-				{field:'operator',title:'操作人',width:70,align:'left'},
-				{field:'statusName',title:'状态',width:100,align:'left'},
+				{field:'creator',title:'创建人',width:70,align:'center'},
+				{field:'createTime',title:'创建时间',width:130,align:'center'},
+				{field:'operator',title:'操作人',width:70,align:'center'},
+				{field:'statusName',title:'状态',width:100,align:'center'},
 				{field:'opt',title:'操作',width:200,align:'center',  
 		            formatter:function(value,row,index){  
 		            	
@@ -689,6 +689,17 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid)
 				{field:'id',hidden:true},
 				{field:'code',title:'商品编码',width:120,align:'left'},
 		        {field:'name',width:120,title:'商品名称'},
+		        {field:'goodType',width:50,title:'彩种',  
+		            formatter:function(value,row,index){  
+		            	var goodTypeName ='';
+		            	switch(value)
+		            	{
+		            		case '1':goodTypeName='体彩';break;
+		            		case '2':goodTypeName='福彩';break;
+		            		case '0':goodTypeName='双机';break;
+		            	}
+		            	return goodTypeName;  
+		            }  },
 				{field:'price',title:'价格(元)',width:80,align:'left'},
 				{field:'provinceName',title:'省级区域',width:100,align:'left'},
 				{field:'cityName',title:'市级区域',width:100,align:'left'},
