@@ -14,6 +14,8 @@ public class AccountBean
 	
 	private String password;
 	
+	private String parentId;
+	
 	private String parentName;
 	
 	private String status;
@@ -56,6 +58,14 @@ public class AccountBean
 
 	public void setTelephone(String telephone) {
 		this.telephone = telephone;
+	}
+	
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 
 	public String getParentName() {

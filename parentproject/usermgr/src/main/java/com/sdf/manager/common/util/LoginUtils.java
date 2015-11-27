@@ -5,8 +5,8 @@ import javax.servlet.http.HttpSession;
 import com.sdf.manager.user.bean.AccountBean;
 
 public class LoginUtils {
-
-	 /**
+	
+	/**
 	  * 
 	 * @Description: TODO(获取当前登录人员的usercode) 
 	 * @author bann@sdfcp.com

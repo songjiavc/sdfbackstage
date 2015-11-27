@@ -37,5 +37,10 @@ public class Constants {
 	public static final String PAY_MODE_ONE = "0";//支付方式：现金支付
 	
 	public static final String PAY_MODE_TWO = "1";//支付方式：转账支付
+	
+	//代理模块内容start
+	//固化市场专员角色编码，目地是通过编码查找对应的市场人员
+	public static final String ROLE_SCZY_CODE = "SC_ZY";
+	//代理模块内容end
 
 }

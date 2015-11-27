@@ -15,4 +15,14 @@ public interface RoleRepository extends GenericRepository<Role,String>
 	 */
 	@Query("select u from Role u where u.isDeleted ='1' and u.id =?1")
 	public Role getRoleById(String id);
+	
+	/** 
+	  * @Description: 根据roleCode获取role实体
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月25日 上午10:57:51 
+	  * @param code
+	  * @return 
+	  */
+	@Query("select u from Role u where u.isDeleted ='1' and u.code =?1")
+	public Role getRoleByCode(String code);
 }

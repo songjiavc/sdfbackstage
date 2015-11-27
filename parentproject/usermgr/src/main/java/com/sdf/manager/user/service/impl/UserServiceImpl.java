@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.MD5Util;
@@ -24,6 +25,7 @@ import com.sdf.manager.user.bean.UserRelaRoleBean;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
+import com.sdf.manager.user.repository.RoleRepository;
 import com.sdf.manager.user.repository.UserRelaRoleRepository;
 import com.sdf.manager.user.repository.UserRepository;
 import com.sdf.manager.user.service.UserService;
@@ -32,7 +34,6 @@ import com.sdf.manager.user.service.UserService;
   * @Description: 
   * @author songj@sdfcp.com
   * @date 2015年9月25日 上午8:51:54 
-  *  
   */
 @Service("userService")
 @Transactional(propagation=Propagation.REQUIRED)
@@ -42,6 +43,8 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private UserRelaRoleRepository userRelaRoleRepository;
+	@Autowired
+	private RoleRepository roleRepository;
 	/**
 	 * @return
 	 */
@@ -213,5 +216,31 @@ public class UserServiceImpl implements UserService {
 		User user = this.getUserByCode(userCode);
 		user.setPassword(MD5Util.MD5(newPassword));
 		userRepository.save(user);
+	}
+
+	/* (非 Javadoc) 
+	 * <p>Title: findAccountsByRoleCode</p> 
+	 * <p>Description:根据rolecode获取具有该角色的用户列表 </p> 
+	 * @param roleCode
+	 * @return 
+	 * @see com.sdf.manager.user.service.UserService#findAccountsByRoleCode(java.lang.String) 
+	 */
+	public List<AccountBean> findAccountsByRoleCode(String roleCode) {
+		Role role = roleRepository.getRoleByCode(roleCode);
+		List<User> users = role.getUsers();
+		if(users!=null && users.size()>0){
+			List<AccountBean> accountList = new ArrayList<AccountBean>();
+			for(User user : users){
+				AccountBean accountBean = new AccountBean();
+				try {
+					BeanUtil.copyBeanProperties(accountBean, user);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				accountList.add(accountBean);
+			}
+			return accountList;
+		}
+		return null;
 	}
 }

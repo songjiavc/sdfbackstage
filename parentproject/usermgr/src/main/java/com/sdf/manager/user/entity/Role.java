@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Transient;
 
@@ -70,8 +71,20 @@ public class Role extends BaseEntiry implements Serializable
             inverseJoinColumns = {@JoinColumn(name = "authority_ID", referencedColumnName = "id") })
 	private List<Authority> authorities ;
 
-	
-	
+	/*
+	 *   add by songj@sdfcp.com
+	 *   desc  通过角色查找对应的user实体列表
+	 */
+	@JsonIgnore //多对多调用的时候避免json组装死循环
+	@Transient
+	//@ManyToMany注释表示Teacher是多对多关系的一端。
+    //@JoinTable描d述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Teacher表的外键关系。
+    //中间表Teacher_Student的Teacher_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Student)的外键关系。
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "RELA_SDF_USER_ROLE", 
+            joinColumns = { @JoinColumn(name = "ROLE_ID",referencedColumnName = "id") }, 
+            inverseJoinColumns = { @JoinColumn(name = "USER_ID",referencedColumnName = "id") })
+	private List<User> users;
 	
 	public String getParentRolename() {
 		return parentRolename;
@@ -133,9 +146,13 @@ public class Role extends BaseEntiry implements Serializable
 	public void setIsSystem(String isSystem) {
 		this.isSystem = isSystem;
 	}
-	
-	
 
+	public List<User> getUsers() {
+		return users;
+	}
 
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
 	
 }

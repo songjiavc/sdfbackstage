@@ -37,6 +37,34 @@ function initQueryProvince()
 	}); 
 }
 
+	/**
+	 * add by songj@sdfcp.com
+	 * date 2015-11-27 
+	 * desc 初始化上级代理列表
+	 */
+	function initAddFormParentId(parentId){
+		$('#addFormParentId').combobox('clear');//清空combobox值
+		$('#addFormParentId').combobox({
+			queryParams:{
+				
+			},//暂时没有任何需要查询的条件
+			url:contextPath+'/agent/getSczyList.action',
+			valueField : 'id',
+			textField : 'name',
+			onLoadSuccess: function (data) { //数据加载完毕事件
+				debugger;
+                 if (parentId == undefined) 
+                 {
+                	 $("#addFormProvince").combobox('select',data[0].id);
+                 }
+                 else
+            	 {
+                	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
+                	 $("#addFormProvince").combobox('setValue', parentId);
+            	 }
+             }
+		});
+	}
 /**
  * 初始化省数据
  * @param addOrUpdate:标记当前是添加表单操作还是修改表单的操作,值为"add" 和"update"
@@ -144,10 +172,10 @@ function initDatagrid()
 			searchFormAgent : $('#searchFormAgent').val()
 	};
 	//渲染列表
-	$('#stationDataGrid').datagrid({
+	$('#agentDataGrid').datagrid({
 		singleSelect:false,
 		queryParams: queryParams,
-		url: contextPath + '/station/getStationList.action',
+		url: contextPath + '/agent/getAgentList.action',
 		method:'get',
 		border:false,
 		fit:true,
@@ -157,19 +185,19 @@ function initDatagrid()
 		striped:true,
 		columns:[[
 				{field:'id',checkbox:true},
-				{field:'stationCode',title:'登录帐号',width:'10%',align:'center'},
-				{field:'stationNumber',title:'站点号',width:'10%',align:'center'},
+				{field:'agentCode',title:'登录帐号',width:'10%',align:'center'},
+				{field:'agentNumber',title:'站点号',width:'10%',align:'center'},
 				{field:'province',title:'省',width:'10%',align:'center'},
 				{field:'city',title:'市',width:'10%',align:'center'},
-				{field:'stationStyle',title:'站点类型',width:'10%',align:'center'},
+				{field:'agentStyle',title:'站点类型',width:'10%',align:'center'},
 				{field:'name',title:'站主名称',width:'10%',align:'center'},
 				{field:'telephone',title:'站主电话',width:'10%',align:'center'},
-				{field:'stationCode',title:'登录帐号',width:'10%',align:'center'},
+				{field:'agentCode',title:'登录帐号',width:'10%',align:'center'},
 				{field:'createTime',title:'录入时间',width:'10%',align:'center'},
 				{field:'opt',title:'操作',width:'130',align:'center', 
 		            formatter:function(value,row,index){
-		                var btn = '<a class="editcls" onclick="updateStation(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
-		                	+'<a class="delcls" onclick="delStationById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
+		                var btn = '<a class="editcls" onclick="updateAgent(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
+		                	+'<a class="delcls" onclick="delAgentById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
 		                	+'<a class="setOrder" onclick="setOrder(&quot;'+row+'&quot;)" href="javascript:void(0)"></a>';
 		                return btn;
 		            }
@@ -187,21 +215,21 @@ function initDatagrid()
 	//关闭弹框
 	function closeDialog()
 	{	
-		$("#setOrder").dialog('close');
-		$("#addOrUpdateStation").dialog('close');
+		$("#addOrUpdateAgent").dialog('close');
+		$("#setAgentScope").dialog('close');
 	}
 
 	/**
-	 * 权限修改
+	 * 代理修改
 	 */
-	function updateStation(id)
+	function updateAgent(id)
 	{
 			/**
 			 * 站点修改
 			 */
-			$('.panel-title.panel-with-icon').html('修改站点信息');
-			$('#addFormStationCode').attr('readonly','readonly');
-			var url = contextPath + '/station/getStationDetail.action';
+			$('.panel-title.panel-with-icon').html('修改代理信息');
+			$('#addFormAgentCode').attr('readonly','readonly');
+			var url = contextPath + '/agent/getAgentDetail.action';
 			var paramData = new Object();
 			paramData.id=id;
 			$.ajax({
@@ -212,14 +240,15 @@ function initDatagrid()
 		        data:paramData,
 		        dataType: "json",
 		        success: function (data) {
-					$('#addOrUpdateStationForm').form('load',data);
+					$('#addOrUpdateAgentForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
+					initAddFormParentId(data.parentId);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);
 		        }
 			});
-			$("#addOrUpdateStation").dialog("open");//打开修改用户弹框
+			$("#addOrUpdateAgent").dialog("open");//打开修改用户弹框
 	}
 
 	/**
@@ -235,12 +264,12 @@ function initDatagrid()
 			$("#setOrder").dialog("open");
 	}
 	//提交添加权限form表单
-	function submitAddStation()
+	function submitAddAgent()
 	{
-		$('#addOrUpdateStationForm').form('submit',{
-			url:contextPath+'/station/saveOrUpdate.action',
+		$('#addOrUpdateAgentForm').form('submit',{
+			url:contextPath+'/agent/saveOrUpdate.action',
 			onSubmit:function(param){
-				return $('#addOrUpdateStationForm').form('validate');
+				return $('#addOrUpdateAgentForm').form('validate');
 			},
 			success:function(data){
 				$.messager.alert('提示', eval("(" + data + ")").message);
@@ -251,20 +280,20 @@ function initDatagrid()
 	}
 	
 	//修改帐号form表单
-	function submitUpdatestation()
+	function submitUpdateagent()
 	{
-		$('#addOrUpdateStationForm').form('submit',{
-			url:contextPath+'/station/saveOrUpdate.action',
+		$('#addOrUpdateAgentForm').form('submit',{
+			url:contextPath+'/agent/saveOrUpdate.action',
 			onSubmit:function(param){
-				return $('#updatestationForm').form('enableValidation').form('validate');
+				return $('#updateagentForm').form('enableValidation').form('validate');
 			},
 		    success:function(data){
 		    	//data从后台返回后的类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
 		    	$.messager.alert('提示', eval("(" + data + ")").message);
-		    	$("#updatestation").dialog('close');//初始化修改权限弹框关闭
+		    	$("#updateagent").dialog('close');//初始化修改权限弹框关闭
 		    	//在修改权限后刷新权限数据列表
 		    	initDatagrid();
-		    	$('#updatestationForm').form('clear');
+		    	$('#updateagentForm').form('clear');
 		    }
 		});
 	}
@@ -282,7 +311,7 @@ function initDatagrid()
 		$.ajax({
 			async: false,   //设置为同步获取数据形式
 	        type: "post",
-	        url: contextPath+'/station/checkCode.action',
+	        url: contextPath+'/agent/checkCode.action',
 	        data:paramData,
 	        dataType: "json",
 	        success: function (data) {
@@ -300,8 +329,8 @@ function initDatagrid()
 /**
  * 删除单个记录
  */
-	function delStationById(id){
-		var url = contextPath + '/station/deleteStationByIds.action';
+	function delAgentById(id){
+		var url = contextPath + '/agent/deleteAgentByIds.action';
 		$.messager.confirm(" ", "您确认删除选中数据？", function (r) {  
 	        if (r) {  
 		        	$.ajax({
@@ -328,19 +357,19 @@ function initDatagrid()
 	 * 批量删除
 	 * @param code
 	 */
-	function deleteStationByIds()
+	function deleteAgentByIds()
 	{
-		var url = contextPath + '/station/deleteStationByIds.action';
+		var url = contextPath + '/agent/deleteAgentByIds.action';
 		var paramObj = new Object();
 		
 		var idArr = new Array();
-		var rows = $('#stationDataGrid').datagrid('getSelections');
+		var rows = $('#agentDataGrid').datagrid('getSelections');
 		var deleteFlag = true;
 		
 		for(var i=0; i<rows.length; i++)
 		{
 			idArr.push(rows[i].id);//code
-		}
+		}	
 		
 		if(idArr.length>0)
 		{

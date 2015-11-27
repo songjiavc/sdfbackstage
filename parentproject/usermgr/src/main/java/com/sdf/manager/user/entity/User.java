@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -80,6 +81,10 @@ public class User extends BaseEntiry implements Serializable
             joinColumns = { @JoinColumn(name = "USER_ID",referencedColumnName = "id") }, 
             inverseJoinColumns = { @JoinColumn(name = "ROLE_ID",referencedColumnName = "id") })
 	private List<Role> roles;
+	
+	//只对代理有效，代理范围
+	@OneToMany(mappedBy = "agentId", fetch = FetchType.LAZY) 
+	private List<AgentRange> agentRanges;
 	
 	public String getId() {
 		return id;
@@ -176,5 +181,12 @@ public class User extends BaseEntiry implements Serializable
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-	
+
+	public List<AgentRange> getAgentRanges() {
+		return agentRanges;
+	}
+
+	public void setAgentRanges(List<AgentRange> agentRanges) {
+		this.agentRanges = agentRanges;
+	}
 }

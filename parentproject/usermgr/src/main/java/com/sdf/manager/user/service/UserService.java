@@ -102,4 +102,15 @@ public interface UserService {
 	  * @param userCode 
 	  */
 	public void savePassword(String newPassword,String userCode);
+	
+	/** 
+	  * @Description: 根据  roleCode  获取帐号列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月25日 上午10:55:55 
+	  * @param roleCode
+	  * @return 
+	  */
+	public List<AccountBean> findAccountsByRoleCode(String roleCode);
+	
+	
 }
