@@ -42,6 +42,12 @@ public class Constants {
 	
 	public static final String ROLE_PROXY_ID = "2";//“代理”角色的id
 	
+	public static final String LOTTERY_TYPE_TC = "1";//彩种：体彩
+	
+	public static final String LOTTERY_TYPE_FC = "2";//彩种：福彩
+	
+	public static final String LOTTERY_TYPE_SJ = "0";//彩种：双机
+	
 	
 
 }

@@ -279,14 +279,14 @@ function initDatagrid()
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
 				{field:'connectOrders',hidden:true},//是否与有效订单关联
-				{field:'code',title:'商品编码',width:120,align:'left'},
+				{field:'code',title:'商品编码',width:120,align:'center'},
 		        {field:'name',width:120,title:'商品名称'},
-				{field:'price',title:'价格(元)',width:80,align:'left'},
-				{field:'provinceName',title:'省级区域',width:100,align:'left'},
-				{field:'cityName',title:'市级区域',width:100,align:'left'},
-				{field:'createTime',title:'创建时间',width:130,align:'left'},
-				{field:'goodsDesprition',title:'商品描述',width:120,align:'left'},
-				{field:'status',title:'商品状态',width:70,align:'left',
+				{field:'price',title:'价格(元)',width:80,align:'center'},
+				{field:'provinceName',title:'省级区域',width:100,align:'center'},
+				{field:'cityName',title:'市级区域',width:100,align:'center'},
+				{field:'createTime',title:'创建时间',width:130,align:'center'},
+				{field:'goodsDesprition',title:'商品描述',width:120,align:'center'},
+				{field:'status',title:'商品状态',width:70,align:'center',
 					formatter:function(value,row,index){
 							var showStatus = "";
 							switch(row.status)

@@ -11,6 +11,8 @@
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.10.1.min.js"></script>    
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/jquery.easyui.min.js"></script>    
     <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/locale/easyui-lang-zh_CN.js"></script> 
+    <%--datagrid子网格实现引入文件--%>
+    <script type="text/javascript" src="<%=request.getContextPath() %>/js/easyUI/datagrid-detailview.js"></script> 
 <script>
 	var contextPath = '<%=request.getContextPath() %>';
 	

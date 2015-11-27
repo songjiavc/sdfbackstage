@@ -16,8 +16,48 @@ public class RelaSdfGoodProductDTO {
 	
 	private String price;//实际售卖价格
 	
+	private String name;//产品名称
+	private String lotteryType;//产品彩票种类（1：体彩 2：福彩）
+	
+	private String code;//产品编码
+	
+	private String orderprobation;//订单中设置的试用期
+	
 	
 
+	
+	
+	public String getOrderprobation() {
+		return orderprobation;
+	}
+
+	public void setOrderprobation(String orderprobation) {
+		this.orderprobation = orderprobation;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getLotteryType() {
+		return lotteryType;
+	}
+
+	public void setLotteryType(String lotteryType) {
+		this.lotteryType = lotteryType;
+	}
 
 	public String getId() {
 		return id;

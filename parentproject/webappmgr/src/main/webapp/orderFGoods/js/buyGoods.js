@@ -2,12 +2,95 @@ var goodsList = new Array();//选中的商品数据
 var countPrice = 0;//选中商品总价
 $(document).ready(function(){
 	
-			initGoodsDatagrid('210000', 'all', 'goodsDatagridU');
+			initGoodsDatagrid('210000', 'all', 'goodsDatagridU','1');
+			initStationList();//加载站点列表（TODO:从后台获取当前登录用户的信息，获取其下属的站点列表数据）
 			clearGoodsArray();
 			
 			generateCode();
 			
+			bindStationCombobox();//为站点下拉框绑定级联事件
+			
 		});
+
+/**
+ * 为站点下拉框绑定级联事件
+ */
+function bindStationCombobox()
+{
+	$("#stationA").combobox({
+
+		onSelect: function (rec) {
+			if(null != rec.id && '' != rec.id)
+			{
+				var returnArr = new Array();
+				returnArr = getDetailStation(rec.id);//rec.id is stationId
+				//根据站点的区域和彩种加载商品信息列表
+				initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);		
+			}
+			
+		}
+
+		}); 
+}
+
+/**
+ * 获取站点详情
+ * @param stationId：站点id
+ */
+function getDetailStation(stationId)
+{
+	var returnArr = new Array();
+	var url = contextPath + '/station/getStationDetail.action';
+	var paramData = new Object();
+	paramData.id=stationId;
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "get",
+        cache:false,
+        url: url,
+        data:paramData,
+        dataType: "json",
+        success: function (data) {
+			
+        	var province = data.addFormProvince;
+        	var city = data.addFormCity;
+        	var stationType = data.addFormStationStyle;//站点类型：1：体彩 2：福彩
+        	
+        	returnArr.push(province);//站点所属省
+        	returnArr.push(city);//站点所属市
+        	returnArr.push(stationType);//站点类型：1：体彩 2：福彩
+        	
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+	});
+	
+	return returnArr;
+}
+
+/**
+ * 初始化站点下拉框（加载站点的约束条件：1.上级代理下属的所有站点）
+ */
+function initStationList()
+{
+	var data = new Object();
+	
+	$('#stationA').combobox({
+		queryParams:data,
+		url:contextPath+'/order/getStationList.action',
+		valueField:'id',
+		textField:'stationNumber',
+		 onLoadSuccess: function (data1) { //数据加载完毕事件
+             if (data1.length > 0 ) 
+             {//默认选中第一个站点
+            	 $('#stationA').combobox('select',data1[data1.length-1].ccode);
+             }
+            
+				
+         }
+	}); 
+}
 
 /**
  * 清空全局变量
@@ -46,16 +129,17 @@ function generateCode()
 
 
 /**
- * 初始化选择产品列表
+ * 初始化选择商品列表（加载条件：1.区域（根据选中的站点的区域值）2.彩种（根据选中的站点的彩种--》加载当前彩种和双机商品））
  * @param provinceId:选中站点的省id
  * @param cityId:选中站点的市id
  */
-function initGoodsDatagrid(provinceId,cityId,productDatagrid)
+function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 {
 	var params = new Object();
 	params.province = provinceId;
 	params.city = cityId;
 	params.status = '1';//上架商品
+	params.stationType = stationType;//站点类型：1：体彩 2：福彩
 	
 	$('#'+productDatagrid).datagrid({
 		singleSelect:false,
@@ -73,52 +157,38 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid)
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
-				{field:'id',hidden:true},
-				{field:'code',title:'商品编码',width:120,align:'left'},
-		        {field:'name',width:120,title:'商品名称'},
-				{field:'price',title:'价格(元)',width:80,align:'left'},
-				{field:'provinceName',title:'省级区域',width:100,align:'left'},
-				{field:'cityName',title:'市级区域',width:100,align:'left'},
-				{field:'createTime',title:'创建时间',width:130,align:'left'},
-				{field:'goodsDesprition',title:'商品描述',width:120,align:'left'}
+				{field:'code',title:'商品编码',width:120,align:'center'},
+		        {field:'name',width:120,title:'商品名称',align:'center'},
+		        {field:'goodType',width:50,title:'彩种',align:'center', 
+		            formatter:function(value,row,index){  
+		            	var goodTypeName ='';
+		            	switch(value)
+		            	{
+		            		case '1':goodTypeName='体彩';break;
+		            		case '2':goodTypeName='福彩';break;
+		            		case '0':goodTypeName='双机';break;
+		            	}
+		            	return goodTypeName;  
+		            }  },
+				{field:'price',title:'价格(元)',width:80,align:'center'},
+				{field:'provinceName',title:'省级区域',width:80,align:'center'},
+				{field:'cityName',title:'市级区域',width:80,align:'center'},
+				{field:'createTime',title:'创建时间',width:150,align:'center'},
+				{field:'goodsDesprition',title:'商品描述',width:120,align:'center'}
 		    ]],  
 	    onLoadSuccess:function(data){  
 	        if(data.rows.length==0){
 				var body = $(this).data().datagrid.dc.body2;
 				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
 			}
-	       /* else
-	        	{
-	        		for(var i=0;i<data.rows.length;i++)
-	        			{
-	        				$('#'+productDatagrid).datagrid('beginEdit', i);
-	        			}
-	        	}*/
 	        
 	        //选中（写入后台读取的产品数据进行选中）
 	        var selectedRows = $('#'+productDatagrid).datagrid('getRows');
-	       /* if("productDatagridU" == productDatagrid)//修改商品
-	        	{
-		            var  pdList = checkProducts(params.goodsId,productDatagrid);
-			        for(var i=0;i<pdList.length;i++)
-					{
-			        	var	proId = pdList[i].productId;
-			        	var	probation = pdList[i].probation; 
-			        	var	price  = pdList[i].price;
-			        	
-			        	$.each(selectedRows,function(j,selectedRow){
-			        			
-			        		
-							if(selectedRow.id == proId){
-								 var selled = $('#'+productDatagrid).datagrid('getEditor', {index:j,field:'sellPrice'});
-								 var probationed = $('#'+productDatagrid).datagrid('getEditor', {index:j,field:'probation'});
-								 selled.target.val(price);//※只有当editor的type是text的时候才可以设置值成功
-								 probationed.target.val(probation);
-								 $('#'+productDatagrid).datagrid('selectRow',j);
-							}
-			        	});
-					}
-	        	}*/
+	        
+	        $.each(selectedRows,function(j,selectRow){
+	        	$('#'+productDatagrid).datagrid('expandRow',j);//将子网格展开
+	        	
+        	});
 	       
 	        //写入和选中当前数据选中的产品（写入productlist选中的）
 	        if(goodsList.length>0)
@@ -184,7 +254,82 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid)
 				}
 			}
 			addCountPrice(countPrice);//更新商品总价
-		}
+		},
+		//创建子网格
+		view: detailview,
+	    detailFormatter:function(index,row){//注意2  
+         return '<div style="padding:2px"><table id="ddv-' + row.id + '"></table></div>';  
+        }, 
+	    onExpandRow: function(index,row){
+	    	
+	    	var tableId = row.id;
+	    	 $('#ddv-'+tableId).datagrid({
+	    		method:'get',
+	            url:contextPath+'/goods/getProductsOfGoods.action?id='+row.id,
+	            fitColumns:true,
+	            loadMsg:'加载中...',
+	            height:'auto',
+	            columns:[[
+	                {field:'id',hidden:true},//商品和产品关联id
+					{field:'goodId',hidden:true},
+					{field:'productId',hidden:true},
+					{field:'name',width:120,title:'产品名称',align:'center'},
+					{field:'lotteryType',width:50,title:'彩种',align:'center',  
+			            formatter:function(value,row,index){  
+			            	var lotteryTypeName ='';
+			            	switch(value)
+			            	{
+			            		case '1':lotteryTypeName='体彩';break;
+			            		case '2':lotteryTypeName='福彩';break;
+			            	}
+			            	return lotteryTypeName;  
+			            }  },
+			        {field:'probation',width:50,title:'试用期最大值',align:'center'},
+		            {field:'orderProbation',title:'试用期(天)',width:50,align:'center',editor: {  
+						type: 'text',  
+	                    options: {  
+	                        required: true
+	                    }  
+	                }}
+	            ]],
+	            onResize:function(){
+	            	$('#'+productDatagrid).datagrid('fixDetailRowHeight',index);
+	            },
+	            onLoadSuccess:function(prodata){
+	                
+	                for(var i=0;i<prodata.rows.length;i++)
+        			{
+	                	 $('#ddv-'+tableId).datagrid('beginEdit', i);
+	                	 var probationed = $('#ddv-'+tableId).datagrid('getEditor', {index:i,field:'orderProbation'});
+						 probationed.target.val('0');
+        			}
+	                
+	                //绑定editor校验
+	                var selectedproRows = $('#ddv-'+tableId).datagrid('getRows');
+	                $.each(selectedproRows,function(indexp,row){
+	                	var editors = $('#ddv-'+tableId).datagrid('getEditors', indexp);//获取当前行可编辑的值
+			 			//校验
+	                	var oldValue = row.probation;//当前产品可以设定的最大试用期
+	                	
+	                	editors[0].target.bind('change',function () {//sellprice校验
+			 				
+	                		if(editors[0].target.val()>oldValue)
+	                			{
+	                				$.messager.alert('提示', "产品中第"+(indexp+1)+"行数据的试用期天数大于试用期最大值");
+	                				editors[0].target.val('0');
+	                			}
+			 				
+			 				});
+			        	
+	                	});
+	                $('#'+productDatagrid).datagrid('fixRowHeight',index);
+		       
+	            }
+	        });
+	        $('#'+productDatagrid).datagrid('fixDetailRowHeight',index);
+	        
+	    }
+		
 	});
 }
 
@@ -238,17 +383,62 @@ function submitAddgoods(operatype)
 	$('#ff').form('submit',{
 		url:contextPath+'/order/saveOrUpdate.action',
 		onSubmit:function(param){
-			param.goodsList = JSON.stringify(goodsList);
-			param.operatype = operatype;//0:保存 1：保存并提交
 			var flag = false;
 			if($('#ff').form('enableValidation').form('validate')&& goodsList.length>0 )
 				{
 					flag = true;
+					//存入“站点--产品”关联数据
+					
+					var proOfgoods  = new map();
+					for(var i=0;i<goodsList.length;i++)
+						{
+							var goodArr = new Array();//放入的对象是key是和value的组合
+							try
+							{
+								var selectedproRows = $('#ddv-'+goodsList[i]).datagrid('getRows');
+								
+								$.each(selectedproRows,function(j,selectedRow){
+										var valueArr =  new Array();
+										var productId = selectedRow.productId;
+										var goodId = selectedRow.goodId;
+										var proAndgoodId = selectedRow.id;
+										var lotteryType = selectedRow.lotteryType;
+										var orderProbationRow = $('#ddv-'+goodsList[i]).datagrid('getEditor', {index:j,field:'orderProbation'});
+										var orderProbation = orderProbationRow.target.val();//形成订单填写的试用期
+										
+										valueArr.push(productId);//0
+										valueArr.push(goodId);//1
+										valueArr.push(orderProbation);//2
+										valueArr.push('010102');//放入站点号//3
+										valueArr.push(lotteryType);//4
+										valueArr.push(proAndgoodId);//5//商品和产品关联表id
+										
+										var proOfgoods = new map();
+										proOfgoods.put(productId, valueArr);
+										
+										goodArr.push(proOfgoods);
+									}
+					        	);
+							}
+							catch(e)
+							{
+								//商品没有点击展开设置试用期
+								console.log('商品没有点击展开设置试用期');
+							}
+							
+							
+							proOfgoods.put(goodsList[i], goodArr);
+						}
 				}
 			else if(goodsList.length==0)
 				{
 					$.messager.alert('提示', "请为当前订单选择商品!");
 				}
+			
+			param.goodsList = JSON.stringify(goodsList);
+			param.operatype = operatype;//0:保存 1：保存并提交
+			param.proList = JSON.stringify(proOfgoods);
+			
 			return flag;
 		},
 	    success:function(data){

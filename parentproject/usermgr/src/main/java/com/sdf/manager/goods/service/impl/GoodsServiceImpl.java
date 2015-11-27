@@ -204,7 +204,15 @@ public class GoodsServiceImpl implements GoodsService {
 				if(null != entity.getProduct())
 				{
 					dto.setProductId(entity.getProduct().getId());
+					
+					dto.setName(entity.getProduct().getName());
+					
+					dto.setLotteryType(entity.getProduct().getLotteryType());
+					
+					dto.setCode(entity.getProduct().getCode());
 				}
+				
+				dto.setOrderprobation("");
 				
 				
 				

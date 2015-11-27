@@ -124,6 +124,7 @@ public class GoodsController {
 				@RequestParam(value="city",required=false) String city,//模糊查询所选市
 				@RequestParam(value="goodsName",required=false) String goodsName,//模糊查询填写的商品名称
 				@RequestParam(value="goodsDesprition",required=false) String goodsDesprition,//模糊查询填写的商品描述
+				@RequestParam(value="stationType",required=false) String stationType,//根据站点的类型（//站点类型：1：体彩 2：福彩）加载商品
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 			Map<String,Object> returnData = new HashMap<String,Object> ();
@@ -173,6 +174,17 @@ public class GoodsController {
 			{
 				params.add(status);//根据商品描述模糊查询商品数据
 				buffer.append(" and status = ?").append(params.size());
+			}
+			
+			if(null != stationType && !"".equals(stationType))
+			{//※根据站点类型查询商品数据，获取的数据是当前站点的类型对应的商品数据和双机商品数据的并集
+				List<String> paraArr = new ArrayList<String> ();
+				paraArr.add(stationType);
+				paraArr.add(Constants.LOTTERY_TYPE_SJ);
+				params.add(paraArr);
+				// JPQL(javax.persistence.Query)的IN查询参数必须是集合Collection(用List)类型，而HQL还可以是数组类型；
+				buffer.append(" and goodType in ?").append(params.size());
+				
 			}
 			
 			//排序
@@ -596,7 +608,6 @@ public class GoodsController {
 		}
 	 
 	 
-	
 	 
 	 
 	 

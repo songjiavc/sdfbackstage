@@ -173,6 +173,15 @@
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
 	           	</div>
 	        </div>
+	        <div class="ftitle">
+	            <label for="stationA">选中站点:</label>
+	             <div style="float:left;margin-left: 40px;">
+		            <select class="easyui-combobox " id="stationA" name="station"  
+			          	 		 data-options="editable:false" style="width:200px;" >
+			          	 		
+					</select>
+				</div>
+	        </div>
 	        <div class="ftable">
 	            <label for="product">选择商品:</label>
 	           <div style="float:left;margin-left:30px;width:700px;">
@@ -265,6 +274,15 @@
 	            <div style="float:left;margin-left: 30px;">
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceD" name="price" style="width:200px" readonly="readonly"/> 
 	           	</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="stationA">选中站点:</label>
+	             <div style="float:left;margin-left: 40px;">
+		            <select class="easyui-combobox " id="stationD" name="station"  
+			          	 		 data-options="editable:false" style="width:200px;" >
+			          	 		
+					</select>
+				</div>
 	        </div>
 	        <div class="ftable">
 	            <label for="product">选中的商品列表:</label>

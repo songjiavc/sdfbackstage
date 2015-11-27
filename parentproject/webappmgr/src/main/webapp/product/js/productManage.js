@@ -393,12 +393,12 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
-		        {field:'name',width:120,title:'产品名称'},
+		        {field:'name',width:120,title:'产品名称',align:'center'},
 				{field:'code',title:'产品编码',width:120,align:'center'},
 				{field:'price',title:'参考价格(元)',width:100,align:'center'},
 				{field:'provinceName',title:'省级区域',width:70,align:'center'},
 				{field:'cityName',title:'市级区域',width:70,align:'center'},
-				{field:'lotteryType',width:50,title:'彩种',  
+				{field:'lotteryType',width:50,title:'彩种',align:'center',  
 		            formatter:function(value,row,index){  
 		            	var lotteryTypeName ='';
 		            	switch(value)
