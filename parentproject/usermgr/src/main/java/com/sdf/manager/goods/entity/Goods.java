@@ -21,6 +21,13 @@ import org.springframework.data.annotation.Transient;
 import com.sdf.manager.order.entity.Orders;
 import com.sdf.manager.user.entity.BaseEntiry;
 
+/** 
+  * @ClassName: Goods 
+  * @Description: 商品表实体
+  * @author bann@sdfcp.com
+  * @date 2015年11月29日 上午11:49:55 
+  *  
+  */
 @Entity
 @Table(name="T_SDF_GOODS")
 public class Goods extends BaseEntiry{
