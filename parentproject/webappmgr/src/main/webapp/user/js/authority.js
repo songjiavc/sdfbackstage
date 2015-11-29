@@ -29,6 +29,7 @@ function initDatagrid(parentCode)
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'connectRole',hidden:true},//当前权限是否关联了有效的角色数据
 				{field:'isSystem',hidden:true},
 		        {field:'authName',width:120,title:'权限名称'},
 				{field:'code',title:'权限编码',width:120,align:'left'},
@@ -51,7 +52,7 @@ function initDatagrid(parentCode)
 				{field:'opt',title:'操作',width:160,align:'center',  
 		            formatter:function(value,row,index){  
 		                var btn = '<a class="editcls" onclick="updateAuth(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">编辑</a>'
-		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;)" href="javascript:void(0)">删除</a>';
+		                	+'<a class="auth" onclick="deleteAuth(&quot;'+row.id+'&quot;,&quot;'+row.isSystem+'&quot;,&quot;'+row.connectRole+'&quot;)" href="javascript:void(0)">删除</a>';
 		                return btn;  
 		            }  
 		        }  
@@ -150,6 +151,8 @@ function deleteAuthList()
 		
 		var issystem = rows[i].isSystem;//当前数据的是否为系统数据的标志位
 		
+		var connectRole = rows[i].connectRole;//当前数据是否和有效的角色数据有关联
+		
 		if(haveChildFlag)
 			{
 				$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'拥有子级权限,不可以进行删除操作!");
@@ -160,6 +163,13 @@ function deleteAuthList()
 			if("1"==issystem)
 				{
 					$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'是系统数据,不可以进行删除操作!");
+					deleteFlag = false;
+					break;
+				}
+			else 
+				if("1"==connectRole)
+				{
+					$.messager.alert('提示', "当前待删除权限:'"+rows[i].authName+"'和'"+rows[i].bindRoles+"'的角色数据有关联,不可以进行删除操作!");
 					deleteFlag = false;
 					break;
 				}
@@ -208,53 +218,66 @@ function deleteAuthList()
 /**
  * 删除权限
  */
-function deleteAuth(code,isSystem)
+function deleteAuth(code,isSystem,connectRole)
 {
 	var url = contextPath + '/menu/deleteAuth.action';
 	var data1 = new Object();
+	var deleteFlag = true;//是否可以进行删除标志位
 	
-	if("1"!=isSystem)
-	{
-		var codearr = [];
-		codearr.push(code);
-		
-		data1.codes=codearr.toString();
-		
-		var haveChildFlag = checkHaveChildAuth(code);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
-		
-		if(haveChildFlag)
-			{
-				$.messager.alert('提示', "当前待删除权限有子级权限,不可以进行删除操作!");
-			}
-		else
-			{
-				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
-			        if (r) {  
-				        	$.ajax({
-				        		async: false,   //设置为同步获取数据形式
-				                type: "post",
-				                url: url,
-				                data:data1,
-				                dataType: "json",
-				                success: function (data) {
-				                	initDatagrid('');
-				                	//删除权限后重新加载树
-				                	initZnodes();
-				                	$.messager.alert('提示', data.message);
-				                },
-				                error: function (XMLHttpRequest, textStatus, errorThrown) {
-				                    alert(errorThrown);
-				                }
-				           });
-				        	
-			        }  
-			    });  
-			}
-	}
-	else
+	if("1"==isSystem)
 	{
 		$.messager.alert('提示',"当前待删除数据是系统数据不可以进行删除操作!");
+		deleteFlag = false;
 	}
+	else
+		{
+			var haveChildFlag = checkHaveChildAuth(code);//判断当前待删除权限是否拥有子级权限，若拥有子级权限则不可以删除
+			if(haveChildFlag)
+			{
+				$.messager.alert('提示', "当前待删除权限有子级权限,不可以进行删除操作!");
+				deleteFlag = false;
+			}
+			else
+				{
+					if("1"==connectRole)//当connectRole=1时则表示当前权限和有效的角色数据有关联
+					{
+						$.messager.alert('提示', "当前权限和有效的角色数据有关联,不可以进行删除操作!");
+						deleteFlag = false;
+					}
+				}
+		}
+		
+	
+	var codearr = [];
+	codearr.push(code);
+	data1.codes=codearr.toString();
+	
+	
+	if(deleteFlag)
+		{
+			$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+		        if (r) {  
+			        	$.ajax({
+			        		async: false,   //设置为同步获取数据形式
+			                type: "post",
+			                url: url,
+			                data:data1,
+			                dataType: "json",
+			                success: function (data) {
+			                	initDatagrid('');
+			                	//删除权限后重新加载树
+			                	initZnodes();
+			                	$.messager.alert('提示', data.message);
+			                },
+			                error: function (XMLHttpRequest, textStatus, errorThrown) {
+			                    alert(errorThrown);
+			                }
+			           });
+			        	
+		        }  
+		    });  
+		}
+	
 	
 	
 	

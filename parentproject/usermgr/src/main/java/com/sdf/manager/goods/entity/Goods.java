@@ -3,18 +3,31 @@ package com.sdf.manager.goods.entity;
 import java.sql.Timestamp;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Transient;
 
+import com.sdf.manager.order.entity.Orders;
 import com.sdf.manager.user.entity.BaseEntiry;
 
+/** 
+  * @ClassName: Goods 
+  * @Description: 商品表实体
+  * @author bann@sdfcp.com
+  * @date 2015年11月29日 上午11:49:55 
+  *  
+  */
 @Entity
 @Table(name="T_SDF_GOODS")
 public class Goods extends BaseEntiry{
@@ -32,6 +45,9 @@ public class Goods extends BaseEntiry{
 	
 	@Column(name="NAME", length=45)
 	private String name;//商品名称
+	
+	@Column(name="GOODS_TYPE", length=45)
+	private String goodType;//商品彩种（ 1：体彩 2：福彩 0：双机），根据选中的产品的产品彩种来生成
 	
 	
 	@Column(name="STATUS", length=2)
@@ -55,6 +71,16 @@ public class Goods extends BaseEntiry{
 	
 	
 	
+	
+	
+	public String getGoodType() {
+		return goodType;
+	}
+
+	public void setGoodType(String goodType) {
+		this.goodType = goodType;
+	}
+
 	public String getGoodsDesprition() {
 		return goodsDesprition;
 	}
@@ -67,6 +93,26 @@ public class Goods extends BaseEntiry{
 	private List<RelaSdfGoodProduct> goodAndproduct;
 	
 	
+	@Transient
+	//表间关联的主控方的配置
+	//@JoinTable描述了多对多关系的数据表关系。name属性指定中间表名称，joinColumns定义中间表与Role表的外键关系。
+    //中间表RELA_SDF_AUTHORITY_ROLE的ROLE_ID列是Teacher表的主键列对应的外键列，inverseJoinColumns属性定义了中间表与另外一端(Authority)的外键关系。
+    //属性referencedColumnName标注的是所关联表中的字段名，若不指定则使用的所关联表的主键字段名作为外键。 
+	@ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinTable(name = "RELA_SDF_ORDER_GOOD", 
+            joinColumns = {  @JoinColumn(name = "GOOD_ID", referencedColumnName = "id")  }, 
+            inverseJoinColumns = {@JoinColumn(name = "ORDER_ID", referencedColumnName = "id") })
+	private List<Orders> orders;
+	
+	
+
+	public List<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Orders> orders) {
+		this.orders = orders;
+	}
 
 	public List<RelaSdfGoodProduct> getGoodAndproduct() {
 		return goodAndproduct;

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AuthorityBean;
+import com.sdf.manager.user.dto.AuthorityDTO;
 import com.sdf.manager.user.entity.Authority;
 
 /** 
@@ -60,4 +61,7 @@ public interface AuthService {
 	public QueryResult<Authority> getAuthList(Class<Authority> entityClass, String whereJpql, Object[] queryParams, 
 			LinkedHashMap<String, String> orderby, Pageable pageable);
 	
+	public  AuthorityDTO toDTO(Authority entity);
+	
+	public  List<AuthorityDTO> toDTOS(List<Authority> entities);
 }

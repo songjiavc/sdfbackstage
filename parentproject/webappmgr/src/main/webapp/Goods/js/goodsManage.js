@@ -32,7 +32,7 @@ function bindComboboxChange()
 		onSelect: function (rec) {
 			 //加载市级数据
 			 initCities('add','cityA','',rec.pcode);
-			 initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
+			 initProductDatagrid('privinceA','cityA','productDatagridA','goodTypeAhidden','goodTypeA','goodTypeAhidden','goodTypeA');//初始化待选择产品列表
 		}
 
 		}); 
@@ -42,7 +42,7 @@ function bindComboboxChange()
 		onSelect: function (rec) {
 			//加载市级数据
 			initCities('update','cityU','',rec.pcode);
-			initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+			initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 		}
 
 		}); 
@@ -61,7 +61,7 @@ function bindComboboxChange()
 
 		onSelect: function (rec) {
 			
-				initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
+				initProductDatagrid('privinceA','cityA','productDatagridA','goodTypeAhidden','goodTypeA');//初始化待选择产品列表
 			}
 
 		}); 
@@ -70,7 +70,7 @@ function bindComboboxChange()
 
 		onSelect: function (rec) {
 			
-				initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+				initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 			}
 
 		}); 
@@ -278,14 +278,15 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
-				{field:'code',title:'商品编码',width:120,align:'left'},
+				{field:'connectOrders',hidden:true},//是否与有效订单关联
+				{field:'code',title:'商品编码',width:120,align:'center'},
 		        {field:'name',width:120,title:'商品名称'},
-				{field:'price',title:'价格(元)',width:80,align:'left'},
-				{field:'provinceName',title:'省级区域',width:100,align:'left'},
-				{field:'cityName',title:'市级区域',width:100,align:'left'},
-				{field:'createTime',title:'创建时间',width:130,align:'left'},
-				{field:'goodsDesprition',title:'商品描述',width:120,align:'left'},
-				{field:'status',title:'商品状态',width:70,align:'left',
+				{field:'price',title:'价格(元)',width:80,align:'center'},
+				{field:'provinceName',title:'省级区域',width:100,align:'center'},
+				{field:'cityName',title:'市级区域',width:100,align:'center'},
+				{field:'createTime',title:'创建时间',width:130,align:'center'},
+				{field:'goodsDesprition',title:'商品描述',width:120,align:'center'},
+				{field:'status',title:'商品状态',width:70,align:'center',
 					formatter:function(value,row,index){
 							var showStatus = "";
 							switch(row.status)
@@ -300,7 +301,7 @@ function initDatagrid()
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
 			                var btn = '<a class="editcls" onclick="updateGoods(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-			                	+'<a class="deleterole" onclick="deleteGoods(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
+			                	+'<a class="deleterole" onclick="deleteGoods(&quot;'+row.id+'&quot;,&quot;'+row.status+'&quot;,&quot;'+row.connectOrders+'&quot;)" href="javascript:void(0)">删除</a>';
 			                return btn;  
 			            }  
 			        }  
@@ -337,7 +338,7 @@ function initDatagrid()
  * @param provinceId
  * @param cityId
  */
-function initProductDatagrid(provinceId,cityId,productDatagrid)
+function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGTId)
 {
 	var params = new Object();
 	params.province = $("#"+provinceId).combobox('getValue');
@@ -369,6 +370,16 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 				{field:'price',title:'参考价格(元)',width:100,align:'center'},
 				{field:'provinceName',title:'省级区域',width:120,align:'center'},
 				{field:'cityName',title:'市级区域',width:120,align:'center'},
+				{field:'lotteryType',width:50,title:'彩种',  
+		            formatter:function(value,row,index){  
+		            	var lotteryTypeName ='';
+		            	switch(value)
+		            	{
+		            		case '1':lotteryTypeName='体彩';break;
+		            		case '2':lotteryTypeName='福彩';break;
+		            	}
+		            	return lotteryTypeName;  
+		            }  },
 				{field:'cpdlName',title:'大类别',width:100,align:'center'},
 				{field:'cpzlName',title:'中类别',width:100,align:'center'},
 //				{field:'cpxlName',title:'小类别',width:100,align:'center'},
@@ -504,7 +515,7 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 			var editors = $('#'+productDatagrid).datagrid('getEditors', index);//获取当前行可编辑的值
 			
 		},*/
-		onCheck:function(index,row){
+	    onSelect:function(index,row){
 			//获取选中行的填写值
 			var editors = $('#'+productDatagrid).datagrid('getEditors', index);//获取当前行可编辑的值
 			var errRow = index;
@@ -547,6 +558,8 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 								if(pushFlag)
 									{
 										productList.put(row.id, editvalue);
+										//更新商品彩种显示
+										fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
 									}
 								else
 									{
@@ -595,10 +608,54 @@ function initProductDatagrid(provinceId,cityId,productDatagrid)
 				}
 			
 		},
-		onUncheck:function(index,row){
+		onUnselect:function(index,row){
+			
+			if(productList.contain(row.id))//新选中的产品数据
+			{
+				//更新商品彩种显示
+				fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
+			}
 			productList.remove(row.id);
+			
 		}
 	});
+}
+
+/**
+ * 填充商品彩种显示框
+ */
+function fillShowGoodstype(productDatagrid,hiddenId,showId)
+{
+	var gType;
+	var selectedRows = $('#'+productDatagrid).datagrid('getSelections');//获取datagrid中选中的所有行
+	var flag;
+	$.each(selectedRows,function(i,selectedRow){
+		
+		if(i == 0)
+			{
+				flag = selectedRow.lotteryType;
+				gType = selectedRow.lotteryType;
+			}
+		else
+			{
+				if(flag != selectedRow.lotteryType)
+					{
+						gType = '0';//双机
+					}
+			}
+		
+	});
+	
+	
+	var showGoodstypeText = '';
+	$("#"+hiddenId).val(gType);
+	switch(gType)
+	{
+		case '1':showGoodstypeText='体彩';break;
+		case '2':showGoodstypeText='福彩';break;
+		case '0':showGoodstypeText='双机';break;
+	}
+	$("#"+showId).val(showGoodstypeText);
 }
 
 //校验销售价格
@@ -647,7 +704,7 @@ function updateGoods(id)
 					//初始化市级区域combobox
 					initCities('update','cityU',data.cityDm,data.provinceDm);
 					//初始化待选择产品列表
-					initProductDatagrid('privinceU','cityU','productDatagridU');//初始化待选择产品列表
+					initProductDatagrid('privinceU','cityU','productDatagridU','goodTypeUhidden','goodTypeU');//初始化待选择产品列表
 					
 					
 			
@@ -775,43 +832,61 @@ function submitUpdategoods()
 /**
  * 删除商品数据
  * @param id
+ * @param status:当前待删除商品状态（0：待上架，1：上架 2：下架）
+ * @param connectOrders:是否与有效订单数据关联
  */
-function deleteGoods(id)
+function deleteGoods(id,status,connectOrders)
 {
 	var url = contextPath + '/goods/deleteGoods.action';
 	var data1 = new Object();
+	var deleteFlag = true;
 	
 	var codearr = [];
 	codearr.push(id);
 	
 	data1.ids=codearr.toString();
-		
-	if(codearr.length>0)
+	
+	if(codearr.length == 0)
+		{
+			$.messager.alert('提示',"请选择数据后操作!");
+			deleteFlag = false;
+		}
+	else
+		if('1' == status)//商品当前状态为“上架”
+			{
+				$.messager.alert('提示',"当前待删除商品已上架,不可删除!");
+				deleteFlag = false;
+			}
+	else
+		if('1' == connectOrders)//商品与有效订单数据有关联
+			{
+				$.messager.alert('提示',"当前待删除商品已被购买,不可删除!");
+				deleteFlag = false;
+			}
+	
+	if(deleteFlag)
 	{
 		$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
-			                }
-			           });
-			        	
-		        }  
-		    });  
+	        if (r) {  
+		        	$.ajax({
+		        		async: false,   //设置为同步获取数据形式
+		                type: "post",
+		                url: url,
+		                data:data1,
+		                dataType: "json",
+		                success: function (data) {
+		                	initDatagrid();
+		                	$.messager.alert('提示', data.message);
+		                },
+		                error: function (XMLHttpRequest, textStatus, errorThrown) {
+		                    alert(errorThrown);
+		                }
+		           });
+		        	
+	        }  
+	    });  
 	}
-	else
-	{
-		$.messager.alert('提示',"请选择数据后操作!");
-	}
+		
 	
 }
 
@@ -833,6 +908,22 @@ function deleteGoodsList(operaType)
 	for(var i=0; i<rows.length; i++)
 	{
 		codearr.push(rows[i].id);//code
+		
+		if('0' == operaType)
+			{
+				if('1' == rows[i].status)//商品当前状态为“上架”
+					{
+						deleteFlag = false;
+						$.messager.alert('提示', "当前待删除商品编码为:"+rows[i].code+"的商品已上架,不可进行删除操作!");
+						break;
+					}
+				else
+					if('1' == rows[i].connectOrders)//商品与有效订单数据有关联
+						{
+							$.messager.alert('提示',"当前待删除商品编码为:"+rows[i].code+"已被购买,不可进行删除操作!");
+							deleteFlag = false;
+						}
+			}
 	}
 	
 	if(deleteFlag)

@@ -1,10 +1,12 @@
 package com.sdf.manager.user.service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.user.dto.RoleDTO;
 import com.sdf.manager.user.entity.Role;
 
 public interface RoleService {
@@ -42,5 +44,9 @@ public interface RoleService {
 	* @date 2015年10月19日 下午2:27:15
 	 */
 	public  void update(Role role);
+	
+	public  List<RoleDTO> toDTOS(List<Role> entities);
+	
+	public  RoleDTO toDTO(Role entity);
 
 }

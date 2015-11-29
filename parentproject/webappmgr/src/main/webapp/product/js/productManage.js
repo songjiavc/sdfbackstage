@@ -393,15 +393,25 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
-		        {field:'name',width:120,title:'产品名称'},
-				{field:'code',title:'产品编码',width:120,align:'left'},
-				{field:'price',title:'参考价格(元)',width:120,align:'left'},
-				{field:'provinceName',title:'省级区域',width:120,align:'left'},
-				{field:'cityName',title:'市级区域',width:120,align:'left'},
-				{field:'cpdlName',title:'大类别',width:120,align:'left'},
-				{field:'cpzlName',title:'中类别',width:120,align:'left'},
-				{field:'cpxlName',title:'小类别',width:120,align:'left'},
-				{field:'createTime',title:'创建时间',width:120,align:'left'},
+		        {field:'name',width:120,title:'产品名称',align:'center'},
+				{field:'code',title:'产品编码',width:120,align:'center'},
+				{field:'price',title:'参考价格(元)',width:100,align:'center'},
+				{field:'provinceName',title:'省级区域',width:70,align:'center'},
+				{field:'cityName',title:'市级区域',width:70,align:'center'},
+				{field:'lotteryType',width:50,title:'彩种',align:'center',  
+		            formatter:function(value,row,index){  
+		            	var lotteryTypeName ='';
+		            	switch(value)
+		            	{
+		            		case '1':lotteryTypeName='体彩';break;
+		            		case '2':lotteryTypeName='福彩';break;
+		            	}
+		            	return lotteryTypeName;  
+		            }  },
+				{field:'cpdlName',title:'大类别',width:120,align:'center'},
+				{field:'cpzlName',title:'中类别',width:120,align:'center'},
+				{field:'cpxlName',title:'小类别',width:120,align:'center'},
+				{field:'createTime',title:'创建时间',width:140,align:'center'},
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
 			                var btn = '<a class="editcls" onclick="updateProduct(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
@@ -444,6 +454,7 @@ function updateProduct(id)
 						id:data.id,
 						code:data.code,
 						name:data.name,
+						lotteryType:data.lotteryType,
 						price:data.price,
 						privince:data.privince,
 						cpdl:data.cpdlDm,

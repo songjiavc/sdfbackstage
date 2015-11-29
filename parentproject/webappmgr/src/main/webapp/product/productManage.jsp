@@ -165,6 +165,14 @@
 	             validType="checkAname['#nameA','idA']" missingMessage="产品名称不可以为空" ></input>
 	        </div>
 	        <div class="ftitle">
+	            <label for="lotteryTypeA">产品彩种分类:</label>
+	            <select class="easyui-combobox " id="lotteryTypeA" name="lotteryType"  
+		          	  data-options="editable:false" style="width:150px;" >
+		          	  <option value="1" checked>体彩</option>
+		          	  <option value="2" >福彩</option>
+				</select>
+	        </div>
+	        <div class="ftitle">
 	            <label for="priceA">参考价格:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="priceA" name="price" data-options="required:true"
 	             validType="money" missingMessage="参考价格不可以为空" ></input>(元)
@@ -239,6 +247,14 @@
 	            <label for="nameU">产品名称:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="nameU" name="name" data-options="required:true"
 	             validType="checkAname['#nameU','idU']" missingMessage="产品名称不可以为空" ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="lotteryTypeU">产品彩种分类:</label>
+	            <select class="easyui-combobox " id="lotteryTypeU" name="lotteryType"  
+		          	  data-options="editable:false" style="width:150px;" >
+		          	  <option value="1" checked>体彩</option>
+		          	  <option value="2" >福彩</option>
+				</select>
 	        </div>
 	       <div class="ftitle">
 	            <label for="priceU">参考价格:</label>

@@ -13,7 +13,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.jaxb.SpringDataJaxb.OrderDto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +21,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.goods.dto.GoodsDTO;
 import com.sdf.manager.goods.entity.Goods;
+import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.goods.service.GoodsService;
 import com.sdf.manager.order.dto.OrdersDTO;
+import com.sdf.manager.order.entity.FoundOrderStatus;
+import com.sdf.manager.order.entity.OrderNextStatus;
+import com.sdf.manager.order.entity.OrderStatus;
 import com.sdf.manager.order.entity.Orders;
+import com.sdf.manager.order.entity.RelaSdfStationProduct;
+import com.sdf.manager.order.service.FoundOrderStatusService;
 import com.sdf.manager.order.service.OrderService;
+import com.sdf.manager.order.service.OrderStatusService;
+import com.sdf.manager.order.service.RelaSdfStationProService;
+import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.station.entity.Station;
+import com.sdf.manager.user.entity.Role;
+import com.sdf.manager.user.entity.User;
+import com.sdf.manager.user.service.RoleService;
+import com.sdf.manager.user.service.UserService;
 
 
 /**
@@ -58,7 +74,42 @@ public class OrderController
 	 @Autowired
 	 private GoodsService goodsService;
 	 
+	 @Autowired
+	 private UserService userService;
+	 
+	 @Autowired
+	 private RoleService roleService;
+	 
+	 @Autowired
+	 private FoundOrderStatusService foundOrderStatusService;//状态跟踪表的service层
+	 
+	 @Autowired
+	 private OrderStatusService orderStatusService;//订单状态service层
+	 
+	 @Autowired
+	 private RelaSdfStationProService relaSdfStationProService;
+	 
 	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
+	 
+	 public static final String OPERORTYPE_SAVE = "0";//代理编辑页面，保存
+	 public static final String OPERORTYPE_SAVEANDCOMMIT = "1";//代理编辑页面，保存并提交
+	
+	 /***订单状态静态变量 start***/
+	 public static final String PROXY_SAVE_ORDER = "01";//代理购买商品形成订单时，代理保存的状态码
+	 public static final String ORDER_FINISH = "21";//审批完成且已归档的订单状态
+	 public static final String ORDER_STOP = "31";//审批不通过，终止订单审批状态
+	 /***订单状态静态变量 end***/
+	
+	 public static final String DIRECTION_GO = "1";//前进方向标志位
+	 public static final String DIRECTION_BACK = "1";//后退方向标志位
+	 
+	 public static final String PAGE_OPERORTYPE_SAVE = "1";//代理订单列表，提交
+	 public static final String PAGE_OPERORTYPE_PASS = "2";//财管订单列表，审批通过
+	 public static final String PAGE_OPERORTYPE_REJECT = "3";//财管订单列表，审批驳回
+	 public static final String PAGE_OPERORTYPE_STOP = "4";//财管订单列表，不通过
+	 
+	 public static final String STATION_PRODUCT_INVALID_STATUS = "0";//站点和产品关联数据无效
+	 public static final String STATION_PRODUCT_VALID_STATUS = "1";//站点和产品关联数据有效
 	 
 	/**
 	 * 
@@ -67,20 +118,22 @@ public class OrderController
 	* @date 2015年11月16日 上午9:59:00
 	 */
 	 @RequestMapping(value = "/getDetailOrders", method = RequestMethod.GET)
-	 public @ResponseBody Orders getDetailOrders(
+	 public @ResponseBody OrdersDTO getDetailOrders(
 			@RequestParam(value="id",required=false) String id,
 			ModelMap model,HttpSession httpSession) throws Exception
 	 {
 		 Orders order = new Orders();
-		
+		 
 		 order = orderService.getOrdersById(id);
-	 	
-		 return order;
+		 
+		 OrdersDTO orderDto = orderService.toDTO(order);
+	 	 
+		 return orderDto;
 	 }
 	 
 	/**
 	 * 
-	* @Description:获取订单列表数据
+	* @Description:获取订单列表数据（※根据当前登录人员的信息加载订单数据，代理是加载其下属站点对应的所有订单的数据）
 	* @author bann@sdfcp.com
 	* @date 2015年11月16日 下午3:50:33
 	 */
@@ -148,11 +201,13 @@ public class OrderController
 				@RequestParam(value="receiveTele",required=false) String receiveTele,//收件人电话
 				@RequestParam(value="status",required=false) String status,//状态
 				@RequestParam(value="goodsList",required=false) String goodsList,//选中的商品数据
+				@RequestParam(value="proList",required=false) String proList,//选中的商品下的产品数据和其对应设定的试用期
 				@RequestParam(value="station",required=false) String station,//站点
 				@RequestParam(value="operatype",required=false) String operatype,//0:保存 1：保存并提交
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 		   ResultBean resultBean = new ResultBean ();
+		   
 		   
 		   Orders order ;
 		   order = orderService.getOrdersById(id);
@@ -180,10 +235,80 @@ public class OrderController
 			   }
 			   
 			   order.setGoods(goods);
-			   
+			   String currentStatus = order.getStatus();
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {//保存
+				   currentStatus = order.getStatus();
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				   //根据当前状态获取下一状态
+				   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(order.getStatus(), "1");
+				   currentStatus = orderNextStatus.getNextStatusId();//代理保存并提交
+				   
+			   }
+			   order.setStatus(currentStatus);
+			   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
 			   orderService.update(order);
 			   resultBean.setMessage("修改订单信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				 //由于状态变化，将变化状态存入到状态流程跟踪表中
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,order);
+			   }
+			   
+			   /**处理产品和站点关联数据**/
+			   //1.删除之前的关联数据
+			   List<RelaSdfStationProduct> deleteData = this.getStationAndProducts(id, model, httpSession);
+			   for (RelaSdfStationProduct relaSdfStationProduct : deleteData) {
+				
+				   relaSdfStationProduct.setIsDeleted(Constants.IS_DELETED);
+				   relaSdfStationProService.update(relaSdfStationProduct);
+			   }
+			   //2.保存新关联数据
+			   /**处理station<-->product关联关系数据**/
+			   JSONObject proOfgoods = JSONObject.parseObject(proList);
+			   List<String> proOfgoodsKeys =  (List<String>) proOfgoods.get("keys");
+			   Map<String,Object> proOfgoodsData =  (Map<String, Object>) proOfgoods.get("data");
+			   List<RelaSdfStationProduct> relaSdfStationProducts = new ArrayList<RelaSdfStationProduct>();
+			   for(int m=0;m<proOfgoodsKeys.size();m++)
+			   {
+				   JSONArray choosegoods = (JSONArray) proOfgoodsData.get(proOfgoodsKeys.get(m));
+				   for(int i=0;i<choosegoods.size();i++)
+				   {
+					   JSONObject products = JSONObject.parseObject(choosegoods.get(i).toString());
+					   List<String> proids =  (List<String>) products.get("keys");
+					   Map<String,Object> data =  (Map<String, Object>) products.get("data");
+					   String proid="";
+					   JSONArray ps;
+					   Product p1;
+					   for(int j=0;j<proids.size();j++)
+					   {
+						   RelaSdfStationProduct relaSdfStationProduct = new RelaSdfStationProduct();
+						   proid = proids.get(j);
+						   ps = (JSONArray) data.get(proid);
+						   relaSdfStationProduct.setProductId(ps.getString(5));//productId中放置的是产品和商品关联表的id
+						   relaSdfStationProduct.setStationId(ps.getString(3));//从前台获取
+						   relaSdfStationProduct.setProbation(ps.getString(2));
+						   relaSdfStationProduct.setGoodsId(ps.getString(1));
+						   relaSdfStationProduct.setOrderId(id);
+						   relaSdfStationProduct.setIsDeleted(Constants.IS_NOT_DELETED);
+						   relaSdfStationProduct.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
+						   relaSdfStationProduct.setCreaterTime(new Timestamp(System.currentTimeMillis()));
+						   relaSdfStationProduct.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+						   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
+						   relaSdfStationProduct.setType(ps.getString(4));
+						   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_INVALID_STATUS);//订单开始时无效
+						   
+						   relaSdfStationProducts.add(relaSdfStationProduct);
+						   
+						   relaSdfStationProService.save(relaSdfStationProduct);
+					   }
+				   }
+			   }
+			   
 			   
 		   }
 		   else
@@ -203,7 +328,19 @@ public class OrderController
 			   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   order.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			   order.setIsDeleted("1");//有效数据
-			   
+			   String currentStatus = "01";
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {
+				   currentStatus = OrderController.PROXY_SAVE_ORDER;//购买商品形成订单时，代理保存的状态
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {
+				   OrderNextStatus orderNextStatus = orderStatusService.
+						   getOrderNextStatusBycurrentStatusId(OrderController.PROXY_SAVE_ORDER,OrderController.DIRECTION_GO );
+				   currentStatus = orderNextStatus.getNextStatusId();//代理保存并提交
+			   }
+			   order.setStatus(currentStatus);//代理保存订单
+			   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
 			   JSONArray array = JSONArray.parseArray(goodsList);
 			   List<Goods> goods = new ArrayList<Goods>();
 			   for (Object goodId : array) {
@@ -214,8 +351,73 @@ public class OrderController
 			   }
 			   
 			   order.setGoods(goods);
-			   
 			   orderService.save(order);
+			   
+			   
+			   //跟踪订单状态，添加订单状态到订单状态跟踪表中
+			   
+			   /*finishSaveOrder用处：用来做订单跟踪表与订单表的数据关联，因为若不获取，
+			   	则当前操作的订单还不存在，无法存入其状态(订单编码也是全局唯一的！！！)*/
+			   Orders finishSaveOrder = orderService.getOrdersByCode(code);
+			   
+			   if(OrderController.OPERORTYPE_SAVE.equals(operatype))
+			   {
+				   currentStatus = OrderController.PROXY_SAVE_ORDER;//购买商品形成订单时，代理保存的状态
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,finishSaveOrder);
+			   }
+			   else if(OrderController.OPERORTYPE_SAVEANDCOMMIT.equals(operatype))
+			   {  /*若代理在购买商品时保存并提交到财务管理员审批时，当前订单是有两个状态变化的，
+				   所以要向订单状态跟踪表中放入两条数据*/
+				  //1.保存“代理保存订单”状态跟踪数据
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),OrderController.PROXY_SAVE_ORDER,order);
+				   
+				   //2.保存“提交财务管理员”状态跟踪数据
+				   this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,finishSaveOrder);
+			   }
+			   
+			   /**处理station<-->product关联关系数据**/
+			   JSONObject proOfgoods = JSONObject.parseObject(proList);
+			   List<String> proOfgoodsKeys =  (List<String>) proOfgoods.get("keys");
+			   Map<String,Object> proOfgoodsData =  (Map<String, Object>) proOfgoods.get("data");
+			   List<RelaSdfStationProduct> relaSdfStationProducts = new ArrayList<RelaSdfStationProduct>();
+			   for(int m=0;m<proOfgoodsKeys.size();m++)
+			   {
+				   JSONArray choosegoods = (JSONArray) proOfgoodsData.get(proOfgoodsKeys.get(m));
+				   for(int i=0;i<choosegoods.size();i++)
+				   {
+					   JSONObject products = JSONObject.parseObject(choosegoods.get(i).toString());
+					   List<String> proids =  (List<String>) products.get("keys");
+					   Map<String,Object> data =  (Map<String, Object>) products.get("data");
+					   String proid="";
+					   JSONArray ps;
+					   Product p1;
+					   for(int j=0;j<proids.size();j++)
+					   {
+						   RelaSdfStationProduct relaSdfStationProduct = new RelaSdfStationProduct();
+						   proid = proids.get(j);
+						   ps = (JSONArray) data.get(proid);
+						   relaSdfStationProduct.setProductId(ps.getString(5));//productId中放置的是产品和商品关联表的id
+						   relaSdfStationProduct.setStationId(ps.getString(3));//从前台获取
+						   relaSdfStationProduct.setProbation(ps.getString(2));
+						   relaSdfStationProduct.setGoodsId(ps.getString(1));
+						   relaSdfStationProduct.setOrderId(finishSaveOrder.getId());
+						   relaSdfStationProduct.setIsDeleted(Constants.IS_NOT_DELETED);
+						   relaSdfStationProduct.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
+						   relaSdfStationProduct.setCreaterTime(new Timestamp(System.currentTimeMillis()));
+						   relaSdfStationProduct.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+						   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
+						   relaSdfStationProduct.setType(ps.getString(4));
+						   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_INVALID_STATUS);//订单开始时无效
+						   
+						   relaSdfStationProducts.add(relaSdfStationProduct);
+						   
+						   relaSdfStationProService.save(relaSdfStationProduct);
+					   }
+				   }
+			   }
+			   
+			  
+			   
 			   resultBean.setMessage("添加订单信息成功!");
 			   resultBean.setStatus("success");
 			   
@@ -227,6 +429,89 @@ public class OrderController
 		   
 		   return resultBean;
 		}
+	 
+	 /**
+	  * 
+	 * @Description: 保存订单状态跟踪表数据
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午1:45:17
+	  */
+	 private void saveFoundOrderStatus(String creator,String currentStatus,Orders order)
+	 {
+		 FoundOrderStatus foundOrderStatus = new FoundOrderStatus();
+	     foundOrderStatus.setCreator(creator);
+	     foundOrderStatus.setStatus(currentStatus);
+	     foundOrderStatus.setStatusSj(new Timestamp(System.currentTimeMillis()));
+	     foundOrderStatus.setOrders(order);
+	     foundOrderStatusService.save(foundOrderStatus);
+	 }
+	 
+	 /**
+	  * 
+	 * @Description: 校验订单是否已审批完成并已归档 
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午2:36:41
+	  */
+	 @RequestMapping(value = "/checkOrderStatus", method = RequestMethod.POST)
+		public @ResponseBody ResultBean checkOrderStatus(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	ResultBean resultBean = new ResultBean();
+		 	boolean orderFinish = false;
+		 	
+		 	Orders order = orderService.getOrdersById(id);
+		 	
+		 	if(OrderController.ORDER_FINISH.equals(order.getStatus()))
+		 	{
+		 		orderFinish = true;
+		 	}
+		 	resultBean.setExist(orderFinish);
+		 	return resultBean;
+		}
+	 
+	 /**
+	  * 
+	 * @Description: 获取当前订单的商品数据 
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月19日 下午2:55:36
+	  */
+	 @RequestMapping(value = "/getGoodsOfOrder", method = RequestMethod.GET)
+		public @ResponseBody List<GoodsDTO> getGoodsOfOrder(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<Goods> goods = new ArrayList<Goods>();
+		 	
+		 	Orders order = orderService.getOrdersById(id);
+		 	
+		 	if(null != order.getGoods() && order.getGoods().size()>0)
+		 	{
+		 		goods = order.getGoods();
+		 	}
+		 	
+		 	
+		 	List<GoodsDTO> goodsDtos = goodsService.toDTOS(goods);
+		 	
+		 	return goodsDtos;
+		}
+	 
+	 /**
+	  * 
+	 * @Description: 根据订单id获取订单下选中的商品下产品和站点关联的数据
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月26日 下午5:37:11
+	  */
+	 @RequestMapping(value = "/getStationAndProducts", method = RequestMethod.POST)
+		public @ResponseBody List<RelaSdfStationProduct> getStationAndProducts(
+				@RequestParam(value="orderId",required=false) String orderId,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<RelaSdfStationProduct> relaSdfStationProducts = relaSdfStationProService.getRelaSdfStationProductByOrderId(orderId);
+		
+		 	return relaSdfStationProducts;
+		}
+	 
 	 
 	
 	 /**
@@ -243,6 +528,7 @@ public class OrderController
 			ResultBean resultBean = new ResultBean();
 			
 			Orders orders;
+			List<Goods> goods = new ArrayList<Goods>();
 			for (String id : ids) 
 			{
 				orders = new Orders();
@@ -250,6 +536,7 @@ public class OrderController
 				orders.setIsDeleted("0");;//设置当前数据为已删除状态
 				orders.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				orders.setModifyTime(new Timestamp(System.currentTimeMillis()));
+				orders.setGoods(goods);//用来清空订单与商品的关联数据，方便删除商品时判断是否与有效订单关联
 				orderService.update(orders);
 				
 				
@@ -262,6 +549,68 @@ public class OrderController
 			return resultBean;
 		}
 	 
+	 
+	 /**
+	  * 
+	 * @Description: 更新订单状态
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月23日 下午2:48:16
+	  */
+	 @RequestMapping(value = "/approveOrders", method = RequestMethod.POST)
+		public @ResponseBody ResultBean approveOrders(
+				@RequestParam(value="orderId",required=false) String orderId,
+				@RequestParam(value="operortype",required=false) String operortype,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+			ResultBean resultBean = new ResultBean();
+			
+			Orders order = orderService.getOrdersById(orderId);
+		    String currentStatus = order.getStatus();
+		    String directFlag = "1";
+		    if(OrderController.PAGE_OPERORTYPE_SAVE.equals(operortype))
+		    {//代理审批通过
+		    	OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus, directFlag);
+		    	currentStatus = orderNextStatus.getNextStatusId();
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_PASS.equals(operortype))
+		    {//财管订单列表审批通过
+			   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus,directFlag);
+			   currentStatus = orderNextStatus.getNextStatusId();
+			   //审批完成后要置“站点<-->产品”关联数据为有效,，即购买此订单产品的站点可以开始使用或试用了
+			   List<RelaSdfStationProduct> relaSdfStationProducts 
+			   				= relaSdfStationProService.getRelaSdfStationProductByOrderId(orderId);
+			   for (RelaSdfStationProduct relaSdfStationProduct : relaSdfStationProducts) {
+				   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_VALID_STATUS);
+				   relaSdfStationProduct.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+				   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
+				   relaSdfStationProService.update(relaSdfStationProduct);
+			   }
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_REJECT.equals(operortype))
+		    {//财管订单列表审批驳回
+		       directFlag = "0";
+			   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus,directFlag);
+			   currentStatus = orderNextStatus.getNextStatusId();
+		    }
+		    else if(OrderController.PAGE_OPERORTYPE_STOP.equals(operortype))
+		    {//财管订单列表不通过
+			   currentStatus = OrderController.ORDER_STOP;//置订单状态为“不通过”的状态码
+		    }
+		    
+		   order.setStatus(currentStatus);
+		   order.setStatusTime(new Timestamp(System.currentTimeMillis()));
+		   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
+		   order.setModifyTime(new Timestamp(System.currentTimeMillis()));
+		   orderService.update(order);
+		   
+		   //由于状态变化，将变化状态存入到状态流程跟踪表中
+			this.saveFoundOrderStatus(LoginUtils.getAuthenticatedUserCode(httpSession),currentStatus,order);
+			
+			resultBean.setStatus("success");
+			resultBean.setMessage("审批订单成功!");
+			
+			return resultBean;
+		}
 	 
 	 /**
 	  * 
@@ -403,5 +752,72 @@ public class OrderController
 			
 		}
 	 
+	 /**
+	  * 
+	 * @Description: 获取当前登录用户的角色
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月24日 下午2:44:42
+	  */
+	 @RequestMapping(value = "/getLoginuserRole", method = RequestMethod.POST)
+		public @ResponseBody ResultBean getLoginuserRole(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	ResultBean resultBean = new ResultBean();
+		 	
+		 	//获取session中的登录数据
+			String code = LoginUtils.getAuthenticatedUserCode(httpSession);
+			User user = userService.getUserByCode(code);
+			//获取当前登录人员的角色list
+			List<Role> roles = user.getRoles();
+			
+			//根据“代理”和“财政管理员”的角色id获取对应的角色数据，用来判断当前用户的角色中是否有权限
+			Role roleProxy = roleService.getRoleById(Constants.ROLE_PROXY_ID);
+			Role roleFManger = roleService.getRoleById(Constants.ROLE_FINANCIAL_MANAGER_ID);
+			
+			if(roles.contains(roleProxy))
+			{
+				resultBean.setProxy(true);
+			}
+			else
+			{
+				resultBean.setProxy(false);
+			}
+			
+			if(roles.contains(roleFManger))
+			{
+				resultBean.setFinancialManager(true);
+			}
+			else
+			{
+				resultBean.setFinancialManager(false);
+			}
+			
+		 	
+		 	return resultBean;
+		}
 	
+	 /**
+	  * 
+	 * @Description: TODO(获取站点列表数据) 
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月25日 下午2:39:11
+	  */
+	 @RequestMapping(value = "/getStationList", method = RequestMethod.POST)
+		public @ResponseBody List<Station> getStationList(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	
+		 	List<Station> stations = new ArrayList<Station>();
+		 	//获取当前登录人员的用户信息
+			String code = LoginUtils.getAuthenticatedUserCode(httpSession);//登录用户的code
+		 	
+			/***根据登录人员的和站点关联的字段，查询当前登录用户的下属站点列表***/
+			
+			
+		 	
+		 	return stations;
+		}
+	 
 }

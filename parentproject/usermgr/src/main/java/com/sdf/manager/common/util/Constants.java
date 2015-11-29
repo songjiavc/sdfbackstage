@@ -2,6 +2,9 @@ package com.sdf.manager.common.util;
 
 public class Constants {
 	
+	/** 
+	  * @Fields IS_DELETED : 常量类标识删除
+	  */ 
 	public static final String IS_DELETED = "0";
 	
 	public static final String IS_NOT_DELETED = "1";
@@ -38,9 +41,16 @@ public class Constants {
 	
 	public static final String PAY_MODE_TWO = "1";//支付方式：转账支付
 	
-	//代理模块内容start
-	//固化市场专员角色编码，目地是通过编码查找对应的市场人员
-	public static final String ROLE_SCZY_CODE = "SC_ZY";
-	//代理模块内容end
+	public static final String ROLE_FINANCIAL_MANAGER_ID = "1";//“财务管理员”角色的id
+	
+	public static final String ROLE_PROXY_ID = "2";//“代理”角色的id
+	
+	public static final String LOTTERY_TYPE_TC = "1";//彩种：体彩
+	
+	public static final String LOTTERY_TYPE_FC = "2";//彩种：福彩
+	
+	public static final String LOTTERY_TYPE_SJ = "0";//彩种：双机
+	
+	
 
 }

@@ -7,7 +7,6 @@
     <link href="<%=request.getContextPath() %>/css/ztree/zTreeStyle.css" rel="stylesheet" type="text/css" />
     <jsp:include page="../common/top.jsp" flush="true" /> 
     <script src="<%=request.getContextPath() %>/orderFGoods/js/buyGoods.js" type="text/javascript"></script>
-    
     <script type="text/javascript">
 		
 	</script>
@@ -114,14 +113,14 @@
 	             validType="money" missingMessage="商品价格不可以为空" ></input>
 	        </div> -->
 	        <div class="ftitle">
-	            <label for="priceA">商品总价:</label>
+	            <label for="priceA">商品总价(元):</label>
 	            <div style="float:left;margin-left: 30px;">
 	            	<input name="price" id="pricehidden" type="hidden" >
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
 	           	</div>
 	        </div>
 	        <div class="ftitle">
-	            <label for="stationA">站点信息:</label>
+	            <label for="stationA">选中站点:</label>
 	             <div style="float:left;margin-left: 40px;">
 		            <select class="easyui-combobox " id="stationA" name="station"  
 			          	 		 data-options="editable:false" style="width:200px;" >
@@ -131,7 +130,7 @@
 	        </div>
 	       <div class="ftable">
 	           <label for="goodsDatagridU">选择商品:</label>
-	           <div style="float:left;margin-left:30px;width:700px;">
+	           <div style="float:left;margin-left:30px;width:800px;">
 	            	<table id="goodsDatagridU" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
 					</table>
 	            </div>

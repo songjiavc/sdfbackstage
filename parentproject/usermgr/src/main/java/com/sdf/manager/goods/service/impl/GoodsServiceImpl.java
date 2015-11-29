@@ -20,6 +20,7 @@ import com.sdf.manager.goods.entity.Goods;
 import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.goods.repository.GoodsRepository;
 import com.sdf.manager.goods.service.GoodsService;
+import com.sdf.manager.order.entity.Orders;
 import com.sdf.manager.product.entity.City;
 import com.sdf.manager.product.entity.Province;
 import com.sdf.manager.product.service.CityService;
@@ -149,6 +150,17 @@ public class GoodsServiceImpl implements GoodsService {
 					
 				}
 				
+				if(entity.getOrders().size()>0)
+				{
+					String connectOrders = "1";
+					dto.setConnectOrders(connectOrders);//有关联的订单数据
+				}
+				else
+				{
+					String connectOrders = "0";
+					dto.setConnectOrders(connectOrders);//未与订单关联
+				}
+				
 				
 				
 				
@@ -192,7 +204,15 @@ public class GoodsServiceImpl implements GoodsService {
 				if(null != entity.getProduct())
 				{
 					dto.setProductId(entity.getProduct().getId());
+					
+					dto.setName(entity.getProduct().getName());
+					
+					dto.setLotteryType(entity.getProduct().getLotteryType());
+					
+					dto.setCode(entity.getProduct().getCode());
 				}
+				
+				dto.setOrderprobation("");
 				
 				
 				
