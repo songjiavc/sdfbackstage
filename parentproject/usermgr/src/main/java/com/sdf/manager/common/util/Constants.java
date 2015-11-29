@@ -2,6 +2,9 @@ package com.sdf.manager.common.util;
 
 public class Constants {
 	
+	/** 
+	  * @Fields IS_DELETED : 常量类标识删除
+	  */ 
 	public static final String IS_DELETED = "0";
 	
 	public static final String IS_NOT_DELETED = "1";
