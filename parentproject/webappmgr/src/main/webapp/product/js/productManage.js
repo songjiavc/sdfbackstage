@@ -394,8 +394,8 @@ function initDatagrid()
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
 		        {field:'name',width:120,title:'产品名称',align:'center'},
-				{field:'code',title:'产品编码',width:120,align:'center'},
-				{field:'price',title:'参考价格(元)',width:100,align:'center'},
+				{field:'code',title:'产品编码',width:150,align:'center'},
+				{field:'price',title:'参考价格(元)',width:80,align:'center'},
 				{field:'provinceName',title:'省级区域',width:70,align:'center'},
 				{field:'cityName',title:'市级区域',width:70,align:'center'},
 				{field:'lotteryType',width:50,title:'彩种',align:'center',  
@@ -408,9 +408,9 @@ function initDatagrid()
 		            	}
 		            	return lotteryTypeName;  
 		            }  },
-				{field:'cpdlName',title:'大类别',width:120,align:'center'},
-				{field:'cpzlName',title:'中类别',width:120,align:'center'},
-				{field:'cpxlName',title:'小类别',width:120,align:'center'},
+				{field:'cpdlName',title:'大类别',width:80,align:'center'},
+				{field:'cpzlName',title:'中类别',width:80,align:'center'},
+				{field:'cpxlName',title:'小类别',width:80,align:'center'},
 				{field:'createTime',title:'创建时间',width:140,align:'center'},
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
@@ -531,6 +531,29 @@ function submitUpdateproduct()
 	    	
 	    }
 	});
+}
+
+/**
+ * 生成产品编码
+ */
+function generateCode()
+{
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/product/generateProductcode.action',
+        dataType: "json",
+        success: function (data) {
+        	
+        	var proCode = data.code;
+        	$("#codeA").textbox('setText',proCode);
+        	$("#codehidden").val(proCode);
+        	
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
 }
 
 /**
