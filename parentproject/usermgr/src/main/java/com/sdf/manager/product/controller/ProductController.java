@@ -616,7 +616,7 @@ public class ProductController
 		 int day = c.get(Calendar.DAY_OF_MONTH);
 		 proCode.append(year+"").append(month+"").append(day+"");
 		 
-		 //验证当天是否已生成订单
+		 //验证当天是否已生成产品
 		//放置分页参数
 			Pageable pageable = new PageRequest(0,10000);
 			
