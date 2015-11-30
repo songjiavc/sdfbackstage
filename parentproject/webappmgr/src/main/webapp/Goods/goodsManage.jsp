@@ -17,6 +17,7 @@
   	    	clearProductList();
   	    	initProvince('add','privinceA','');//默认选中全部，则全部下是没有市数据的
   	    	initProductDatagrid('privinceA','cityA','productDatagridA');//初始化待选择产品列表
+  	    	generateCode();//生成商品编码
   	    	$("#addProduct").dialog('open');
   	    	
   	    }
@@ -142,8 +143,11 @@
 	        <div class="ftitle">
 	            <label for="codeA">商品编码:</label>
 	            <input type="hidden" name="id" id="idA"/>
-	            <input class="easyui-validatebox commonInput" type="text" id="codeA" name="code" data-options="required:true"
-	             validType="checkCodes['#codeA','idA']" missingMessage="商品编码不可以为空" ></input>
+	            <div style="float:left;margin-left: 30px;">
+		            <input name="code" id="codehidden" type="hidden" >
+		            <input class="easyui-textbox" type="text" id="codeA"  style="width:200px"  readonly="readonly" 
+		               ></input>
+		        </div>
 	        </div>
 	        <div class="ftitle">
 	            <label for="nameA">商品名称:</label>

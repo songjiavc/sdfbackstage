@@ -84,7 +84,7 @@ public class ProductController
 	 @Autowired
 	 private GoodsService goodsService;
 	 
-	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
+	 public static final int SERIAL_NUM_LEN = 6;//产品流水号中自动生成的数字位数
 	 
 	/**
 	 * 

@@ -2,6 +2,7 @@ package com.sdf.manager.goods.controller;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +33,7 @@ import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.goods.service.GoodsService;
 import com.sdf.manager.goods.service.RelaProAndGoodsService;
 import com.sdf.manager.product.application.dto.ProductDto;
+import com.sdf.manager.product.controller.ProductController;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProductService;
@@ -65,6 +67,8 @@ public class GoodsController {
 	 
 	 @Autowired
 	 private RelaProAndGoodsService relaProAndGoodsService;
+	 
+	 public static final int SERIAL_NUM_LEN = 6;//商品流水号中自动生成的数字位数
 	
 	
 	/**
@@ -608,8 +612,84 @@ public class GoodsController {
 		}
 	 
 	 
+	 /**
+	  * 
+	 * @Description: 生成商品编码
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月30日 上午11:51:41
+	  */
+	 @RequestMapping(value = "/generateGoodscode", method = RequestMethod.POST)
+		public @ResponseBody Map<String,Object>  generateGoodscode(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception {
+		 
+		 Map<String,Object> returndata = new HashMap<String, Object>();
+		 String code = this.codeGenertor();
+		 returndata.put("code", code);
+		 returndata.put("operator", LoginUtils.getAuthenticatedUserName(httpSession));
+		 
+		 return returndata;
+				 
+	 }
 	 
-	 
+	/**
+	 * 
+	* @Description:生成商品编码 
+	* //规则：年月日(yyyyMMdd)+6位流水号
+	* @author bann@sdfcp.com
+	* @date 2015年11月18日 上午10:31:02
+	 */
+	 private  synchronized String codeGenertor()
+	 {
+		 
+		 StringBuffer goodsCode = new StringBuffer("Goods");
+		//获取当前年月日
+		 Calendar c =  Calendar.getInstance();
+		 
+		 int year = c.get(Calendar.YEAR);
+		 int month = c.get(Calendar.MONTH)+1;
+		 int day = c.get(Calendar.DAY_OF_MONTH);
+		 goodsCode.append(year+"").append(month+"").append(day+"");
+		 
+		 //验证当天是否已生成商品
+		//放置分页参数
+			Pageable pageable = new PageRequest(0,10000);
+			
+			//参数
+			StringBuffer buffer = new StringBuffer();
+			List<Object> params = new ArrayList<Object>();
+			
+			params.add(goodsCode+"%");//根据商品编码模糊查询
+			buffer.append(" code like ?").append(params.size());
+			
+			//排序
+			LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+			orderBy.put("code", "desc");//大号的code排在前面
+			
+			QueryResult<Goods> goodlist = goodsService.getGoodsList(Goods.class, buffer.toString(), params.toArray(),
+					orderBy, pageable);
+			
+			if(goodlist.getResultList().size()>0)
+			{
+				String maxCode = goodlist.getResultList().get(0).getCode();
+				String weihao = maxCode.substring(8, maxCode.length());
+				int num = Integer.parseInt(weihao);
+				String newNum = (++num)+"";
+				int needLen = (GoodsController.SERIAL_NUM_LEN-newNum.length());
+				for(int i=0;i<needLen;i++)
+				{
+					newNum = "0"+newNum;
+				}
+				goodsCode.append(newNum);
+			}
+			else
+			{//当天还没有生成商品编码
+				goodsCode.append("000001");
+			}
+			
+		 
+			return goodsCode.toString();
+	 }
 	 
 	 
 	 

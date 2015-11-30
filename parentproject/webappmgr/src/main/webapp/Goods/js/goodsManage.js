@@ -279,11 +279,11 @@ function initDatagrid()
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
 				{field:'connectOrders',hidden:true},//是否与有效订单关联
-				{field:'code',title:'商品编码',width:120,align:'center'},
-		        {field:'name',width:120,title:'商品名称'},
-				{field:'price',title:'价格(元)',width:80,align:'center'},
-				{field:'provinceName',title:'省级区域',width:100,align:'center'},
-				{field:'cityName',title:'市级区域',width:100,align:'center'},
+				{field:'code',title:'商品编码',width:150,align:'center'},
+		        {field:'name',width:120,title:'商品名称',align:'center'},
+				{field:'price',title:'价格(元)',width:60,align:'center'},
+				{field:'provinceName',title:'省级区域',width:80,align:'center'},
+				{field:'cityName',title:'市级区域',width:80,align:'center'},
 				{field:'createTime',title:'创建时间',width:130,align:'center'},
 				{field:'goodsDesprition',title:'商品描述',width:120,align:'center'},
 				{field:'status',title:'商品状态',width:70,align:'center',
@@ -827,6 +827,29 @@ function submitUpdategoods()
 	    	
 	    }
 	});
+}
+
+/**
+ * 生成商品编码
+ */
+function generateCode()
+{
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "post",
+        url: contextPath+'/goods/generateGoodscode.action',
+        dataType: "json",
+        success: function (data) {
+        	
+        	var proCode = data.code;
+        	$("#codeA").textbox('setText',proCode);
+        	$("#codehidden").val(proCode);
+        	
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
 }
 
 /**
