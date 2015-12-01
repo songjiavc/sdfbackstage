@@ -3,6 +3,7 @@ package com.sdf.manager.order.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.goods.dto.GoodsDTO;
@@ -649,12 +651,13 @@ public class OrderController
 		 
 		 StringBuffer orderCode = new StringBuffer();
 		//获取当前年月日
-		 Calendar c =  Calendar.getInstance();
-		 
-		 int year = c.get(Calendar.YEAR);
-		 int month = c.get(Calendar.MONTH)+1;
-		 int day = c.get(Calendar.DAY_OF_MONTH);
-		 orderCode.append(year+"").append(month+"").append(day+"");
+		 String date = "";
+		 Date dd  = Calendar.getInstance().getTime();
+		 date = DateUtil.formatDate(dd, DateUtil.FULL_DATE_FORMAT);
+		 String year = date.substring(0, 4);//半包，不包括最大位数值
+		 String month = date.substring(5, 7);
+		 String day = date.substring(8, 10);
+		 orderCode.append(year).append(month).append(day);
 		 
 		 //验证当天是否已生成订单
 		//放置分页参数

@@ -525,6 +525,7 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 					{
 						$.messager.alert('提示', "请填写选中产品的销售价格和试用期!");
 						$('#'+productDatagrid).datagrid('unselectRow', index);
+						$('#'+productDatagrid).datagrid('onUncheck', index);
 					}
 					else
 					{
@@ -564,46 +565,10 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 								else
 									{
 										$('#'+productDatagrid).datagrid('unselectRow', index);
+										$('#'+productDatagrid).datagrid('onUncheck', index);
 									}
-								
-
-								
 							}
-						else//已选择的产品数据
-							{
-								/*//校验
-								editors[0].target.bind('blur',function () {//sellprice校验
-									
-									var oldvalue = [];
-									if(checkEditorSellprice(editors[0].target.val()))
-										{//符合输入的金额校验
-										  oldvalue = productList.get(row.id);
-										  oldvalue[0] = editors[0].target.val();
-										}
-									else
-										{
-											$.messager.alert('提示', "2产品列表中第"+(errRow+1)+"行数据的销售价格不符合金额的输入规则");
-											productList.remove(row.id);
-											$('#'+productDatagrid).datagrid('unselectRow', index);
-										}
-									
-								});
-								editors[1].target.bind('blur',function () {//probation校验
-	
-									var oldvalue = [];
-									if(checkEditorProbation(editors[1].target.val()))
-										{//符合输入的金额校验
-										  oldvalue = productList.get(row.id);
-										  oldvalue[1] = editors[1].target.val();
-										}
-									else
-										{
-											$.messager.alert('提示', "2产品列表中第"+(errRow+1)+"行数据的试用天数应输入0或正整数");
-											productList.remove(row.id);
-											$('#'+productDatagrid).datagrid('unselectRow', index);
-										}
-								});*/
-							}
+						
 					}
 				}
 			
@@ -617,7 +582,77 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 			}
 			productList.remove(row.id);
 			
+		},
+		onSelectAll:function(rows){
+			
+				$.each(rows,function(index,row){
+					//获取选中行的填写值
+					var editors = $('#'+productDatagrid).datagrid('getEditors', index);//获取当前行可编辑的值
+					var errRow = index;
+					if(null != editors && ""!=editors)
+						{
+							if("" == editors[0].target.val() || "" == editors[1].target.val())
+							{
+								$.messager.alert('提示', "请填写选中的第"+(errRow+1)+"行产品的销售价格和试用期!");
+								$('#'+productDatagrid).datagrid('unselectRow', index);
+								$('#'+productDatagrid).datagrid('onUncheck', index);
+								
+							}
+							else
+							{
+								var pushFlag = false;
+								if(!productList.contain(row.id))//新选中的产品数据
+									{
+										var editvalue = [];//当前选中行的编辑值
+										var pushFlag = true;
+										if(checkEditorSellprice(editors[0].target.val()))
+										{//符合输入的金额校验
+											editvalue.push(editors[0].target.val());//放置sellprice销售价格
+											
+											if(checkEditorProbation(editors[1].target.val()))
+											{//符合输入的金额校验
+												editvalue.push(editors[1].target.val());//放置probation试用期
+											}
+											else
+											{
+												pushFlag = false;
+												$.messager.alert('提示', "1产品列表中第"+(errRow+1)+"行数据的试用天数应输入0或正整数");
+											}
+										}
+										else
+										{
+											pushFlag = false;
+											$.messager.alert('提示', "1产品列表中第"+(errRow+1)+"行数据的销售价格不符合金额的输入规则");
+										}
+										if(pushFlag)
+											{
+												productList.put(row.id, editvalue);
+												//更新商品彩种显示
+												fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
+											}
+										else
+											{
+												$('#'+productDatagrid).datagrid('unselectRow', index);
+												$('#'+productDatagrid).datagrid('onUncheck', index);
+											}
+									}
+								
+							}
+						}
+				});
+		},
+		onUnselectAll:function(rows){
+			$.each(rows,function(i,row){
+					
+				if(productList.contain(row.id))//新选中的产品数据
+				{
+					//更新商品彩种显示
+					fillShowGoodstype(productDatagrid,hiddenGTId,showGTId);
+				}
+				productList.remove(row.id);
+			});
 		}
+		
 	});
 }
 

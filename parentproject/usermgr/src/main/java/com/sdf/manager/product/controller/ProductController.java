@@ -1,8 +1,10 @@
 package com.sdf.manager.product.controller;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -609,12 +611,13 @@ public class ProductController
 		 
 		 StringBuffer proCode = new StringBuffer("Pro");
 		//获取当前年月日
-		 Calendar c =  Calendar.getInstance();
-		 
-		 int year = c.get(Calendar.YEAR);
-		 int month = c.get(Calendar.MONTH)+1;
-		 int day = c.get(Calendar.DAY_OF_MONTH);
-		 proCode.append(year+"").append(month+"").append(day+"");
+		 String date = "";
+		 Date dd  = Calendar.getInstance().getTime();
+		 date = DateUtil.formatDate(dd, DateUtil.FULL_DATE_FORMAT);
+		 String year = date.substring(0, 4);//半包，不包括最大位数值
+		 String month = date.substring(5, 7);
+		 String day = date.substring(8, 10);
+		 proCode.append(year).append(month).append(day);
 		 
 		 //验证当天是否已生成产品
 		//放置分页参数
@@ -637,7 +640,7 @@ public class ProductController
 			if(prolist.getResultList().size()>0)
 			{
 				String maxCode = prolist.getResultList().get(0).getCode();
-				String weihao = maxCode.substring(8, maxCode.length());
+				String weihao = maxCode.substring(11, maxCode.length());
 				int num = Integer.parseInt(weihao);
 				String newNum = (++num)+"";
 				int needLen = (ProductController.SERIAL_NUM_LEN-newNum.length());
