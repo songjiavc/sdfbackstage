@@ -43,7 +43,9 @@ import com.sdf.manager.order.service.RelaSdfStationProService;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.entity.Station;
+import com.sdf.manager.station.service.StationService;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.RoleService;
@@ -88,6 +90,9 @@ public class OrderController
 	 
 	 @Autowired
 	 private RelaSdfStationProService relaSdfStationProService;
+	 
+	 @Autowired
+	 private StationService stationService;
 	 
 	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
 	 
@@ -804,7 +809,7 @@ public class OrderController
 	 * @date 2015年11月25日 下午2:39:11
 	  */
 	 @RequestMapping(value = "/getStationList", method = RequestMethod.POST)
-		public @ResponseBody List<Station> getStationList(
+		public @ResponseBody List<StationDto> getStationList(
 				@RequestParam(value="id",required=false) String id,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
@@ -812,12 +817,32 @@ public class OrderController
 		 	List<Station> stations = new ArrayList<Station>();
 		 	//获取当前登录人员的用户信息
 			String code = LoginUtils.getAuthenticatedUserCode(httpSession);//登录用户的code
-		 	
+		 	String userId = LoginUtils.getAuthenticatedUserId(httpSession);
 			/***根据登录人员的和站点关联的字段，查询当前登录用户的下属站点列表***/
+			List<Station> stations2 = new ArrayList<Station>();
+			stations2 = stationService.getStationByAgentId(userId);
+			List<StationDto> stationDtos = new ArrayList<StationDto>();
 			
-			
+			for (Station station : stations2) {
+				
+				StationDto stationDto = new StationDto();
+				stationDto.setId(station.getId());
+				stationDto.setStationNumber(station.getStationNumber());
+				
+				stationDtos.add(stationDto);
+			}
 		 	
-		 	return stations;
+			
+		 	return stationDtos;
 		}
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 
 }

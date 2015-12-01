@@ -2,7 +2,7 @@ var goodsList = new Array();//选中的商品数据
 var countPrice = 0;//选中商品总价
 $(document).ready(function(){
 	
-			initGoodsDatagrid('210000', 'all', 'goodsDatagridU','1');
+//			initGoodsDatagrid('210000', 'all', 'goodsDatagridU','1');
 			initStationList();//加载站点列表（TODO:从后台获取当前登录用户的信息，获取其下属的站点列表数据）
 			clearGoodsArray();
 			
@@ -24,6 +24,7 @@ function bindStationCombobox()
 			{
 				var returnArr = new Array();
 				returnArr = getDetailStation(rec.id);//rec.id is stationId
+				$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 				//根据站点的区域和彩种加载商品信息列表
 				initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);		
 			}
@@ -84,7 +85,7 @@ function initStationList()
 		 onLoadSuccess: function (data1) { //数据加载完毕事件
              if (data1.length > 0 ) 
              {//默认选中第一个站点
-            	 $('#stationA').combobox('select',data1[data1.length-1].ccode);
+            	 $('#stationA').combobox('select',data1[data1.length-1].id);
              }
             
 				

@@ -114,7 +114,7 @@ public class MenuController {
 		else
 		{
 			//向session中写入登录信息
-			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName());
+			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName(),user.getId());
 		}
 		
 		

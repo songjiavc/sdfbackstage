@@ -2,10 +2,10 @@ var goodsList = new Array();//选中的商品数据
 var countPrice = 0;//选中商品总价
 $(document).ready(function(){
 	
+			clearGoodsArray();
 			closeDialog();//页面加载时关闭弹框
 			initDatagrid();//初始化数据列表
 			bindStationCombobox();
-//			initStationList();//加载站点列表（TODO:从后台获取当前登录用户的信息，获取其下属的站点列表数据）
 			getLoginuserRole();
 			
 			goodsList = new Array();
@@ -15,7 +15,7 @@ $(document).ready(function(){
 /**
  * 初始化站点下拉框（加载站点的约束条件：1.上级代理下属的所有站点）
  */
-function initStationList()
+function initStationList(stationId)
 {
 	var data = new Object();
 	
@@ -25,11 +25,7 @@ function initStationList()
 		valueField:'id',
 		textField:'stationNumber',
 		 onLoadSuccess: function (data1) { //数据加载完毕事件
-             if (data1.length > 0 ) 
-             {//默认选中第一个站点
-            	 $('#stationA').combobox('select',data1[data1.length-1].ccode);
-             }
-            
+			 $('#stationA').combobox('select',stationId);
 				
          }
 	}); 
@@ -91,6 +87,7 @@ function bindStationCombobox()
 			{
 				var returnArr = new Array();
 				returnArr = getDetailStation(rec.id);//rec.id is stationId
+				$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 				//根据站点的区域和彩种加载商品信息列表
 				initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);		
 			}
@@ -332,12 +329,16 @@ function updateOrders(id)
 						price:data.price,
 						payMode:data.payMode,
 						receiveAddr:data.receiveAddr,
-						receiveTele:data.receiveTele
+						receiveTele:data.receiveTele,
 //						transCost:data.transCost
+						stationId:data.stationId//填充选中订单中站点
 					});
-					
+					initStationList(data.stationId);
 					//选中当前商品对应产品,并在商品列表加载完成后选中商品
-					initGoodsDatagrid('210000', 'all', 'goodsDatagridU','1');
+					var returnArr = new Array();
+					returnArr = getDetailStation(data.stationId);//rec.id is stationId
+					//根据站点的区域和彩种加载商品信息列表
+					initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);
 			
 					
 	        },
@@ -350,6 +351,44 @@ function updateOrders(id)
 		
 	
 }
+
+
+/**
+ * 获取站点详情
+ * @param stationId：站点id
+ */
+function getDetailStation(stationId)
+{
+	var returnArr = new Array();
+	var url = contextPath + '/station/getStationDetail.action';
+	var paramData = new Object();
+	paramData.id=stationId;
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "get",
+        cache:false,
+        url: url,
+        data:paramData,
+        dataType: "json",
+        success: function (data) {
+			
+        	var province = data.addFormProvince;
+        	var city = data.addFormCity;
+        	var stationType = data.addFormStationStyle;//站点类型：1：体彩 2：福彩
+        	
+        	returnArr.push(province);//站点所属省
+        	returnArr.push(city);//站点所属市
+        	returnArr.push(stationType);//站点类型：1：体彩 2：福彩
+        	
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+	});
+	
+	return returnArr;
+}
+
 
 /**
  * 选中当前订单配置的商品

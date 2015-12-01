@@ -69,6 +69,20 @@ public class Station extends BaseEntiry implements Serializable
 	
 	@Column(name="STATUS")
 	private String status;
+	
+	@Column(name="AGENT_ID")
+	private String agentId;//上级代理id
+	
+	
+	
+
+	public String getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(String agentId) {
+		this.agentId = agentId;
+	}
 
 	public String getId() {
 		return id;

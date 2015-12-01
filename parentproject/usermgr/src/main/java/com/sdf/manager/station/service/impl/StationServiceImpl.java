@@ -2,6 +2,7 @@ package com.sdf.manager.station.service.impl;
 
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -135,5 +136,13 @@ public class StationServiceImpl implements StationService {
 	 */
 	public Station getSationById(String id) {
 		return stationRepository.getOne(id);
+	}
+
+
+	/**
+	 * 根据代理id获取其下属的站点列表
+	 */
+	public List<Station> getStationByAgentId(String agentId) {
+		return stationRepository.getStationByAgentId(agentId);
 	}
 }

@@ -1,6 +1,7 @@
 package com.sdf.manager.station.service;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 
@@ -69,4 +70,12 @@ public interface StationService {
 	  */
 	public QueryResult<Station> getStationList(Class<Station> entityClass, String whereJpql, Object[] queryParams, 
 			LinkedHashMap<String, String> orderby, Pageable pageable);
+	
+	/**
+	 * 
+	* @Description: TODO(用一句话描述该文件做什么) 
+	* @author bann@sdfcp.com
+	* @date 2015年12月1日 上午9:09:58
+	 */
+	public List<Station> getStationByAgentId(String agentId);
 }

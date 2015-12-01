@@ -150,10 +150,32 @@ public class GoodsController {
 				buffer.append(" and provinceDm = ?").append(params.size());
 			}
 			
-			if(null != city && !"".equals(city) && !Constants.CITY_ALL.equals(city))
+			if(null != city && !"".equals(city))
 			{
-				params.add(city);//根据城市查询产品数据
-				buffer.append(" and cityDm = ?").append(params.size());
+				if(null != stationType && !"".equals(stationType))//订单中根据站点的区域信息加载商品的查询条件的组成方式
+				{
+					if(Constants.CITY_ALL.equals(city))
+					{
+						params.add(Constants.CITY_ALL);
+						buffer.append(" and cityDm = ?").append(params.size());
+					}
+					else
+					{
+						List<String> paraArr = new ArrayList<String> ();
+						paraArr.add(city);
+						paraArr.add(Constants.CITY_ALL);
+						params.add(paraArr);
+						buffer.append(" and cityDm in ?").append(params.size());
+					}
+					
+				}
+				else
+					if(!Constants.CITY_ALL.equals(city))//商品管理的模糊查询条件
+					{
+						params.add(city);
+						buffer.append(" and cityDm = ?").append(params.size());
+					}
+				
 			}
 			
 			if(null != goodsName && !"".equals(goodsName))
