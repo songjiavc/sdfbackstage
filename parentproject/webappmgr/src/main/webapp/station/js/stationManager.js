@@ -170,7 +170,7 @@ function initDatagrid()
 		            formatter:function(value,row,index){
 		                var btn = '<a class="editcls" onclick="updateStation(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
 		                	+'<a class="delcls" onclick="delStationById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
-		                	+'<a class="setOrder" onclick="setOrder(&quot;'+row+'&quot;)" href="javascript:void(0)"></a>';
+		                	+'<a class="setOrder" onclick="setOrder(&quot;'+row.id+'&quot;,&quot;'+row.stationNumber+'&quot;,&quot;'+row.stationStyle+'&quot;)" href="javascript:void(0)"></a>';
 		                return btn;
 		            }
 		        }
@@ -221,18 +221,6 @@ function initDatagrid()
 			$("#addOrUpdateStation").dialog("open");//打开修改用户弹框
 	}
 
-	/**
-	 * 商品选购入口，留给班娜补充
-	 */
-	function setOrder(row)
-	{
-			/*
-			 *   row = {
-			 *   	
-			 *   }
-			 */
-			$("#setOrder").dialog("open");
-	}
 	//提交添加权限form表单
 	function submitAddStation()
 	{
