@@ -25,6 +25,8 @@ function bindStationCombobox()
 			if(null != rec.id && '' != rec.id)
 			{
 				clearGoodsArray();
+				$("#pricehidden").val('');
+				$("#priceA").textbox('setText','');
 				var returnArr = new Array();
 				returnArr = getDetailStation(rec.id);//rec.id is stationId
 				$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
@@ -261,11 +263,16 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			
 		},
 		onUnselect:function(index,row){
-			var price = 0;
-			price = parseInt(row.price);
-			removeGoodList(row.id);
-			countPrice = countPrice-price;
-			addCountPrice(countPrice);//更新商品总价
+			var pushFlag = goodListExist(row.id);
+			if(!pushFlag)//false为不允许放入list，则表示当前值做过价格处理
+				{
+					var price = 0;
+					price = parseInt(row.price);
+					removeGoodList(row.id);
+					countPrice = countPrice-price;
+					addCountPrice(countPrice);//更新商品总价
+				}
+			
 			
 		},
 		onUnselectAll:function(rows){
@@ -273,9 +280,14 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			
 			for(var i=0;i<rows.length;i++)
 			{
-				price = parseInt(rows[i].price);
-				removeGoodList(rows[i].id);
-				countPrice = countPrice-price;
+				var pushFlag = goodListExist(row.id);
+				if(!pushFlag)
+					{
+						price = parseInt(rows[i].price);
+						removeGoodList(rows[i].id);
+						countPrice = countPrice-price;
+					}
+				
 			}
 			addCountPrice(countPrice);//更新商品总价
 			
@@ -337,7 +349,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			                        valueField:'id',
 									textField:'stationNumber',   
 		                            panelHeight: 'auto',  
-		                            required: true ,  
+		                            required: false ,  
 		                            editable:false  
 	                        }  
 	                    }  

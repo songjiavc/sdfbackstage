@@ -73,7 +73,6 @@ function clearGoodsArray()
 	goodsList = new Array();
 	countPrice = 0;//清零商品总价
 	$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
-	$('#goodsDatagridD').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 }
 
 /**
@@ -87,6 +86,8 @@ function bindStationCombobox()
 			if(undefined != rec &&null != rec.id && '' != rec.id)
 			{
 				clearGoodsArray();
+				$("#pricehidden").val('');
+				$("#priceA").textbox('setText','');
 				var returnArr = new Array();
 				returnArr = getDetailStation(rec.id);//rec.id is stationId
 				$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
@@ -262,6 +263,8 @@ function approveOrdersInDialog(operortype)
 function viewOrdersDetail(orderId)
 {
 	clearGoodsArray();
+	$('#goodsDatagridD').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
+	
 	var url = contextPath + '/order/getDetailOrders.action';
 	var data1 = new Object();
 	data1.id=orderId;//订单id
@@ -339,6 +342,7 @@ function updateOrders(id)
 //						transCost:data.transCost
 						stationId:data.stationId//填充选中订单中站点
 					});
+					
 					initStationList('stationA',data.stationId);
 					//选中当前商品对应产品,并在商品列表加载完成后选中商品
 					var returnArr = new Array();
@@ -426,7 +430,16 @@ function checkedGoodsOfOrder(id,productDatagrid)
 								if(selectedRow.id == goodId)
 								{
 //									 $('#'+productDatagrid).datagrid('selectRow',j);
-									goodsList.push(goodId);
+									var price = 0;
+									var pushFlag = goodListExist(goodId);
+									if(pushFlag)
+										{
+											goodsList.push(goodId);//※每次在操作goodlist的内容时就要同时操作商品总价
+											price = parseInt(selectedRow.price);//js中将字符串转换为数字
+											countPrice = countPrice+price;
+											addCountPrice(countPrice);//更新商品总价
+										}
+									
 								}
 				        	});
         				}
@@ -527,11 +540,14 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 								if(selectedRow.id == goodId){
 									
 									 $('#'+productDatagrid).datagrid('selectRow',j);
+//									 var price = parseInt(selectedRow.price);//js中将字符串转换为数字
+//									 countPrice = countPrice+price;
+									
 								}
 				        	});
 	        				
-	        				
 	        			}
+//	        		 addCountPrice(countPrice);//更新商品总价
 	        	}
 	        
 	        
@@ -581,15 +597,21 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 					goodsList.push(row.id);
 					price = parseInt(row.price);//js中将字符串转换为数字
 					countPrice = countPrice+price;
+					addCountPrice(countPrice);//更新商品总价
 				}
-			addCountPrice(countPrice);//更新商品总价
+			
 		},
 		onUnselect:function(index,row){
-			var price = 0;
-			price = parseInt(row.price);
-			removeGoodList(row.id);
-			countPrice = countPrice-price;
-			addCountPrice(countPrice);//更新商品总价
+			var pushFlag = goodListExist(row.id);
+			if(!pushFlag)//false为不允许放入list，则表示当前值做过价格处理
+				{
+					var price = 0;
+					price = parseInt(row.price);
+					removeGoodList(row.id);
+					countPrice = countPrice-price;
+					addCountPrice(countPrice);//更新商品总价
+				}
+			
 			
 		},
 		onUnselectAll:function(rows){
@@ -597,9 +619,14 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			
 			for(var i=0;i<rows.length;i++)
 			{
-				price = parseInt(rows[i].price);
-				removeGoodList(rows[i].id);
-				countPrice = countPrice-price;
+				var pushFlag = goodListExist(row.id);
+				if(!pushFlag)//false为不允许放入list，则表示当前值做过价格处理
+					{
+						price = parseInt(rows[i].price);
+						removeGoodList(rows[i].id);
+						countPrice = countPrice-price;
+					}
+				
 			}
 			addCountPrice(countPrice);//更新商品总价
 			
@@ -661,7 +688,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			                        valueField:'id',
 									textField:'stationNumber',   
 		                            panelHeight: 'auto',  
-		                            required: true ,  
+		                            required: false ,  
 		                            editable:false  
 	                        }  
 	                    }  
