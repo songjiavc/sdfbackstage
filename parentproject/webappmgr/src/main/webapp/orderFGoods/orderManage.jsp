@@ -240,14 +240,12 @@
 	        </div>
 	       <div class="ftitle">
 	            <label for="priceU">支付方式:</label>
-	            <div style="float : left;margin-left: 30px;">
 	           		<input class="easyui-validatebox commonInput" type="text" id="payModeC" name="payMode"  readonly="readonly"></input>
 		           <!--  <select class="easyui-combobox" id="payModeC" name="payMode"  
 			          	 		 data-options="editable:false" style="width:150px;" >
 			          	 		<option value="0" checked="checked">现金支付</option>
 			          	 		<option value="1">转账支付</option>
 					</select> -->
-				</div>
 	        </div>
 	        <div class="ftitle">
 	            <label for="receiveAddrU">收货人地址:</label>
@@ -276,13 +274,13 @@
 	           	</div>
 	        </div>
 	        <div class="ftitle">
-	            <label for="stationA">选中站点:</label>
-	             <div style="float:left;margin-left: 40px;">
-		            <select class="easyui-combobox " id="stationD" name="station"  
+	            <label for="stationA">选中站点号:</label>
+		            <!-- <select class="easyui-combobox " id="stationD" name="station"  
 			          	 		 data-options="editable:false" style="width:200px;" >
 			          	 		
-					</select>
-				</div>
+					</select> -->
+					<input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="stationD" name="station" 
+	              ></input>
 	        </div>
 	        <div class="ftable">
 	            <label for="product">选中的商品列表:</label>

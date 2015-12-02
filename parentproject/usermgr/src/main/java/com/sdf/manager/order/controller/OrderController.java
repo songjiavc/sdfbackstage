@@ -228,6 +228,7 @@ public class OrderController
 			   order.setCode(code);
 			   order.setTransCost(transCost);
 			   order.setPayMode(payMode);
+			   order.setStationId(station);
 			   order.setReceiveAddr(receiveAddr);
 			   order.setReceiveTele(receiveTele);
 			   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
@@ -330,6 +331,7 @@ public class OrderController
 			   order.setReceiveAddr(receiveAddr);
 			   order.setReceiveTele(receiveTele);
 			   order.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
+			   order.setStationId(station);
 			   //setCreator中放置的是创建订单人的name
 			   order.setCreator(LoginUtils.getAuthenticatedUserName(httpSession));
 			   order.setCreaterTime(new Timestamp(System.currentTimeMillis()));
