@@ -23,10 +23,22 @@ public class RelaSdfGoodProductDTO {
 	
 	private String orderprobation;//订单中设置的试用期
 	
+	private String stationOfPro;
+	
+	
+	
 	
 
 	
 	
+	public String getStationOfPro() {
+		return stationOfPro;
+	}
+
+	public void setStationOfPro(String stationOfPro) {
+		this.stationOfPro = stationOfPro;
+	}
+
 	public String getOrderprobation() {
 		return orderprobation;
 	}

@@ -47,6 +47,7 @@ import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
 import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.entity.Station;
+import com.sdf.manager.station.repository.StationRepository;
 import com.sdf.manager.station.service.StationService;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
@@ -825,12 +826,23 @@ public class OrderController
 			List<Station> stations2 = new ArrayList<Station>();
 			stations2 = stationService.getStationByAgentId(userId);
 			List<StationDto> stationDtos = new ArrayList<StationDto>();
+			String stationtypeText = "";
 			
 			for (Station station : stations2) {
 				
+				if(station.getStationType().equals(Constants.LOTTERY_TYPE_FC))
+			 	{
+					stationtypeText = "福彩";
+			 	}
+			 	else
+			 		if(station.getStationType().equals(Constants.LOTTERY_TYPE_TC))
+				 	{
+			 			stationtypeText = "体彩";
+				 	}
+				
 				StationDto stationDto = new StationDto();
 				stationDto.setId(station.getId());
-				stationDto.setStationNumber(station.getStationNumber());
+				stationDto.setStationNumber(stationtypeText+"--"+station.getStationNumber());
 				
 				stationDtos.add(stationDto);
 			}
@@ -838,6 +850,64 @@ public class OrderController
 			
 		 	return stationDtos;
 		}
+	 
+	 
+	 /**
+	  * 
+	 * @Description: 获取当前站点的其他类别的站点
+	 * @author bann@sdfcp.com
+	 * @date 2015年12月1日 下午1:58:41
+	  */
+	 @RequestMapping(value = "/getOtherStations", method = RequestMethod.POST)
+		public @ResponseBody List<StationDto> getOtherStations(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<StationDto> stationDtos = new ArrayList<StationDto>();
+		 	
+		 	//1.获取当前选中站点详情
+		 	Station station = stationService.getSationById(id);
+		 	
+		 	String stationType = station.getStationType();
+		 	String owner  = station.getOwner();//获取站主姓名
+		 	String telephone = station.getOwnerTelephone();//获取站主联系电话
+		 	String stationtypeText = "";
+		 	
+		 	//若是福彩类型，则查询体彩站点，若为体彩类型，则查询福彩站点
+		 	if(stationType.equals(Constants.LOTTERY_TYPE_FC))
+		 	{
+		 		stationType = Constants.LOTTERY_TYPE_TC;
+		 		stationtypeText = "体彩";
+		 	}
+		 	else
+		 		if(stationType.equals(Constants.LOTTERY_TYPE_TC))
+			 	{
+			 		stationType = Constants.LOTTERY_TYPE_FC;
+			 		stationtypeText = "福彩";
+			 	}
+		 	
+		 	//2.根据站主姓名和联系电话获取当前站主其他类别站点（规定：站主姓名和站主联系电话可以唯一确定一个站主）
+		 	
+		 	List<Station> stations = stationService.getStationByStationTypeAndOwnerAndOwnertelephone
+		 			(stationType, owner, telephone);
+		 	
+		 	for (Station station2 : stations) {
+				
+				StationDto stationDto = new StationDto();
+				stationDto.setId(station2.getId());
+				stationDto.setStationNumber(stationtypeText+"--"+station2.getStationNumber());
+				
+				stationDtos.add(stationDto);
+			}
+		 	
+		 	
+		 	return stationDtos;
+		}
+	 
+	 
+	 
+	 
+	 
 	 
 	 
 	 

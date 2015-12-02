@@ -142,6 +142,33 @@
 	  		<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="submitAddgoods('0')">保存</a>
 	  		<a id="btn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="submitAddgoods('1')">保存并提交</a>
 	  </div>
+	  
+	  <div id="selectOtherStation" class="easyui-dialog" title="选择其他彩种站点" style="width:400px;height:200px;padding:10px;top:50px;"
+            data-options="
+                iconCls: 'icon-save',
+                buttons: [{
+                    text:'确定',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                    	getSelectedOtherStation();
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#selectOtherStation').dialog('close');
+                        
+                    }
+                }]
+            ">
+            <div style="float:left;margin-left: 40px;">
+		            <select class="easyui-combobox " id="otherStation" 
+			          	 		 data-options="editable:false" style="width:200px;" >
+			          	 		
+					</select>
+			</div>
+		
+    </div>
 </body>
 	
 	

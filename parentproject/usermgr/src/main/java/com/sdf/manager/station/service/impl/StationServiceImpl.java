@@ -145,4 +145,11 @@ public class StationServiceImpl implements StationService {
 	public List<Station> getStationByAgentId(String agentId) {
 		return stationRepository.getStationByAgentId(agentId);
 	}
+
+
+	public List<Station> getStationByStationTypeAndOwnerAndOwnertelephone(
+			String stationType, String owner, String ownerTelephone) {
+		return stationRepository.getStationByStationTypeAndOwnerAndOwnertelephone
+				(stationType, owner, ownerTelephone);
+	}
 }

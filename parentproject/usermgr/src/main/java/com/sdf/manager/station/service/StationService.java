@@ -78,4 +78,13 @@ public interface StationService {
 	* @date 2015年12月1日 上午9:09:58
 	 */
 	public List<Station> getStationByAgentId(String agentId);
+	
+	/**
+	 * 
+	* @Description: 获取当前站主信息对应的其他彩种的站点
+	* @author bann@sdfcp.com
+	* @date 2015年12月1日 下午2:05:03
+	 */
+	public List<Station> getStationByStationTypeAndOwnerAndOwnertelephone
+	(String stationType,String owner,String ownerTelephone);
 }
