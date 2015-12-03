@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,6 +63,9 @@ import com.sdf.manager.product.service.RegionService;
 @RequestMapping("/product")
 public class ProductController 
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+	
 	 @Autowired
 	 private ProductService productService;
 	 
@@ -245,6 +250,10 @@ public class ProductController
 			   resultBean.setMessage("修改产品信息成功!");
 			   resultBean.setStatus("success");
 			   
+			   //日志输出
+			   logger.info("修改产品--产品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
+			   
 		   }
 		   else
 		   {
@@ -268,6 +277,10 @@ public class ProductController
 			   
 			   resultBean.setMessage("添加产品信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   //日志输出
+			   logger.info("添加产品--产品code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			  
 		   }
 		   
 		   
@@ -314,6 +327,11 @@ public class ProductController
 				
 				//删除产品--商品关联数据
 				relaProAndGoodsService.deleteRelapGoodsList(product.getGoodAndproduct());
+				
+				 //日志输出
+				 logger.info("删除产品--产品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				   
+				   
 			}
 			
 			

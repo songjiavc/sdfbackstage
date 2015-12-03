@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -55,6 +57,8 @@ import com.sdf.manager.product.service.ProvinceService;
 @RequestMapping("/goods")
 public class GoodsController {
 
+	private static final Logger logger = LoggerFactory.getLogger(GoodsController.class);
+	
 	@Autowired
 	private GoodsService goodsService;
 	
@@ -398,6 +402,9 @@ public class GoodsController {
 			   resultBean.setMessage("修改商品信息成功!");
 			   resultBean.setStatus("success");
 			   
+			   //日志输出
+				 logger.info("修改商品--商品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
 		   }
 		   else
 		   {
@@ -443,6 +450,10 @@ public class GoodsController {
 			   
 			   resultBean.setMessage("添加商品信息成功!");
 			   resultBean.setStatus("success");
+			   
+			 //日志输出
+			logger.info("添加商品--商品code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
 		   }
 		   
 		   
@@ -477,6 +488,10 @@ public class GoodsController {
 					goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 					goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
 					goodsService.update(goods);//保存更改状态的商品实体
+					
+					 //日志输出
+					 logger.info("删除商品--商品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				   
 				}
 			}
 			else
@@ -500,6 +515,10 @@ public class GoodsController {
 					goods.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 					goods.setModifyTime(new Timestamp(System.currentTimeMillis()));
 					goodsService.update(goods);//保存更改状态的商品实体
+					
+					 //日志输出
+					logger.info("更改商品状态--商品id="+id+"更改的商品状态位="+updateStatus+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				   
 				}
 			}
 			

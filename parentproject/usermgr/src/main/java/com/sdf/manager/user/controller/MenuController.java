@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,6 +51,9 @@ import com.sdf.manager.user.service.UserService;
 @Controller
 @RequestMapping("/menu")
 public class MenuController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
+	
     @Autowired
 	private AuthService authService;
     
@@ -116,6 +121,10 @@ public class MenuController {
 			//向session中写入登录信息
 			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName(),user.getId());
 		}
+		
+		 //日志输出
+		   logger.info("用户登录：登录信息用户名："+code+"密码："+password+"登录状态："+message);
+		   
 		
 		
 		model.addAttribute("message", message);
@@ -360,6 +369,10 @@ public class MenuController {
 			
 			returnMap.setMessage("修改权限成功!");
 			returnMap.setStatus("success");
+			
+		  //日志输出
+		   logger.info("修改权限--权限id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
 		}
 		else
 		{
@@ -381,6 +394,10 @@ public class MenuController {
 			
 			returnMap.setMessage("保存权限成功!");
 			returnMap.setStatus("success");
+			
+			 //日志输出
+			logger.info("保存权限--权限code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				 
 		}
 		
 		
@@ -573,6 +590,10 @@ public class MenuController {
 			authority.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			authService.save(authority);//保存更改状态的权限实体
+			
+			 //日志输出
+			logger.info("删除权限--权限id="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				
 		}
 		
 		

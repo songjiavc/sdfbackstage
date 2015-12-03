@@ -9,6 +9,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -44,6 +46,8 @@ import com.sdf.manager.user.service.RoleService;
 @RequestMapping("/role")
 public class RoleController 
 {
+	private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
+	
 	 @Autowired
 	 private RoleService roleService;
 	 
@@ -129,6 +133,10 @@ public class RoleController
 			   resultBean.setMessage("修改角色成功!");
 			   resultBean.setStatus("success");
 			   
+			   //日志输出
+			   logger.info("修改角色--角色id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
+			   
 		   }
 		   else
 		   {
@@ -148,6 +156,10 @@ public class RoleController
 			   
 			   resultBean.setMessage("添加角色成功!");
 			   resultBean.setStatus("success");
+			   
+			   //日志输出
+			   logger.info("添加角色--角色code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
 		   }
 		   
 		   
@@ -180,6 +192,10 @@ public class RoleController
 				role.setModifyTime(new Timestamp(System.currentTimeMillis()));
 				role.setAuthorities(authList);//清空角色与权限的关联表数据，因为当前角色已删除，所以关联数据无意义
 				roleService.update(role);//保存更改状态的角色实体
+				
+				//日志输出
+				logger.info("删除角色--角色id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				   
 			}
 			
 			
