@@ -42,8 +42,11 @@
         <span style="float:right; padding-right:20px;" class="head"> 
        	 <a href="#" id="editpass">修改密码</a> <a href="#" id="loginOut" onclick="logout()">安全退出</a>
         </span>
+         <span style="float:right; padding-right:20px;" class="head"> 
+         		当前登录用户：<span id="loginuser">admin</span>
+         </span>
 
-        <span style="padding-left:10px; font-size: 26px; float:left;">时代枫企业管理平台</span>
+        <span style="padding-left:10px; font-size: 36px; float:left;font-family:隶书;">时代枫企业管理平台</span>
     </div>
     <div region="south" split="false" style="height: 30px; background: #D2E0F2; ">
         <div class="footer"><center>时代枫传媒@2015</center></div>

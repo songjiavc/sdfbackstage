@@ -585,6 +585,26 @@ public class MenuController {
 	
 	/**
 	 * 
+	* @Description: 获取登陆人信息
+	* @author bann@sdfcp.com
+	* @date 2015年12月3日 上午9:34:47
+	 */
+	@RequestMapping(value = "/getLoginmsg", method = RequestMethod.POST)
+	public @ResponseBody ResultBean getLoginmsg(
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean resultBean = new ResultBean();
+		
+		String name = LoginUtils.getAuthenticatedUserName(httpSession);
+		
+		resultBean.setMessage(name);
+		
+		return resultBean;
+	}
+	
+	
+	/**
+	 * 
 	* @Description: TODO(获取权限页面的权限树) 
 	* @author bann@sdfcp.com
 	* @date 2015年10月14日 下午2:59:13

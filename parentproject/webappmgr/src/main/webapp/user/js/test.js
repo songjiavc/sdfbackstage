@@ -35,6 +35,8 @@ $(function() {
 			
 			
 			InitLeftMenu();
+			
+			initLoginMes();//初始化登录人信息
 		}
 	else
 		{
@@ -44,6 +46,28 @@ $(function() {
 	
 	
 });
+
+/**
+ * 初始化登陆人信息
+ */
+function initLoginMes()
+{
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+		type: "post",
+		url: contextPath + '/menu/getLoginmsg.action',
+//		data:data,
+		dataType: "json",
+		success: function (dataresult) {
+			var username = dataresult.message;
+		
+			$("#loginuser").html(username);
+		},
+		error: function (XMLHttpRequest, textStatus, errorThrown) {
+			alert(errorThrown);
+		}
+   });
+}
 
 //加载导航菜单数据
 function initMenu()
