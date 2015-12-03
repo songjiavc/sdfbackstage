@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.LoginUtils;
@@ -67,7 +68,7 @@ import com.sdf.manager.user.service.UserService;
  */
 @Controller
 @RequestMapping("/order")
-public class OrderController 
+public class OrderController extends GlobalExceptionHandler
 {
 	 private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	

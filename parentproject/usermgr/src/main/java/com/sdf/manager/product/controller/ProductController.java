@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
@@ -61,7 +62,7 @@ import com.sdf.manager.product.service.RegionService;
  */
 @Controller
 @RequestMapping("/product")
-public class ProductController 
+public class ProductController extends GlobalExceptionHandler
 {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);

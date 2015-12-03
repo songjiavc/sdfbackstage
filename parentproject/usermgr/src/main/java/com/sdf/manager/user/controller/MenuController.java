@@ -1,5 +1,6 @@
 package com.sdf.manager.user.controller;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,9 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
@@ -50,7 +53,7 @@ import com.sdf.manager.user.service.UserService;
   */
 @Controller
 @RequestMapping("/menu")
-public class MenuController {
+public class MenuController extends GlobalExceptionHandler{
 	
 	private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
 	
@@ -100,6 +103,7 @@ public class MenuController {
 			@RequestParam(value="code",required=false) String code,//登录名是user表中的code
 			@RequestParam(value="password",required=false) String password,
 			ModelMap model) throws Exception {
+		
 
 		String message ="success";
 		

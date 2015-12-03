@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.RoleAuthBean;
@@ -44,7 +45,7 @@ import com.sdf.manager.user.service.RoleService;
  */
 @Controller
 @RequestMapping("/role")
-public class RoleController 
+public class RoleController extends GlobalExceptionHandler
 {
 	private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
 	
