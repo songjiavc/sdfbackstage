@@ -717,21 +717,13 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType,ischang
 	            },
 	            onLoadSuccess:function(prodata){
 	                
+	            	//设置商品下产品的试用期和站点下拉框可用，并且设置试用期默认值为'0'
 	            	for(var i=0;i<prodata.rows.length;i++)
         			{
 	                	 $('#ddv-'+tableId).datagrid('beginEdit', i);
 	                	 var editors = $('#ddv-'+tableId).datagrid('getEditors', i);
 	                	 editors[0].target.val('0');
 	                	 
-	                	//处理站点combobox
-						 var stationcombobox = $('#ddv-'+tableId).datagrid('getEditor', {index:i,field:'stationOfPro'});
-						 var lotteryType = prodata.rows[i].lotteryType;
-						 var sdata = getSelectedOtherStation('stationA',lotteryType);
-						 $(stationcombobox.target).combobox( 'loadData' , sdata); 
-						 if(sdata.length>0)
-							 {
-							 	$(stationcombobox.target).combobox( 'setValue' ,sdata[0].id); //默认选中第一项
-							 }
         			}
 	                
 	                //绑定editor校验
@@ -742,16 +734,58 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType,ischang
 	                	var oldValue = row.probation;//当前产品可以设定的最大试用期
 	                	
 	                	editors[0].target.bind('change',function () {//sellprice校验
-			 				
+	                		
 	                		if(editors[0].target.val()>oldValue)
 	                			{
 	                				$.messager.alert('提示', "产品中第"+(indexp+1)+"行数据的试用期天数大于试用期最大值");
 	                				editors[0].target.val('0');
 	                			}
-			 				
+			 					
+		                		//更新goodlist内容
+		                		var pushflag = goodListExist(tableId);
+		                		if(!pushflag)
+		                			{//当前更改的所属商品id已存在
+		                				removeGoodList(tableId);
+		                				goodsList.push(tableId);//※每次在操作goodlist的内容时就要同时操作商品总价
+										addGoodList(tableId);//添加商品下的产品数据
+		                			}
+	                		
+	                		
 			 				});
+	                	
+	                		//给站点更改绑定级联事件
+	                		editors[1].target.combobox({
+
+	                			onChange : function (n,o) {
+		                			//更新goodlist内容
+			                		var pushflag = goodListExist(tableId);
+			                		if(!pushflag)
+			                			{//当前更改的所属商品id已存在
+			                				removeGoodList(tableId);
+			                				goodsList.push(tableId);//※每次在操作goodlist的内容时就要同时操作商品总价
+											addGoodList(tableId);//添加商品下的产品数据
+			                			}
+		                			
+		                			}
+
+	                		}); 
+	                	
 			        	
 	                	});
+	                
+	              //处理站点combobox的默认值选中，这个处理只能放在"站点更改绑定级联事件"的后面，否则无法设定默认值
+	                for(var i=0;i<prodata.rows.length;i++)
+        			{
+	                	//处理站点combobox
+						 var stationcombobox = $('#ddv-'+tableId).datagrid('getEditor', {index:i,field:'stationOfPro'});
+						 var lotteryType = prodata.rows[i].lotteryType;
+						 var sdata = getSelectedOtherStation('stationA',lotteryType);
+						 $(stationcombobox.target).combobox( 'loadData' , sdata); 
+						 if(sdata.length>0)
+							 {
+							 	$(stationcombobox.target).combobox( 'setValue' ,sdata[0].id); //默认选中第一项
+							 }
+        			}
 	                
 	                //收起子网格再展开时的处理
 	                var selectedproRows = $('#ddv-'+tableId).datagrid('getRows');

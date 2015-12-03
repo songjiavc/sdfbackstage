@@ -261,13 +261,13 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="nameU">订单名称:</label>
-	            <input class="easyui-validatebox commonInput" type="text" id="nameU" name="name" data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" id="nameA" name="name" data-options="required:true"
 	            validType="length[1,50]"  missingMessage="订单名称不可以为空" ></input>
 	        </div>
 	       <div class="ftitle">
 	            <label for="priceU">支付方式:</label>
 	            <div style="float : left;margin-left: 30px;">
-		            <select class="easyui-combobox" id="payModeC" name="payMode"  
+		            <select class="easyui-combobox" id="payModeA" name="payMode"  
 			          	 		 data-options="editable:false" style="width:150px;" >
 			          	 		<option value="0" checked="checked">现金支付</option>
 			          	 		<option value="1">转账支付</option>
@@ -276,12 +276,12 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="receiveAddrU">收货人地址:</label>
-	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrU" name="receiveAddr" data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrA" name="receiveAddr" data-options="required:true"
 	             validType="length[1,50]" ></input>
 	        </div>
 	         <div class="ftitle">
 	            <label for="receiveTeleU">联系电话:</label>
-	            <input class="easyui-validatebox commonInput" type="text" id="receiveTeleU" name="receiveTele" data-options="required:true"
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveTeleA" name="receiveTele" data-options="required:true"
 	             validType="mobileAndTel"  ></input>
 	        </div>
 	       <!--  <div class="ftitle">
