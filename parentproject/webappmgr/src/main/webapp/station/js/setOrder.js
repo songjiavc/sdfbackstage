@@ -2,6 +2,7 @@ var goodsList = new Array();//选中的商品数据
 var countPrice = 0;//选中商品总价
 var currentRowId = '';//当前选中的商品id
 var stationtype='';
+var proOfgoods  = new map();
 /**
 	 * 商品选购入口，留给班娜补充
 	 */
@@ -44,6 +45,7 @@ function dialogOPenDo()
 function clearGoodsArray()
 {
 	goodsList = new Array();
+	proOfgoods  = new map();
 	countPrice = 0;//清零商品总价
 	$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 }
@@ -73,8 +75,8 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 		fitColumns:true,
 		pagination:true,
 		collapsible:false,
-		pageSize:5,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
-		pageList:[5,10],
+		pageSize:2,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
+		pageList:[2,5,10],
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
@@ -171,6 +173,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			if(pushFlag)
 				{
 					goodsList.push(row.id);
+					addGoodList(row.id);
 					price = parseInt(row.price);//js中将字符串转换为数字
 					countPrice = countPrice+price;
 					addCountPrice(countPrice);//更新商品总价
@@ -216,6 +219,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 				if(pushFlag)
 				{
 					goodsList.push(rows[i].id);
+					addGoodList(rows[i].id);
 					countPrice = countPrice+price;
 				}
 			}
@@ -470,6 +474,46 @@ function goodListExist(value)
 }
 
 /**
+ * 
+ * @param value:放入到goodList的商品id
+ */
+function addGoodList(value)
+{
+	var goodArr = new Array();//放入的对象是key是和value的组合
+	var selectedproRows = $('#ddv-'+value).datagrid('getRows');
+	$.each(selectedproRows,function(j,selectedRow){
+			var valueArr =  new Array();
+			var productId = selectedRow.productId;
+			var goodId = selectedRow.goodId;
+			var proAndgoodId = selectedRow.id;
+			var lotteryType = selectedRow.lotteryType;
+			var editors = $('#ddv-'+value).datagrid('getEditors', j);
+			var orderProbation = editors[0].target.val();//形成订单填写的试用期
+        	var stationvalue = $(editors[1].target).combobox('getValue');
+			
+			valueArr.push(productId);//0
+			valueArr.push(goodId);//1
+			valueArr.push(orderProbation);//2
+			valueArr.push(stationvalue);//放入站点号//3
+			valueArr.push(lotteryType);//4
+			valueArr.push(proAndgoodId);//5//商品和产品关联表id
+			
+			var proOfgoods = new map();
+			proOfgoods.put(productId, valueArr);
+			
+			goodArr.push(proOfgoods);
+		}
+	);
+
+	//判断是否存在
+	if(!proOfgoods.contain(value))
+		{//不包括当前值则可以放入
+			proOfgoods.put(value, goodArr);
+		}
+	
+}
+
+/**
  * 移除goodList的内容
  * @param value
  */
@@ -480,6 +524,7 @@ function removeGoodList(value)
 		if(value == goodsList[i])
 			{
 				goodsList.splice(i,1);
+				proOfgoods.remove(value);
 			}
 	}
 }
@@ -496,7 +541,7 @@ function submitAddgoods(operatype)
 			if($('#ff').form('enableValidation').form('validate')&& goodsList.length>0 )
 				{
 					flag = true;
-					//存入“站点--产品”关联数据
+					/*//存入“站点--产品”关联数据
 					
 					var proOfgoods  = new map();
 					for(var i=0;i<goodsList.length;i++)
@@ -539,7 +584,7 @@ function submitAddgoods(operatype)
 							
 							
 							proOfgoods.put(goodsList[i], goodArr);
-						}
+						}*/
 				}
 			else if(goodsList.length==0)
 				{

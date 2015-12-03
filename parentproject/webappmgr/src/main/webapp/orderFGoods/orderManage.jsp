@@ -183,7 +183,7 @@
 				</div>
 	        </div>
 	        <div class="ftable">
-	            <label for="product">选择商品:</label>
+	            <label for="product">选择商品:<span style="color:red;font-size: 11px;">(*若选中的商品为双机商品,请配置其他彩种站点!)</span></label>
 	           <div style="float:left;margin-left:30px;width:700px;">
 	            	<table id="goodsDatagridU" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
 					</table>

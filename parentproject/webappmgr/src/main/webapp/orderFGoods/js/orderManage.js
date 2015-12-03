@@ -1,5 +1,7 @@
 var goodsList = new Array();//选中的商品数据
 var countPrice = 0;//选中商品总价
+var proOfgoods  = new map();
+
 $(document).ready(function(){
 	
 			clearGoodsArray();
@@ -71,6 +73,7 @@ function getLoginuserRole()
 function clearGoodsArray()
 {
 	goodsList = new Array();
+	proOfgoods  = new map();
 	countPrice = 0;//清零商品总价
 	$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 }
@@ -86,13 +89,14 @@ function bindStationCombobox()
 			if(undefined != rec &&null != rec.id && '' != rec.id)
 			{
 				clearGoodsArray();
+				proOfgoods  = new map();
 				$("#pricehidden").val('');
 				$("#priceA").textbox('setText','');
 				var returnArr = new Array();
 				returnArr = getDetailStation(rec.id);//rec.id is stationId
 				$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 				//根据站点的区域和彩种加载商品信息列表
-				initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);		
+				initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2],'1');		
 			}
 			
 		}
@@ -340,7 +344,7 @@ function updateOrders(id)
 						receiveAddr:data.receiveAddr,
 						receiveTele:data.receiveTele,
 //						transCost:data.transCost
-						stationId:data.stationId//填充选中订单中站点
+						station:data.stationId//填充选中订单中站点
 					});
 					
 					initStationList('stationA',data.stationId);
@@ -348,7 +352,7 @@ function updateOrders(id)
 					var returnArr = new Array();
 					returnArr = getDetailStation(data.stationId);//rec.id is stationId
 					//根据站点的区域和彩种加载商品信息列表
-					initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);
+					initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2],'0');
 			
 					
 	        },
@@ -435,6 +439,7 @@ function checkedGoodsOfOrder(id,productDatagrid)
 									if(pushFlag)
 										{
 											goodsList.push(goodId);//※每次在操作goodlist的内容时就要同时操作商品总价
+											addGoodList(goodId);//添加商品下的产品数据
 											price = parseInt(selectedRow.price);//js中将字符串转换为数字
 											countPrice = countPrice+price;
 											addCountPrice(countPrice);//更新商品总价
@@ -464,8 +469,9 @@ function addCountPrice(cprice)
  * @param provinceId
  * @param cityId
  * @param productDatagrid
+ * @param ischange:是否为站点更新加载（1：是，0：否）
  */
-function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
+function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType,ischange)
 {
 	var params = new Object();
 	params.province = provinceId;
@@ -474,7 +480,13 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 	params.stationType = stationType;//站点类型：1：体彩 2：福彩
 	
 	var idU = $("#idU").val();
-	var prostaList = getSproductsOfOrderId(idU);
+	
+	var prostaList = new Object() ;
+	 if('0'==ischange)
+ 	{//只有在非更新站点加载数据时重新选中数据
+		prostaList = getSproductsOfOrderId(idU);
+ 	}
+	
 	
 	$('#'+productDatagrid).datagrid({
 		singleSelect:false,
@@ -487,8 +499,8 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 		fitColumns:true,
 		pagination:true,
 		collapsible:false,
-		pageSize:5,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
-		pageList:[5,10],
+		pageSize:2,//初始化页面显示条数的值是根据pageList的数组中的值来设置的，否则无法正确设置
+		pageList:[2,5,10],
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
@@ -527,8 +539,12 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 	        	
         	});
         	
-	        //选中（写入后台读取的产品数据进行选中）
-	        checkedGoodsOfOrder(idU,productDatagrid);
+	        if('0'==ischange)
+	        	{//只有在非更新站点加载数据时重新选中数据
+	        	  	//选中（写入后台读取的产品数据进行选中）
+	        		checkedGoodsOfOrder(idU,productDatagrid);
+	        	}
+	      
 	        //写入和选中当前数据选中的产品（写入productlist选中的）
 	        if(goodsList.length>0)
 	        	{
@@ -582,10 +598,10 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 								$('#'+productDatagrid).datagrid('unselectRow', index);
 								$('#'+productDatagrid).datagrid('onUncheck', index);
 		            	   }
-		               else
+		               /*else
 		            	   {
 		            	   		$.messager.alert('提示', "当前选中的商品为双机商品，请配置其他彩种站点!");
-		            	   }
+		            	   }*/
 		               	
 		                
 					
@@ -595,6 +611,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			if(pushFlag)
 				{
 					goodsList.push(row.id);
+					addGoodList(row.id);//添加商品下的产品数据
 					price = parseInt(row.price);//js中将字符串转换为数字
 					countPrice = countPrice+price;
 					addCountPrice(countPrice);//更新商品总价
@@ -640,6 +657,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 				if(pushFlag)
 				{
 					goodsList.push(rows[i].id);
+					addGoodList(rows[i].id);//添加商品下的产品数据
 					countPrice = countPrice+price;
 				}
 			}
@@ -1009,6 +1027,46 @@ function goodListExist(value)
 }
 
 /**
+ * 
+ * @param value:放入到goodList的商品id
+ */
+function addGoodList(value)
+{
+	var goodArr = new Array();//放入的对象是key是和value的组合
+	var selectedproRows = $('#ddv-'+value).datagrid('getRows');
+	$.each(selectedproRows,function(j,selectedRow){
+			var valueArr =  new Array();
+			var productId = selectedRow.productId;
+			var goodId = selectedRow.goodId;
+			var proAndgoodId = selectedRow.id;
+			var lotteryType = selectedRow.lotteryType;
+			var editors = $('#ddv-'+value).datagrid('getEditors', j);
+			var orderProbation = editors[0].target.val();//形成订单填写的试用期
+        	var stationvalue = $(editors[1].target).combobox('getValue');
+			
+			valueArr.push(productId);//0
+			valueArr.push(goodId);//1
+			valueArr.push(orderProbation);//2
+			valueArr.push(stationvalue);//放入站点号//3
+			valueArr.push(lotteryType);//4
+			valueArr.push(proAndgoodId);//5//商品和产品关联表id
+			
+			var proOfgoods = new map();
+			proOfgoods.put(productId, valueArr);
+			
+			goodArr.push(proOfgoods);
+		}
+	);
+
+	//判断是否存在
+	if(!proOfgoods.contain(value))
+		{//不包括当前值则可以放入
+			proOfgoods.put(value, goodArr);
+		}
+	
+}
+
+/**
  * 移除goodList的内容
  * @param value
  */
@@ -1019,6 +1077,7 @@ function removeGoodList(value)
 		if(value == goodsList[i])
 			{
 				goodsList.splice(i,1);
+				proOfgoods.remove(value);
 			}
 	}
 }
@@ -1099,8 +1158,8 @@ function submitUpdateOrders(operatype)
 				{
 					flag = true;
 					//存入“站点--产品”关联数据
-					var proOfgoods  = new map();
-					for(var i=0;i<goodsList.length;i++)
+//					var proOfgoods  = new map();
+					/*for(var i=0;i<goodsList.length;i++)
 						{
 							var goodArr = new Array();//放入的对象是key是和value的组合
 //							try
@@ -1138,7 +1197,7 @@ function submitUpdateOrders(operatype)
 							
 							
 							proOfgoods.put(goodsList[i], goodArr);
-						}
+						}*/
 				}
 			else if(goodsList.length==0)
 			{
