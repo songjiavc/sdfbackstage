@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -67,6 +69,8 @@ import com.sdf.manager.user.service.UserService;
 @RequestMapping("/order")
 public class OrderController 
 {
+	 private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	
 	 @Autowired
 	 private OrderService orderService;
 	 
@@ -118,6 +122,9 @@ public class OrderController
 	 
 	 public static final String STATION_PRODUCT_INVALID_STATUS = "0";//站点和产品关联数据无效
 	 public static final String STATION_PRODUCT_VALID_STATUS = "1";//站点和产品关联数据有效
+	 
+	 
+	 
 	 
 	/**
 	 * 
@@ -318,6 +325,8 @@ public class OrderController
 				   }
 			   }
 			   
+			   //日志输出
+			   logger.info("修改订单--订单code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			   
 		   }
 		   else
@@ -430,6 +439,9 @@ public class OrderController
 			   
 			   resultBean.setMessage("添加订单信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   //日志输出
+			   logger.info("添加订单--订单code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			   
 			   
 		   }
@@ -549,7 +561,8 @@ public class OrderController
 				orders.setGoods(goods);//用来清空订单与商品的关联数据，方便删除商品时判断是否与有效订单关联
 				orderService.update(orders);
 				
-				
+				 //日志输出
+				 logger.info("删除订单--订单id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			}
 			
 			
