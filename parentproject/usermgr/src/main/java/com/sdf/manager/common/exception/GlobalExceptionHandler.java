@@ -8,6 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * 
+  * @ClassName: GlobalExceptionHandler 
+  * @Description: 系统全局异常处理类 
+  * @author bann@sdfcp.com
+  * @date 2015年12月3日 下午4:59:45 
+  *
+ */
 public abstract class GlobalExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
