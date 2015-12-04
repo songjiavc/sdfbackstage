@@ -28,6 +28,16 @@ public class StationDto {
 	private String createTime;
 	//所属代理
 	private String agent;
+	
+	private String agentId;//上级代理id
+	
+	
+	public String getAgentId() {
+		return agentId;
+	}
+	public void setAgentId(String agentId) {
+		this.agentId = agentId;
+	}
 	public String getId() {
 		return id;
 	}

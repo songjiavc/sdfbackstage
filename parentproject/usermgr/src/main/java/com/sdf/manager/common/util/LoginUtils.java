@@ -29,12 +29,13 @@ public class LoginUtils {
 	 * @date 2015年10月27日 上午9:16:03
 	  */
 	 public static void setLoginUserMessage(HttpSession session,
-			 String userCode,String password,String name)
+			 String userCode,String password,String name,String userId)
 	 {
 		AccountBean userBean = new AccountBean();
 		userBean.setCode(userCode);
 		userBean.setPassword(password);
 		userBean.setName(name);
+		userBean.setId(userId);
 		
 		//将session登录信息放置到session 
 		session.setAttribute("userBean", userBean);
@@ -56,6 +57,22 @@ public class LoginUtils {
 		 name = userBean.getName();
 		 
 		 return name;
+	 }
+	 
+	 /**
+	  * 
+	 * @Description: TODO(获取session登录的姓名id) 
+	 * @author bann@sdfcp.com
+	 * @date 2015年10月27日 上午9:18:34
+	  */
+	 public static String getAuthenticatedUserId(HttpSession session){
+		 String userId = null; 
+		
+		 AccountBean userBean = (AccountBean)session.getAttribute("userBean");
+		 
+		 userId = userBean.getId();
+		 
+		 return userId;
 	 }
 	 
 }

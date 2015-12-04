@@ -16,6 +16,7 @@
   	    	 //初始化上级权限下拉框值
   	    	initProvince('add','privinceA','');//默认选中全部，则全部下是没有市数据的
   	    	initProductDL('add','cpdlA','');
+  	    	generateCode();//生成产品编码
   	    	$("#addProduct").dialog('open');
   	    	
   	    }
@@ -156,8 +157,11 @@
 	        <div class="ftitle">
 	            <label for="codeA">产品编码:</label>
 	            <input type="hidden" name="id" id="idA"/>
-	            <input class="easyui-validatebox commonInput" type="text" id="codeA" name="code" data-options="required:true"
-	             validType="checkCodes['#codeA','idA']" missingMessage="产品编码不可以为空" ></input>
+	             <div style="float:left;margin-left: 30px;">
+		            <input name="code" id="codehidden" type="hidden" >
+		            <input class="easyui-textbox" readonly="readonly" type="text" id="codeA"  data-options="required:true"
+		              style="width:200px" ></input>
+		         </div>
 	        </div>
 	        <div class="ftitle">
 	            <label for="nameA">产品名称:</label>

@@ -8,6 +8,7 @@
 	  
 	<jsp:include page="../common/top.jsp" flush="true" /> 
     <script type="text/javascript" src="<%=request.getContextPath() %>/station/js/stationManager.js"></script>  
+    <script type="text/javascript" src="<%=request.getContextPath() %>/station/js/setOrder.js"></script>  
     <script type="text/javascript">
 	    var toolbar = [{
 	  	    text:'添加',
@@ -44,6 +45,53 @@
 	  		}
 	  		
 	  	</style>
+	  	
+	  <style type="text/css">
+			.ztree li button.switch {visibility:hidden; width:1px;}
+			.ztree li button.switch.roots_docu {visibility:visible; width:16px;}
+			.ztree li button.switch.center_docu {visibility:visible; width:16px;}
+			.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
+			
+			  .ftitle{
+	  			width:50%;
+	  			float : left;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑';
+	  		}
+	  		
+	  		.ftable{
+	  			width:100%;
+	  			float : left;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑';
+	  		}
+	  		.ftitle label{
+	  			float : left;
+	  			margin-left: 30px;
+	  		}
+	  		
+	  		.ftable label{
+	  			float : left;
+	  			margin-left: 30px;
+	  		}
+	  		.ftitle .commonInput{
+	  			float : left;
+	  			width: 200px;
+	  			margin-left: 30px;
+	  			border-radius : 5px;
+	  		}
+	  		
+	  		.td_font{
+	  			font-weight:bold;
+	  		}
+	  		
+	  		.input_border{
+	  			width:150px;
+	  			border-radius : 5px;
+	  		}
+	  		
+	  		#main-layout{     min-width:1050px;     min-height:240px;     overflow:hidden; }
+		</style>
 </head>
 <body class="easyui-layout">
 	<div  data-options="region:'north'" style="height:100px;">
@@ -170,7 +218,104 @@
 	        </div>
           </form>
      </div> 
-     <!-- 添加权限弹框 -->
-  	 <div id="setOrder" class="easyui-dialog" title="购买商品" style="width:480px;height:450px;padding:20px;" ></div>
+     <!-- 站点商品配置弹框-->
+  	 <div id="setOrder" class="easyui-dialog" title="购买商品" style="width:800px;height:500px;padding:10px;top:40px;"
+            data-options="
+                iconCls: 'icon-save',
+                buttons: [{
+                    text:'保存',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        submitAddgoods('0');
+                    }
+                },{
+                    text:'保存并提交',
+                    iconCls:'icon-ok',
+                    handler:function(){
+                        submitAddgoods('1');
+                    }
+                },{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#setOrder').dialog('close');
+                        clearGoodsArray();
+                    }
+                }]
+            ">
+		<form id="ff" method="get" novalidate>
+	        <div class="ftitle">
+	            <label for="idA">订单编码:</label>
+	            <input type="hidden" name="id" id="idA"/>
+	            <div style="float:left;margin-left: 30px;">
+	            	<input name="code" id="codehidden" type="hidden" >
+	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="codeA" style="width:200px"/> 
+	           	</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="creatorU">订单创建人:</label><!-- 读取创建订单的代理人姓名 -->
+	             <div style="float:left;margin-left: 30px;">
+	            	<input class="easyui-textbox" type="text" id="creatorA" name="creator" readonly="readonly" style="width:200px;"
+	               ></input>
+	              </div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="nameU">订单名称:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="nameA" name="name" data-options="required:true"
+	            validType="length[1,50]"  missingMessage="订单名称不可以为空" ></input>
+	        </div>
+	       <div class="ftitle">
+	            <label for="priceU">支付方式:</label>
+	            <div style="float : left;margin-left: 30px;">
+		            <select class="easyui-combobox" id="payModeA" name="payMode"  
+			          	 		 data-options="editable:false" style="width:150px;" >
+			          	 		<option value="0" checked="checked">现金支付</option>
+			          	 		<option value="1">转账支付</option>
+					</select>
+				</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="receiveAddrU">收货人地址:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrA" name="receiveAddr" data-options="required:true"
+	             validType="length[1,50]" ></input>
+	        </div>
+	         <div class="ftitle">
+	            <label for="receiveTeleU">联系电话:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveTeleA" name="receiveTele" data-options="required:true"
+	             validType="mobileAndTel"  ></input>
+	        </div>
+	       <!--  <div class="ftitle">
+	            <label for="subject">配送方式:</label>
+	             <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	      <!--   <div class="ftitle">
+	            <label for="priceU">运费:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	         <div class="ftitle">
+	            <label for="priceA">商品总价(元):</label>
+	            <div style="float:left;margin-left: 30px;">
+	            	<input name="price" id="pricehidden" type="hidden" >
+	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
+	           	</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="stationA">站点号:</label>
+	             <div style="float:left;margin-left: 40px;">
+	             <input name="station" id="stationAhidden" type="hidden" >
+	             <input class="easyui-textbox" readonly="readonly" type="text" id="stationA" style="width:200px"/> 
+				</div>
+	        </div>
+	        <div class="ftable">
+	            <label for="product">选择商品:</label>
+	           <div style="float:left;margin-left:30px;width:700px;">
+	            	<table id="goodsDatagridU" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
+					</table>
+	            </div>
+	        </div>
+	      </form>
+    </div>
 </body>
 </html>

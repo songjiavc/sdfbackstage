@@ -1,5 +1,6 @@
 package com.sdf.manager.user.controller;
 
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,9 +26,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.bean.TreeBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
@@ -48,7 +53,10 @@ import com.sdf.manager.user.service.UserService;
   */
 @Controller
 @RequestMapping("/menu")
-public class MenuController {
+public class MenuController extends GlobalExceptionHandler{
+	
+	private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
+	
     @Autowired
 	private AuthService authService;
     
@@ -95,6 +103,7 @@ public class MenuController {
 			@RequestParam(value="code",required=false) String code,//登录名是user表中的code
 			@RequestParam(value="password",required=false) String password,
 			ModelMap model) throws Exception {
+		
 
 		String message ="success";
 		
@@ -114,8 +123,12 @@ public class MenuController {
 		else
 		{
 			//向session中写入登录信息
-			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName());
+			LoginUtils.setLoginUserMessage(httpSession, code, password, user.getName(),user.getId());
 		}
+		
+		 //日志输出
+		   logger.info("用户登录：登录信息用户名："+code+"密码："+password+"登录状态："+message);
+		   
 		
 		
 		model.addAttribute("message", message);
@@ -360,6 +373,10 @@ public class MenuController {
 			
 			returnMap.setMessage("修改权限成功!");
 			returnMap.setStatus("success");
+			
+		  //日志输出
+		   logger.info("修改权限--权限id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
 		}
 		else
 		{
@@ -381,6 +398,10 @@ public class MenuController {
 			
 			returnMap.setMessage("保存权限成功!");
 			returnMap.setStatus("success");
+			
+			 //日志输出
+			logger.info("保存权限--权限code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				 
 		}
 		
 		
@@ -573,11 +594,35 @@ public class MenuController {
 			authority.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			authority.setModifyTime(new Timestamp(System.currentTimeMillis()));
 			authService.save(authority);//保存更改状态的权限实体
+			
+			 //日志输出
+			logger.info("删除权限--权限id="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				
 		}
 		
 		
 		resultBean.setStatus("success");
 		resultBean.setMessage("删除成功!");
+		
+		return resultBean;
+	}
+	
+	
+	/**
+	 * 
+	* @Description: 获取登陆人信息
+	* @author bann@sdfcp.com
+	* @date 2015年12月3日 上午9:34:47
+	 */
+	@RequestMapping(value = "/getLoginmsg", method = RequestMethod.POST)
+	public @ResponseBody ResultBean getLoginmsg(
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		ResultBean resultBean = new ResultBean();
+		
+		String name = LoginUtils.getAuthenticatedUserName(httpSession);
+		
+		resultBean.setMessage(name);
 		
 		return resultBean;
 	}

@@ -1,7 +1,10 @@
 package com.sdf.manager.product.controller;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,6 +12,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
@@ -29,6 +35,8 @@ import com.sdf.manager.goods.entity.Goods;
 import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.goods.service.GoodsService;
 import com.sdf.manager.goods.service.RelaProAndGoodsService;
+import com.sdf.manager.order.controller.OrderController;
+import com.sdf.manager.order.entity.Orders;
 import com.sdf.manager.product.application.dto.ProductDto;
 import com.sdf.manager.product.entity.City;
 import com.sdf.manager.product.entity.Product;
@@ -54,8 +62,11 @@ import com.sdf.manager.product.service.RegionService;
  */
 @Controller
 @RequestMapping("/product")
-public class ProductController 
+public class ProductController extends GlobalExceptionHandler
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+	
 	 @Autowired
 	 private ProductService productService;
 	 
@@ -80,6 +91,8 @@ public class ProductController
 	 
 	 @Autowired
 	 private GoodsService goodsService;
+	 
+	 public static final int SERIAL_NUM_LEN = 6;//产品流水号中自动生成的数字位数
 	 
 	/**
 	 * 
@@ -238,6 +251,10 @@ public class ProductController
 			   resultBean.setMessage("修改产品信息成功!");
 			   resultBean.setStatus("success");
 			   
+			   //日志输出
+			   logger.info("修改产品--产品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			   
+			   
 		   }
 		   else
 		   {
@@ -261,6 +278,10 @@ public class ProductController
 			   
 			   resultBean.setMessage("添加产品信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   //日志输出
+			   logger.info("添加产品--产品code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+			  
 		   }
 		   
 		   
@@ -307,6 +328,11 @@ public class ProductController
 				
 				//删除产品--商品关联数据
 				relaProAndGoodsService.deleteRelapGoodsList(product.getGoodAndproduct());
+				
+				 //日志输出
+				 logger.info("删除产品--产品id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
+				   
+				   
 			}
 			
 			
@@ -572,5 +598,84 @@ public class ProductController
 			
 		}
 	 
+	 /**
+	  * 
+	 * @Description:生成产品编码
+	 * @author bann@sdfcp.com
+	 * @date 2015年11月30日 上午11:00:57
+	  */
+	 @RequestMapping(value = "/generateProductcode", method = RequestMethod.POST)
+		public @ResponseBody Map<String,Object>  generateProductcode(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception {
+		 
+		 Map<String,Object> returndata = new HashMap<String, Object>();
+		 String code = this.codeGenertor();
+		 returndata.put("code", code);
+		 returndata.put("operator", LoginUtils.getAuthenticatedUserName(httpSession));
+		 
+		 return returndata;
+				 
+	 }
+	 
+	/**
+	 * 
+	* @Description:生成产品编码 
+	* //规则：年月日(yyyyMMdd)+6位流水号
+	* @author bann@sdfcp.com
+	* @date 2015年11月18日 上午10:31:02
+	 */
+	 private  synchronized String codeGenertor()
+	 {
+		 
+		 StringBuffer proCode = new StringBuffer("Pro");
+		//获取当前年月日
+		 String date = "";
+		 Date dd  = Calendar.getInstance().getTime();
+		 date = DateUtil.formatDate(dd, DateUtil.FULL_DATE_FORMAT);
+		 String year = date.substring(0, 4);//半包，不包括最大位数值
+		 String month = date.substring(5, 7);
+		 String day = date.substring(8, 10);
+		 proCode.append(year).append(month).append(day);
+		 
+		 //验证当天是否已生成产品
+		//放置分页参数
+			Pageable pageable = new PageRequest(0,10000);
+			
+			//参数
+			StringBuffer buffer = new StringBuffer();
+			List<Object> params = new ArrayList<Object>();
+			
+			params.add(proCode+"%");//根据产品名称模糊查询
+			buffer.append(" code like ?").append(params.size());
+			
+			//排序
+			LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+			orderBy.put("code", "desc");//大号的code排在前面
+			
+			QueryResult<Product> prolist = productService.getProductList(Product.class, buffer.toString(), params.toArray(),
+					orderBy, pageable);
+			
+			if(prolist.getResultList().size()>0)
+			{
+				String maxCode = prolist.getResultList().get(0).getCode();
+				String weihao = maxCode.substring(11, maxCode.length());
+				int num = Integer.parseInt(weihao);
+				String newNum = (++num)+"";
+				int needLen = (ProductController.SERIAL_NUM_LEN-newNum.length());
+				for(int i=0;i<needLen;i++)
+				{
+					newNum = "0"+newNum;
+				}
+				proCode.append(newNum);
+			}
+			else
+			{//当天还没有生成产品编码
+				proCode.append("000001");
+			}
+			
+		 
+			return proCode.toString();
+	 }
 	
 }

@@ -3,6 +3,7 @@ package com.sdf.manager.order.controller;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +26,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
+import com.sdf.manager.common.exception.GlobalExceptionHandler;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.goods.dto.GoodsDTO;
@@ -43,7 +48,10 @@ import com.sdf.manager.order.service.RelaSdfStationProService;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.entity.Station;
+import com.sdf.manager.station.repository.StationRepository;
+import com.sdf.manager.station.service.StationService;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.RoleService;
@@ -60,8 +68,10 @@ import com.sdf.manager.user.service.UserService;
  */
 @Controller
 @RequestMapping("/order")
-public class OrderController 
+public class OrderController extends GlobalExceptionHandler
 {
+	 private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	
 	 @Autowired
 	 private OrderService orderService;
 	 
@@ -89,6 +99,9 @@ public class OrderController
 	 @Autowired
 	 private RelaSdfStationProService relaSdfStationProService;
 	 
+	 @Autowired
+	 private StationService stationService;
+	 
 	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
 	 
 	 public static final String OPERORTYPE_SAVE = "0";//代理编辑页面，保存
@@ -110,6 +123,9 @@ public class OrderController
 	 
 	 public static final String STATION_PRODUCT_INVALID_STATUS = "0";//站点和产品关联数据无效
 	 public static final String STATION_PRODUCT_VALID_STATUS = "1";//站点和产品关联数据有效
+	 
+	 
+	 
 	 
 	/**
 	 * 
@@ -220,6 +236,7 @@ public class OrderController
 			   order.setCode(code);
 			   order.setTransCost(transCost);
 			   order.setPayMode(payMode);
+			   order.setStationId(station);
 			   order.setReceiveAddr(receiveAddr);
 			   order.setReceiveTele(receiveTele);
 			   order.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
@@ -309,6 +326,8 @@ public class OrderController
 				   }
 			   }
 			   
+			   //日志输出
+			   logger.info("修改订单--订单code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			   
 		   }
 		   else
@@ -322,6 +341,7 @@ public class OrderController
 			   order.setReceiveAddr(receiveAddr);
 			   order.setReceiveTele(receiveTele);
 			   order.setCreater(LoginUtils.getAuthenticatedUserCode(httpSession));
+			   order.setStationId(station);
 			   //setCreator中放置的是创建订单人的name
 			   order.setCreator(LoginUtils.getAuthenticatedUserName(httpSession));
 			   order.setCreaterTime(new Timestamp(System.currentTimeMillis()));
@@ -420,6 +440,9 @@ public class OrderController
 			   
 			   resultBean.setMessage("添加订单信息成功!");
 			   resultBean.setStatus("success");
+			   
+			   //日志输出
+			   logger.info("添加订单--订单code="+code+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			   
 			   
 		   }
@@ -539,7 +562,8 @@ public class OrderController
 				orders.setGoods(goods);//用来清空订单与商品的关联数据，方便删除商品时判断是否与有效订单关联
 				orderService.update(orders);
 				
-				
+				 //日志输出
+				 logger.info("删除订单--订单id="+id+"--操作人="+LoginUtils.getAuthenticatedUserId(httpSession));
 			}
 			
 			
@@ -644,12 +668,13 @@ public class OrderController
 		 
 		 StringBuffer orderCode = new StringBuffer();
 		//获取当前年月日
-		 Calendar c =  Calendar.getInstance();
-		 
-		 int year = c.get(Calendar.YEAR);
-		 int month = c.get(Calendar.MONTH)+1;
-		 int day = c.get(Calendar.DAY_OF_MONTH);
-		 orderCode.append(year+"").append(month+"").append(day+"");
+		 String date = "";
+		 Date dd  = Calendar.getInstance().getTime();
+		 date = DateUtil.formatDate(dd, DateUtil.FULL_DATE_FORMAT);
+		 String year = date.substring(0, 4);//半包，不包括最大位数值
+		 String month = date.substring(5, 7);
+		 String day = date.substring(8, 10);
+		 orderCode.append(year).append(month).append(day);
 		 
 		 //验证当天是否已生成订单
 		//放置分页参数
@@ -804,7 +829,7 @@ public class OrderController
 	 * @date 2015年11月25日 下午2:39:11
 	  */
 	 @RequestMapping(value = "/getStationList", method = RequestMethod.POST)
-		public @ResponseBody List<Station> getStationList(
+		public @ResponseBody List<StationDto> getStationList(
 				@RequestParam(value="id",required=false) String id,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
@@ -812,12 +837,101 @@ public class OrderController
 		 	List<Station> stations = new ArrayList<Station>();
 		 	//获取当前登录人员的用户信息
 			String code = LoginUtils.getAuthenticatedUserCode(httpSession);//登录用户的code
-		 	
+		 	String userId = LoginUtils.getAuthenticatedUserId(httpSession);
 			/***根据登录人员的和站点关联的字段，查询当前登录用户的下属站点列表***/
+			List<Station> stations2 = new ArrayList<Station>();
+			stations2 = stationService.getStationByAgentId(userId);
+			List<StationDto> stationDtos = new ArrayList<StationDto>();
+			String stationtypeText = "";
 			
-			
+			for (Station station : stations2) {
+				
+				if(station.getStationType().equals(Constants.LOTTERY_TYPE_FC))
+			 	{
+					stationtypeText = "福彩";
+			 	}
+			 	else
+			 		if(station.getStationType().equals(Constants.LOTTERY_TYPE_TC))
+				 	{
+			 			stationtypeText = "体彩";
+				 	}
+				
+				StationDto stationDto = new StationDto();
+				stationDto.setId(station.getId());
+				stationDto.setStationNumber(stationtypeText+"--"+station.getStationNumber());
+				
+				stationDtos.add(stationDto);
+			}
 		 	
-		 	return stations;
+			
+		 	return stationDtos;
 		}
+	 
+	 
+	 /**
+	  * 
+	 * @Description: 获取当前站点的其他类别的站点
+	 * @author bann@sdfcp.com
+	 * @date 2015年12月1日 下午1:58:41
+	  */
+	 @RequestMapping(value = "/getOtherStations", method = RequestMethod.POST)
+		public @ResponseBody List<StationDto> getOtherStations(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<StationDto> stationDtos = new ArrayList<StationDto>();
+		 	
+		 	//1.获取当前选中站点详情
+		 	Station station = stationService.getSationById(id);
+		 	
+		 	String stationType = station.getStationType();
+		 	String owner  = station.getOwner();//获取站主姓名
+		 	String telephone = station.getOwnerTelephone();//获取站主联系电话
+		 	String stationtypeText = "";
+		 	
+		 	//若是福彩类型，则查询体彩站点，若为体彩类型，则查询福彩站点
+		 	if(stationType.equals(Constants.LOTTERY_TYPE_FC))
+		 	{
+		 		stationType = Constants.LOTTERY_TYPE_TC;
+		 		stationtypeText = "体彩";
+		 	}
+		 	else
+		 		if(stationType.equals(Constants.LOTTERY_TYPE_TC))
+			 	{
+			 		stationType = Constants.LOTTERY_TYPE_FC;
+			 		stationtypeText = "福彩";
+			 	}
+		 	
+		 	//2.根据站主姓名和联系电话获取当前站主其他类别站点（规定：站主姓名和站主联系电话可以唯一确定一个站主）
+		 	
+		 	List<Station> stations = stationService.getStationByStationTypeAndOwnerAndOwnertelephone
+		 			(stationType, owner, telephone);
+		 	
+		 	for (Station station2 : stations) {
+				
+				StationDto stationDto = new StationDto();
+				stationDto.setId(station2.getId());
+				stationDto.setStationNumber(stationtypeText+"--"+station2.getStationNumber());
+				
+				stationDtos.add(stationDto);
+			}
+		 	
+		 	
+		 	return stationDtos;
+		}
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
+	 
 	 
 }
