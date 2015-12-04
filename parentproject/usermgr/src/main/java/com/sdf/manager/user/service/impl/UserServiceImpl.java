@@ -308,7 +308,7 @@ public class UserServiceImpl implements UserService {
 				UserRelaRole userRelaRole = new UserRelaRole();
 				userRelaRole.setUserId(user.getId());
 				//初始化的角色是系统初始化数据
-				userRelaRole.setRoleId("ff808181516ab01e01516ab2bd7e0000");
+				userRelaRole.setRoleId("2");
 				userRelaRoleRepository.save(userRelaRole);
 			}else{
 				throw new BizException(0101);
