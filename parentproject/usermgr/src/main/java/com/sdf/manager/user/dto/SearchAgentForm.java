@@ -10,15 +10,11 @@ package com.sdf.manager.user.dto;
 public class SearchAgentForm 
 {
 	/** 
-	  * @Fields id : 主键id
 	  */ 
-	private String id;
 	//代理登录帐号
-	private String agentCode;
-	//代理类型
-	private String agentStyle;
+	private String searchAgentNumber;
 	//省
-	private String province;
+	private String searchFormProvince;
 	//市
 	private String city;
 	//区
@@ -26,62 +22,32 @@ public class SearchAgentForm
 	//详细地址
 	private String address;
 	//代理姓名
-	private String name;
+	private String searchFormName;
 	//代理手机号
-	private String telephone;
-	public String getId() {
-		return id;
+	private String searchFormTelephone;
+	public String getSearchAgentNumber() {
+		return searchAgentNumber;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setSearchAgentNumber(String searchAgentNumber) {
+		this.searchAgentNumber = searchAgentNumber;
 	}
-	public String getAgentCode() {
-		return agentCode;
+	public String getSearchFormProvince() {
+		return searchFormProvince;
 	}
-	public void setAgentCode(String agentCode) {
-		this.agentCode = agentCode;
+	public void setSearchFormProvince(String searchFormProvince) {
+		this.searchFormProvince = searchFormProvince;
 	}
-	public String getAgentStyle() {
-		return agentStyle;
+	public String getSearchFormName() {
+		return searchFormName;
 	}
-	public void setAgentStyle(String agentStyle) {
-		this.agentStyle = agentStyle;
+	public void setSearchFormName(String searchFormName) {
+		this.searchFormName = searchFormName;
 	}
-	public String getProvince() {
-		return province;
+	public String getSearchFormTelephone() {
+		return searchFormTelephone;
 	}
-	public void setProvince(String province) {
-		this.province = province;
-	}
-	public String getCity() {
-		return city;
-	}
-	public void setCity(String city) {
-		this.city = city;
-	}
-	public String getRegion() {
-		return region;
-	}
-	public void setRegion(String region) {
-		this.region = region;
-	}
-	public String getAddress() {
-		return address;
-	}
-	public void setAddress(String address) {
-		this.address = address;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getTelephone() {
-		return telephone;
-	}
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
+	public void setSearchFormTelephone(String searchFormTelephone) {
+		this.searchFormTelephone = searchFormTelephone;
 	}
 	
 	

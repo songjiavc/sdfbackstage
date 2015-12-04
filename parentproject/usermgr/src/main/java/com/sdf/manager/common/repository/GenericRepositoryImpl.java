@@ -95,21 +95,20 @@ public class GenericRepositoryImpl<T, ID extends Serializable> extends SimpleJpa
         return qr;
 	}
 
-	public QueryResult<T> getScrollDataBySql(String sql, Object[] queryParams, Pageable pageable) {
+	public QueryResult<T> getScrollDataBySql(Class<T> entityClass,String sql, Object[] queryParams, Pageable pageable) {
 		//查询记录数
 		QueryResult<T> qr = new QueryResult<T>();
-		Query query = em.createNativeQuery(sql);
+		Query query = em.createNativeQuery(sql,entityClass);
 		setQueryParams(query, queryParams);
 		if(pageable.getPageNumber()!=-1 && pageable.getPageSize()!=-1)
         	query.setFirstResult(pageable.getPageNumber()*pageable.getPageSize()).setMaxResults(pageable.getPageSize());
 		qr.setResultList(query.getResultList());
-		
 		//
 		String from = getFromClause(sql);
 		//查询总记录数
-		query = em.createQuery("select count(*) " + from);  
+	   query = em.createNativeQuery("select count(*) " + from);  
         setQueryParams(query, queryParams);
-        qr.setTotalRecord((Long)query.getSingleResult());
+        qr.setTotalCount(Integer.parseInt(query.getSingleResult().toString()));
 		return qr;
 	}
 	

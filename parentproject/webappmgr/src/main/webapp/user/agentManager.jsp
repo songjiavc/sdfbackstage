@@ -14,7 +14,7 @@
 	  	    iconCls:'icon-add',
 	  	    handler:function(){
 	  	    	 //初始化上级权限下拉框值
-	  	    	initProvince('add','addFormProvince','');//默认选中全部，则全部下是没有市数据的
+	  	    	initProvince('add','','');//默认选中全部，则全部下是没有市数据的
 	  	    	$('.panel-title.panel-with-icon').html('添加代理');
 	  	    	$('#addOrUpdateAgentForm').form('clear');
 	  	    	$("#addOrUpdateAgent").dialog('open');
@@ -53,20 +53,19 @@
 		    	<tr style="margin:10;">
 		    		<td colspan="1" class="td_font">代理帐号：</td>
 		    		<td colspan="2">
-		    			<input id="searchFormCode" class="input_border"  type="text" name="searchFormCode"  />  
+		    			<input id="searchFormNumber" class="input_border"  type="text" name="searchFormNumber"  />  
 		    		</td>
 		    		<td colspan="1" class="td_font">代理姓名：</td>
 		    		<td colspan="2">
 		    			<input id="searchFormName" class="input_border"  type="text" name="searchFormName"  />  
 		    		</td>
-		    		<td colspan="1" class="td_font">代理类别：</td>   <!-- 代理可代理的产品范围，硬件软件，广告公告 -->
+		    		<td colspan="1" class="td_font">代理电话：</td>
 		    		<td colspan="2">
-		    			<select class="easyui-combobox" id="searchFormStyle" name="searchFormStyle" style="width:200px;">
-						</select>
+		    			<input id="searchFormTelephone" class="input_border"  type="text" name="searchFormTelephone"  />  
 		    		</td>
 	    		</tr>
 	    		<tr>
-		    		<td colspan="1"  class="td_font">代理地域：</td>
+		    		<td colspan="1"  class="td_font">代理位置：</td>
 		    		<td colspan="5">
 		    			 <label for="searchFormProvince">省:</label>
 		    			 <select class="easyui-combobox " id="searchFormProvince" name="searchFormProvince" style="width:150px;" >
@@ -75,10 +74,7 @@
 								<select class="easyui-combobox " id="searchFormCity" name="searchFormCity"  style="width:150px;" >
 						</select>
 		    		</td>
-		    		<td colspan="1" class="td_font">代理电话：</td>
-		    		<td colspan="2">
-		    			<input id="searchFormTelephone" class="input_border"  type="text" name="searchFormTelephone"  />  
-		    		</td>
+		    		
 		    		<td class="td_font" colspan="2">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'"  type="button" value="查询" onclick="initDatagrid()">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;margin-left:5px;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'" type="button" value="重置" onclick="reset()">

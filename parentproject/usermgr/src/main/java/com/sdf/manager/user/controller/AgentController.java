@@ -2,6 +2,7 @@ package com.sdf.manager.user.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,27 +13,33 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
+import com.sdf.manager.common.util.DateUtil;
 import com.sdf.manager.common.util.LoginUtils;
+import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.product.entity.City;
+import com.sdf.manager.product.entity.Province;
+import com.sdf.manager.product.entity.Region;
+import com.sdf.manager.product.service.CityService;
+import com.sdf.manager.product.service.ProvinceService;
+import com.sdf.manager.product.service.RegionService;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.dto.AddAgentForm;
-import com.sdf.manager.user.entity.Role;
+import com.sdf.manager.user.dto.AgentListDto;
 import com.sdf.manager.user.entity.User;
-import com.sdf.manager.user.entity.UserRelaRole;
 import com.sdf.manager.user.service.UserService;
 
 
 /** 
-  * @ClassName: AccountController 
+  * @ClassName: AgentController 
   * @Description: 帐号controller
   * @author songj@sdfcp.com
   * @date 2015年10月12日 上午11:19:38 
@@ -44,6 +51,16 @@ public class AgentController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private ProvinceService provinceService;
+	
+	@Autowired
+	private CityService cityService;
+	
+	@Autowired
+	private RegionService regionService;
+	
 	
     /**
 	 * demo登录提交后跳转方法
@@ -61,7 +78,7 @@ public class AgentController {
 			ResultBean resultBean = new ResultBean();
 			try{
 				String userId = LoginUtils.getAuthenticatedUserCode(httpSession);
-				userService.saveOrUpdate(this.transAgentToAccount(addAgentForm),userId);
+				userService.saveOrUpdate(addAgentForm,userId);
 				resultBean.setMessage("操作成功!");
 				resultBean.setStatus("success");
 			}catch(BizException bizEx){
@@ -77,40 +94,63 @@ public class AgentController {
 			}
 	}
 	
-	/** 
-	  * @Description: 将代理转换为帐号，目标是共用一套userService
-	  * @author songj@sdfcp.com
-	  * @date 2015年11月27日 上午10:27:26 
-	  * @param addAgentForm
-	  * @return 
-	  */
-	public AccountBean transAgentToAccount(AddAgentForm addAgentForm){
-		AccountBean accountBean = new AccountBean();
-		accountBean.setId(addAgentForm.getId());
-		accountBean.setCode(addAgentForm.getAddFormAgentCode());
-		accountBean.setName(addAgentForm.getAddFormName());
-		accountBean.setPassword(addAgentForm.getPassword());
-		accountBean.setParentId(addAgentForm.getAddFormParentId());
-		accountBean.setTelephone(addAgentForm.getAddFormTelephone());
-		return accountBean;
-	}
-	@RequestMapping(value = "/getUserList", method = RequestMethod.GET)
-	public @ResponseBody Map<String,Object> getUserList(
+	
+	@RequestMapping(value = "/getAgentList", method = RequestMethod.GET)
+	public @ResponseBody Map<String,Object> getAgentList(
 			@RequestParam(value="page",required=false) int page,
 			@RequestParam(value="rows",required=false) int rows,
+			@RequestParam(value="searchFormNumber",required=false) String searchFormNumber,
+			@RequestParam(value="searchFormName",required=false) String searchFormName,
+			@RequestParam(value="searchFormTelephone",required=false) String searchFormTelephone,
+			@RequestParam(value="searchFormProvince",required=false) String searchFormProvince,
+			@RequestParam(value="searchFormCity",required=false) String searchFormCity,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
-		Map<String,Object> rtMap = new HashMap<String, Object>(); 
+		Map<String,Object> returnData = new HashMap<String, Object>();
 		Pageable pageable = new PageRequest(page-1, rows);
 		//参数
 		StringBuffer buffer = new StringBuffer();
-		List<Object> params = new ArrayList<Object>();
 		
+		LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
+		orderBy.put("id", "desc");
+		List<Object> params = new ArrayList<Object>();
 		//只查询未删除数据
 		params.add(Constants.IS_NOT_DELETED);//只查询有效的数据
-		buffer.append(" isDeleted = ?").append(params.size());
-		rtMap = userService.getScrollDataByJpql(User.class,buffer.toString(), params.toArray(),null , pageable);
-		return rtMap;
+		buffer.append(" a.IS_DELETED = ?").append(params.size());
+		if(null != searchFormNumber && !"".equals(searchFormNumber))
+		{
+			params.add(searchFormNumber);//根据站点号
+			buffer.append(" and a.CODE = ?").append(params.size());
+		}
+		if(null != searchFormProvince && !"".equals(searchFormProvince)&& !Constants.PROVINCE_ALL.equals(searchFormProvince))
+		{
+			params.add(searchFormProvince);//根据省份查询产品数据
+			buffer.append(" and a.province_Code = ?").append(params.size());
+		}
+		if(null != searchFormCity && !"".equals(searchFormCity)&& !Constants.CITY_ALL.equals(searchFormCity))
+		{
+			params.add(searchFormCity);//根据省份查询产品数据
+			buffer.append(" and a.city_Code = ?").append(params.size());
+		}
+		if(null != searchFormName && !"".equals(searchFormName))
+		{
+			params.add("%"+searchFormName+"%");//根据产品描述模糊查询产品数据
+			buffer.append(" and a.NAME  like ?").append(params.size());
+		}
+		
+		if(null != searchFormTelephone && !"".equals(searchFormTelephone))
+		{
+			params.add(searchFormTelephone);//根据产品描述模糊查询产品数据
+			buffer.append(" and a.TELEPHONE = ?").append(params.size());
+		}
+		QueryResult<User> stationList = userService.getAgentList(User.class, buffer.toString(), params.toArray(),
+				orderBy, pageable);
+		List<User> users = stationList.getResultList();
+		List<AgentListDto> stationDtos = this.toDtos(users);
+		int totalrow = stationList.getTotalCount();
+		returnData.put("rows", stationDtos);
+		returnData.put("total", totalrow);
+		return returnData;
 	}
 	@RequestMapping(value = "/getAgentDetail", method = RequestMethod.GET)
 	public @ResponseBody AddAgentForm getAgentDetail(
@@ -127,11 +167,92 @@ public class AgentController {
 		addAgentForm.setAddFormProvince(user.getProvinceCode());
 		addAgentForm.setAddFormCity(user.getCityCode());
 		addAgentForm.setAddFormRegion(user.getRegionCode());
+		addAgentForm.setAddFormAddress(user.getAddress());
 		addAgentForm.setPassword(user.getPassword());
 		return addAgentForm;
 	}
 	
+	/** 
+	  * @Description: 转换返回bean类型
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月2日 下午2:43:05 
+	  * @param stations
+	  * @return 
+	  */
+	private List<AgentListDto> toDtos(List<User> users){
+		List<AgentListDto> dtoList = new ArrayList<AgentListDto>();
+		for(User user : users){
+			AgentListDto agentListDto = new AgentListDto();
+			agentListDto = this.toDto(user);
+			dtoList.add(agentListDto);
+		}
+		return dtoList;
+	}
 	
+	
+	/** 
+	  * @Description: 宁静
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月2日 下午2:43:38 
+	  * @param station
+	  * @return 
+	  */
+	private AgentListDto toDto(	User user){
+		AgentListDto agentListDto = new AgentListDto();
+		agentListDto.setId(user.getId());
+		agentListDto.setName(user.getName());
+		agentListDto.setAgentCode(user.getCode());
+		agentListDto.setCreater(user.getCreater());
+		agentListDto.setAddress(user.getAddress());
+		agentListDto.setTelephone(user.getTelephone());
+		if(!StringUtils.isEmpty(user.getParentUid())){
+			try {
+				String parentName = userService.getUserById(user.getParentUid()).getName();
+				agentListDto.setParentName(parentName);
+			} catch (BizException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//处理实体中的特殊转换值
+		if(null != user.getCreaterTime())//创建时间
+		{
+			agentListDto.setCreaterTime(DateUtil.formatDate(user.getCreaterTime(), DateUtil.FULL_DATE_FORMAT));
+		}
+		if(null != user.getProvinceCode())//省级区域
+		{
+			Province province = new Province();
+			province = provinceService.getProvinceByPcode(user.getProvinceCode());
+			agentListDto.setProvince(null != province?province.getPname():"");
+		}
+		if(null != user.getCityCode())//市级区域
+		{
+			if(Constants.CITY_ALL.equals(user.getCityCode()))
+			{
+				agentListDto.setCity(Constants.CITY_ALL_NAME);
+			}
+			else
+			{
+				City city = new City();
+				city = cityService.getCityByCcode(user.getCityCode());
+				agentListDto.setCity(null != city?city.getCname():"");
+			}
+		}
+		if(null != user.getRegionCode())//市级区域
+		{
+			if(Constants.REGION_ALL.equals(user.getRegionCode()))
+			{
+				agentListDto.setCity(Constants.REGION_ALL_NAME);
+			}
+			else
+			{
+				Region region = new Region();
+				region = regionService.getRegionByAcode(user.getRegionCode());
+				agentListDto.setRegion(null != region?region.getAname():"");
+			}
+		}
+		return agentListDto;
+	}
 	/**
 	 * 
 	 * @Description: TODO(权限输入值校验，用来校验code唯一性和authname唯一性) 
@@ -163,8 +284,8 @@ public class AgentController {
 	  * @throws Exception 
 	  */
 	@SuppressWarnings("finally")
-	@RequestMapping(value = "/deleteAccountByIds", method = RequestMethod.POST)
-	public @ResponseBody ResultBean deleteAccount(
+	@RequestMapping(value = "/deleteAgentByIds", method = RequestMethod.POST)
+	public @ResponseBody ResultBean deleteAgent(
 			@RequestParam(value="ids",required=false) String[] ids,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
@@ -184,80 +305,6 @@ public class AgentController {
 			return resultBean;
 		}
 	}
-	@SuppressWarnings("finally")
-	@RequestMapping(value = "/getUserRelaRoleList", method = RequestMethod.GET)
-	public @ResponseBody Map<String,Object> getUserRelaRoleList(
-			@RequestParam(value="id",required=false) String id,
-			ModelMap model,HttpSession httpSession) throws Exception
-	{
-	    Map<String,Object> returnMap = new HashMap<String,Object>();
-		List<Role> roles = new ArrayList<Role>();
-		try {
-			User user = userService.getUserById(id);
-			roles = user.getRoles();
-			returnMap.put("rows", roles);
-			returnMap.put("total", roles.size());
-		}catch(BizException bizEx){
-			returnMap.put("success", false);
-			returnMap.put("message", bizEx.getMessage());
-		}catch (Exception e) {
-			returnMap.put("success", false);
-			returnMap.put("message",e.getMessage());
-		}finally{
-			return returnMap;
-		}
-	}
-	
-	@SuppressWarnings("finally")
-	@RequestMapping(value = "/saveUserRleaRole", method = RequestMethod.POST)
-	public @ResponseBody ResultBean  saveUserRleaRole(
-			@RequestParam(value="roleList",required=true) String roleList,
-			@RequestParam(value="userId",required=true) String userId,
-			ModelMap model,HttpSession httpSession) throws Exception
-	{
-		ResultBean resultBean = new ResultBean();
-		try{
-			List<UserRelaRole> selRoleList = new ArrayList<UserRelaRole>();
-			//把json字符串转换成对象
-			JSONArray jsonArr = JSONArray.parseArray(roleList);
-			for (int i = 0; i < jsonArr.size(); i++) {
-				selRoleList.add((UserRelaRole)JSONObject.toJavaObject(jsonArr.getJSONObject(i),UserRelaRole.class)); 
-			}
-			userService.saveUserRelaRole(userId,selRoleList);
-			resultBean.setStatus("success");
-			resultBean.setMessage("保存成功!");
-		}catch(BizException bizEx){
-			resultBean.setStatus("failure");
-			resultBean.setMessage(bizEx.getMessage());
-		}catch(Exception e){
-			resultBean.setStatus("failure");
-			resultBean.setMessage(e.getMessage());
-		}finally{
-			return resultBean;
-		}
-	}
-	
-	@SuppressWarnings("finally")
-	@RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
-	public @ResponseBody ResultBean  saveUserRleaRole(
-			@RequestParam(value="password",required=true) String newPassword,
-			ModelMap model,HttpSession httpSession) throws Exception{
-		ResultBean resultBean = new ResultBean();
-		try {
-			String userCode = LoginUtils.getAuthenticatedUserCode(httpSession);
-			userService.savePassword(newPassword, userCode);
-			resultBean.setStatus("success");
-			resultBean.setMessage("密码修改成功!");
-		}catch (Exception e) {
-			resultBean.setStatus("failure");
-			resultBean.setMessage(e.getMessage());
-		}finally{
-			return resultBean;
-		}
-	}
-	
-	 
-	 
 	 	/** 
 	 	  * @Description: 根据角色code获取角色下面对应所有人
 	 	  * @author songj@sdfcp.com

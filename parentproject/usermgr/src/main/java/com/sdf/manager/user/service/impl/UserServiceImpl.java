@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.BeanUtil;
@@ -22,6 +23,7 @@ import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRelaRoleBean;
+import com.sdf.manager.user.dto.AddAgentForm;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
@@ -40,7 +42,6 @@ import com.sdf.manager.user.service.UserService;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserRepository userRepository;
-	
 	@Autowired
 	private UserRelaRoleRepository userRelaRoleRepository;
 	@Autowired
@@ -242,5 +243,92 @@ public class UserServiceImpl implements UserService {
 			return accountList;
 		}
 		return null;
+	}
+
+	/* (非 Javadoc) 
+	 * <p>Title: getUserList</p> 
+	 * <p>Description: </p> 
+	 * @param entityClass
+	 * @param whereJpql
+	 * @param queryParams
+	 * @param orderby
+	 * @param pageable
+	 * @return 
+	 * @see com.sdf.manager.user.service.UserService#getUserList(java.lang.Class, java.lang.String, java.lang.Object[], java.util.LinkedHashMap, org.springframework.data.domain.Pageable) 
+	 */
+	public QueryResult<User> getUserList(Class<User> entityClass, String whereJpql, Object[] queryParams,
+			LinkedHashMap<String, String> orderby, Pageable pageable) {
+			QueryResult<User> stationObj = userRepository.getScrollDataByJpql(entityClass, whereJpql, queryParams,orderby, pageable);
+			return stationObj;
+	}
+	
+	
+	public QueryResult<User> getAgentList(Class<User> entityClass, String whereJpql, Object[] queryParams,
+			LinkedHashMap<String, String> orderby, Pageable pageable) {
+			String sql = "SELECT a.* FROM echart3.T_SDF_USERS a,RELA_SDF_USER_ROLE b,T_SDF_ROLES  c "
+				+ "where a.id = b.user_id "
+				+ "and   b.role_id = c.id "
+				+ "and   c.code='"+Constants.ROLE_SCDL_CODE+"' and " + whereJpql;
+			QueryResult<User> userObj = userRepository.getScrollDataBySql(entityClass,sql, queryParams, pageable);
+			return userObj;
+	}
+	/* (非 Javadoc) 
+	 * <p>Title: saveOrUpdate</p> 
+	 * <p>Description: </p> 
+	 * @param addAgentForm
+	 * @param userId
+	 * @throws BizException 
+	 * @see com.sdf.manager.user.service.UserService#saveOrUpdate(com.sdf.manager.user.dto.AddAgentForm, java.lang.String) 
+	 */
+	public void saveOrUpdate(AddAgentForm addAgentForm,String userId) throws BizException{
+		if(StringUtils.isEmpty(addAgentForm.getId())){
+			//如果是新增判断帐号是否表内重复
+			User userCode = this.getUserByCode(addAgentForm.getAddFormAgentCode());
+			if(null == userCode){
+				User user = new User();
+				user.setCode(addAgentForm.getAddFormAgentCode());
+				user.setName(addAgentForm.getAddFormName());
+				user.setPassword(addAgentForm.getPassword());
+				user.setTelephone(addAgentForm.getAddFormTelephone());
+				user.setStatus(addAgentForm.getStatus());
+				user.setParentUid(addAgentForm.getAddFormParentId());
+				user.setAddress(addAgentForm.getAddFormAddress());
+				user.setProvinceCode(addAgentForm.getAddFormProvince());
+				user.setCityCode(addAgentForm.getAddFormCity());
+				user.setRegionCode(addAgentForm.getAddFormRegion());
+				user.setPassword(MD5Util.MD5(addAgentForm.getPassword()));
+				user.setIsDeleted(Constants.IS_NOT_DELETED);
+				user.setCreater(userId);
+				user.setCreaterTime(new Date());
+				user.setModify(userId);
+				user.setModifyTime(new Date());
+				userRepository.save(user);
+				//保存代理成功后保存角色代理对应关系
+				//获取代理role实体
+				UserRelaRole userRelaRole = new UserRelaRole();
+				userRelaRole.setUserId(user.getId());
+				//初始化的角色是系统初始化数据
+				userRelaRole.setRoleId("ff808181516ab01e01516ab2bd7e0000");
+				userRelaRoleRepository.save(userRelaRole);
+			}else{
+				throw new BizException(0101);
+			}
+		}else{
+			// user.setCode(accountBean.getCode());   修改时登录帐号不允许修改
+			User user = this.getUserById(addAgentForm.getId());
+			user.setName(addAgentForm.getAddFormName());
+			user.setPassword(addAgentForm.getPassword());
+			user.setTelephone(addAgentForm.getAddFormTelephone());
+			user.setParentUid(addAgentForm.getAddFormParentId());
+			user.setAddress(addAgentForm.getAddFormAddress());
+			user.setProvinceCode(addAgentForm.getAddFormProvince());
+			user.setCityCode(addAgentForm.getAddFormCity());
+			user.setRegionCode(addAgentForm.getAddFormRegion());
+			user.setStatus(addAgentForm.getStatus());
+			user.setPassword(MD5Util.MD5(addAgentForm.getPassword()));
+			user.setModify(userId);
+			user.setModifyTime(new Date());
+			userRepository.save(user);
+		}
 	}
 }

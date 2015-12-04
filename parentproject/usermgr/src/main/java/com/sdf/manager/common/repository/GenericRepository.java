@@ -94,5 +94,5 @@ public interface GenericRepository<T, ID extends Serializable> extends JpaReposi
 
 		 */
 
-		public QueryResult<T> getScrollDataBySql(String sql, Object[] queryParams, Pageable pageable);
+		public QueryResult<T> getScrollDataBySql(Class<T> entityClass,String sql, Object[] queryParams, Pageable pageable);
 }

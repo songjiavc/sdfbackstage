@@ -52,15 +52,14 @@ function initQueryProvince()
 			valueField : 'id',
 			textField : 'name',
 			onLoadSuccess: function (data) { //数据加载完毕事件
-				debugger;
                  if (parentId == undefined) 
                  {
-                	 $("#addFormProvince").combobox('select',data[0].id);
+                	 $("#addFormParentId").combobox('select',data[0].id);
                  }
                  else
             	 {
                 	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
-                	 $("#addFormProvince").combobox('setValue', parentId);
+                	 $("#addFormParentId").combobox('setValue', parentId);
             	 }
              }
 		});
@@ -74,7 +73,6 @@ function initQueryProvince()
 function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 {
 	$('#addFormProvince').combobox('clear');//清空combobox值
-	
 	var data = new Object();
 	data.isHasall = false;//不包含"全部"
 	
@@ -86,7 +84,7 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 			 onLoadSuccess: function (data1) { //数据加载完毕事件
                  if (data1.length > 0 && "add" == addOrUpdate) 
                  {
-                	 $("#addFormProvince").combobox('select',data1[0].pcode);
+                	 //$("#addFormProvince").combobox('select',data1[0].pcode);
                  }
                  else
             	 {
@@ -95,13 +93,19 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
             	 }
              },
              onSelect: function(rec){
-            	 var url = contextPath+'/product/getCityList.action?pcode='+rec.pcode;
- 		        $('#addFormCity').combobox('reload', url);
+            	 initAddFormCity(addOrUpdate,rec.pcode,oldccode,oldacode);
  		    }
 		});
+}
+
+function initAddFormCity(addOrUpdate,pcode,oldccode,oldacode){
 	//初始化城市combo
 	$('#addFormCity').combobox({
-		queryParams:data,
+		url : contextPath+'/product/getCityList.action',
+		queryParams:{
+			isHasall : false,    //不包含"全部",
+			pcode : pcode
+		},
 		valueField:'ccode',
 		textField:'cname',
 		 onLoadSuccess: function (data) { //数据加载完毕事件
@@ -123,13 +127,20 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
         	 }
          },
          onSelect: function(rec){
-          	var url = contextPath+'/product/getRegionList.action?ccode='+rec.ccode;
-		        $('#addFormRegion').combobox('reload', url);
+        	 initAddFormRegion(addOrUpdate,rec.ccode,oldacode);
 		    }
 	}); 
+}
+
+function initAddFormRegion(addOrUpdate,ccode,oldacode){
+	
 	//初始化乡镇区combo
 	$('#addFormRegion').combobox({
-		queryParams:data,
+		url :  contextPath+'/product/getRegionList.action',
+		queryParams:{
+			isHasall : false,    //不包含"全部",
+			ccode : ccode
+		},
 		valueField:'acode',
 		textField:'aname',
 		 onLoadSuccess: function (data) { //数据加载完毕事件
@@ -149,13 +160,9 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
             		 	oldacode = "";
             		 }
         	 }
-				
          }
 	}); 
 }
-
-
-
 /*
  * 	@desc	 
  */
@@ -164,12 +171,10 @@ function initDatagrid()
 	//获取查询form中所有值   $('#com').combobox('getValue')
 	var queryParams = {
 			searchFormNumber : $('#searchFormNumber').val(),
-			searchFormStyle : $('#searchFormStyle').combobox('getValue'),
 			searchFormProvince : $('#searchFormProvince').combobox('getValue'),
 			searchFormCity : $('#searchFormCity').combobox('getValue'),
 			searchFormName : $('#searchFormName').val(),
-			searchFormTelephone : $('#searchFormTelephone').val(),
-			searchFormAgent : $('#searchFormAgent').val()
+			searchFormTelephone : $('#searchFormTelephone').val()
 	};
 	//渲染列表
 	$('#agentDataGrid').datagrid({
@@ -185,20 +190,20 @@ function initDatagrid()
 		striped:true,
 		columns:[[
 				{field:'id',checkbox:true},
-				{field:'agentCode',title:'登录帐号',width:'10%',align:'center'},
-				{field:'agentNumber',title:'站点号',width:'10%',align:'center'},
-				{field:'province',title:'省',width:'10%',align:'center'},
-				{field:'city',title:'市',width:'10%',align:'center'},
-				{field:'agentStyle',title:'站点类型',width:'10%',align:'center'},
-				{field:'name',title:'站主名称',width:'10%',align:'center'},
-				{field:'telephone',title:'站主电话',width:'10%',align:'center'},
-				{field:'agentCode',title:'登录帐号',width:'10%',align:'center'},
-				{field:'createTime',title:'录入时间',width:'10%',align:'center'},
+				{field:'agentCode',title:'登录帐号',width:'5%',align:'center'},
+				{field:'province',title:'省',width:'5%',align:'center'},
+				{field:'city',title:'市',width:'5%',align:'center'},
+				{field:'region',title:'区',width:'6%',align:'center'},
+				{field:'address',title:'详细地址',width:'10%',align:'center'},
+				{field:'name',title:'代理名称',width:'8%',align:'center'},
+				{field:'telephone',title:'代理电话',width:'10%',align:'center'},
+				{field:'parentName',title:'上级名称',width:'8%',align:'center'},
+				{field:'creater',title:'录入人',width:'8%',align:'center'},
+				{field:'createrTime',title:'录入时间',width:'10%',align:'center'},
 				{field:'opt',title:'操作',width:'130',align:'center', 
 		            formatter:function(value,row,index){
 		                var btn = '<a class="editcls" onclick="updateAgent(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
-		                	+'<a class="delcls" onclick="delAgentById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>'
-		                	+'<a class="setOrder" onclick="setOrder(&quot;'+row+'&quot;)" href="javascript:void(0)"></a>';
+		                	+'<a class="delcls" onclick="delAgentById(&quot;'+row.id+'&quot;)" href="javascript:void(0)"></a>';
 		                return btn;
 		            }
 		        }
@@ -206,7 +211,6 @@ function initDatagrid()
 	    onLoadSuccess:function(data){  
 	        $('.editcls').linkbutton({plain:true,iconCls:'icon-edit'});
 	        $('.delcls').linkbutton({plain:true,iconCls:'icon-remove'});
-	        $('.setOrder').linkbutton({plain:true,iconCls:'icon-search'});
 	    }  
 	});
 }

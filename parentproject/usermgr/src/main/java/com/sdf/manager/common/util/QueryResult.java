@@ -13,6 +13,7 @@ public class QueryResult<T> {
 	 */
 	private Long totalRecord;
 	
+	private int totalCount;
 	
 	public List<T> getResultList() {
 		return resultList;
@@ -25,5 +26,11 @@ public class QueryResult<T> {
 	}
 	public void setTotalRecord(Long totalRecord) {
 		this.totalRecord = totalRecord;
+	}
+	public int getTotalCount() {
+		return totalCount;
+	}
+	public void setTotalCount(int totalCount) {
+		this.totalCount = totalCount;
 	}
 }

@@ -7,7 +7,10 @@ import java.util.Map;
 import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.common.util.QueryResult;
+import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.dto.AddAgentForm;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
 
@@ -112,5 +115,41 @@ public interface UserService {
 	  */
 	public List<AccountBean> findAccountsByRoleCode(String roleCode);
 	
+	/** 
+	  * @Description: 业务层查询用户列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月2日 下午2:08:51 
+	  * @param entityClass
+	  * @param whereJpql
+	  * @param queryParams
+	  * @param orderby
+	  * @param pageable
+	  * @return 
+	  */
+	public QueryResult<User> getUserList(Class<User> entityClass, String whereJpql, Object[] queryParams, 
+			LinkedHashMap<String, String> orderby, Pageable pageable);
 	
+	/** 
+	  * @Description: 业务层查询用户列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月2日 下午2:08:51 
+	  * @param entityClass
+	  * @param whereJpql
+	  * @param queryParams
+	  * @param orderby
+	  * @param pageable
+	  * @return 
+	  */
+	public QueryResult<User> getAgentList(Class<User> entityClass, String whereJpql, Object[] queryParams, 
+			LinkedHashMap<String, String> orderby, Pageable pageable);
+	
+	/** 
+	  * @Description: 保存代理信息
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月3日 上午9:38:57 
+	  * @param addAgentForm
+	  * @param userId
+	  * @throws BizException 
+	  */
+	public void saveOrUpdate(AddAgentForm addAgentForm,String userId) throws BizException;
 }
