@@ -169,6 +169,7 @@ public class AgentController {
 		addAgentForm.setAddFormRegion(user.getRegionCode());
 		addAgentForm.setAddFormAddress(user.getAddress());
 		addAgentForm.setPassword(user.getPassword());
+		addAgentForm.setConfirmPassword(user.getPassword());
 		return addAgentForm;
 	}
 	

@@ -70,7 +70,8 @@ public class UserServiceImpl implements UserService {
 				user.setPassword(accountBean.getPassword());
 				user.setTelephone(accountBean.getTelephone());
 				user.setStatus(accountBean.getStatus());
-				user.setPassword(MD5Util.MD5(accountBean.getPassword()));
+				//  暂时去掉md5加密   user.setPassword(MD5Util.MD5(accountBean.getPassword()));
+				user.setPassword(accountBean.getPassword());
 				user.setIsDeleted(Constants.IS_NOT_DELETED);
 				user.setCreater(userId);
 				user.setCreaterTime(new Date());
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
 			user.setPassword(accountBean.getPassword());
 			user.setTelephone(accountBean.getTelephone());
 			user.setStatus(accountBean.getStatus());
-			user.setPassword(MD5Util.MD5(accountBean.getPassword()));
+			user.setPassword(accountBean.getPassword());
 			user.setModify("admin");
 			user.setModifyTime(new Date());
 			userRepository.save(user);
@@ -214,7 +215,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	public void savePassword(String newPassword,String userCode){
 		User user = this.getUserByCode(userCode);
-		user.setPassword(MD5Util.MD5(newPassword));
+		user.setPassword(newPassword);
 		userRepository.save(user);
 	}
 
@@ -295,7 +296,7 @@ public class UserServiceImpl implements UserService {
 				user.setProvinceCode(addAgentForm.getAddFormProvince());
 				user.setCityCode(addAgentForm.getAddFormCity());
 				user.setRegionCode(addAgentForm.getAddFormRegion());
-				user.setPassword(MD5Util.MD5(addAgentForm.getPassword()));
+				user.setPassword(addAgentForm.getPassword());
 				user.setIsDeleted(Constants.IS_NOT_DELETED);
 				user.setCreater(userId);
 				user.setCreaterTime(new Date());
@@ -324,7 +325,7 @@ public class UserServiceImpl implements UserService {
 			user.setCityCode(addAgentForm.getAddFormCity());
 			user.setRegionCode(addAgentForm.getAddFormRegion());
 			user.setStatus(addAgentForm.getStatus());
-			user.setPassword(MD5Util.MD5(addAgentForm.getPassword()));
+			user.setPassword(addAgentForm.getPassword());
 			user.setModify(userId);
 			user.setModifyTime(new Date());
 			userRepository.save(user);

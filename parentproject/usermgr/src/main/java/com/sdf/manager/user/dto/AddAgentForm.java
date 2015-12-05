@@ -22,6 +22,8 @@ public class AddAgentForm
 	private String addFormTelephone;
 	//登录密码
 	private String password;
+	//确认密码
+	private String confirmPassword;
 	//上级id
 	private String addFormParentId;
 	
@@ -151,8 +153,13 @@ public class AddAgentForm
 	public void setCreaterTime(String createrTime) {
 		this.createrTime = createrTime;
 	}
-	
-	
-	
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+	}
 	
 }

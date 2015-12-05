@@ -28,24 +28,6 @@
 	  	    }
 	  	}];
 	</script>
-	 <style type="text/css" scoped="scoped">
-	  		.ftitle{
-	  			width:100%;
-	  			margin-bottom: 20px;
-	  			font-family:'微软雅黑',
-	  		}
-	  		.ftitle label{
-	  			margin-left: 30px;
-	  		}
-	  		
-	  		.ftitle .textbox{
-	  			margin-right: 50px;
-	  			float : right;
-	  			width: 200px;
-	  		}
-	  		
-	  	</style>
-	  	
 	  <style type="text/css">
 			.ztree li button.switch {visibility:hidden; width:1px;}
 			.ztree li button.switch.roots_docu {visibility:visible; width:16px;}
