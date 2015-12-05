@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.BeanUtil;
