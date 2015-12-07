@@ -664,7 +664,8 @@ function submitAddgoods(operatype)
 	    	//添加角色后刷新数据列表
 	    	$('#ff').form('clear');//清空表单内容
 	    	clearGoodsArray();
-	    	initDatagrid();
+//	    	initDatagrid();
+	    	window.location.href=contextPath+"/orderFGoods/buyGoods.jsp";
 	    	$('#payModeA').combobox("setValue",'0');
 	    	
 	    	

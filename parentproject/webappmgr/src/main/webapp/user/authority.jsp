@@ -55,14 +55,14 @@
     </style> 
 </head>
 <body>
-    <div class="zTreeDemoBackground left" style="float:left;width: 200px;">
+    <div class="zTreeDemoBackground left" style="float:left;width: 15%;">
 		<ul id="treeDemo" class="ztree"></ul>
 	</div>
-    <div style="float:left;margin-left:10px;" >
+    <div style="float:left;margin-left:10px;width: 81%;" >
     	<div style="margin-top:0px;">
-    	 <table id="datagrid"  title="权限列表" style="width:800px;height:400px;"
+    	 <table id="datagrid"  title="权限列表" 
 			data-options="rownumbers:false,singleSelect:false,pagination:true,
-			collapsible:false,toolbar:toolbar">
+			collapsible:false,toolbar:toolbar" class="easyui-datagrid">
 		 </table>
     	</div>
      </div>

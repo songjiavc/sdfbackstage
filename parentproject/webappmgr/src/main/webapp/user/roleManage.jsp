@@ -55,12 +55,8 @@
 </head>
 <body>
 
-    <div style="float:left;margin-left:10px;" >
-    	<div style="margin-top:0px;">
-    	 <table id="datagrid"  title="角色列表" style="width:800px;height:400px;">
-			</table>
-    	</div>
- 	</div>  
+   	 <table id="datagrid"  title="角色列表" class="easyui-datagrid">
+		</table>
   
   
   <!-- 权限设置弹框 -->
