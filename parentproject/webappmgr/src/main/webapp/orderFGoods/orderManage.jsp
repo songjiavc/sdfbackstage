@@ -291,6 +291,90 @@
 	        </div>
 	      </form>
     </div>
+    
+     <!-- 普通用户订单详情弹框 -->
+    <div id="detailPTOrders" class="easyui-dialog" title="订单详情" style="width:800px;height:500px;padding:10px;top:40px;"
+            data-options="
+                iconCls: 'icon-save',
+                buttons: [{
+                    text:'取消',
+                    iconCls:'icon-cancel',
+                    handler:function(){
+                        $('#detailPTOrders').dialog('close');
+                        clearGoodsArray();
+                    }
+                }]
+            ">
+		<form id="ffPTDetail" method="get" novalidate>
+	        <div class="ftitle">
+	            <label for="codePTU">订单编码:</label>
+	            <input type="hidden" name="id" id="idPTD"/>
+	            <input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="codePTU" name="code" 
+	              ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="creatorPTU">订单创建人:</label><!-- 读取创建订单的代理人姓名 -->
+	            <input class="easyui-validatebox commonInput" type="text" id="creatorPTU" name="creator" readonly="readonly"
+	               ></input>
+	        </div>
+	        <div class="ftitle">
+	            <label for="namePTU">订单名称:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="namePTU" name="name"  readonly="readonly"></input>
+	        </div>
+	       <div class="ftitle">
+	            <label for="payModePTC">支付方式:</label>
+	           		<input class="easyui-validatebox commonInput" type="text" id="payModePTC" name="payMode"  readonly="readonly"></input>
+		           <!--  <select class="easyui-combobox" id="payModeC" name="payMode"  
+			          	 		 data-options="editable:false" style="width:150px;" >
+			          	 		<option value="0" checked="checked">现金支付</option>
+			          	 		<option value="1">转账支付</option>
+					</select> -->
+	        </div>
+	        <div class="ftitle">
+	            <label for="receiveAddrPTU">收货人地址:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrPTU" name="receiveAddr" readonly="readonly"
+	             ></input>
+	        </div>
+	         <div class="ftitle">
+	            <label for="receiveTelePTU">联系电话:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="receiveTelePTU" name="receiveTele"  readonly="readonly"
+	            ></input>
+	        </div>
+	       <!--  <div class="ftitle">
+	            <label for="subject">配送方式:</label>
+	             <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	      <!--   <div class="ftitle">
+	            <label for="priceU">运费:</label>
+	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
+	             validType="money"  ></input>
+	        </div> -->
+	         <div class="ftitle">
+	            <label for="pricePTD">商品总价(元):</label>
+	            <div style="float:left;margin-left: 30px;">
+	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="pricePTD" name="price" style="width:200px" readonly="readonly"/> 
+	           	</div>
+	        </div>
+	        <div class="ftitle">
+	            <label for="stationPTD">选中站点号:</label>
+		            <!-- <select class="easyui-combobox " id="stationD" name="station"  
+			          	 		 data-options="editable:false" style="width:200px;" >
+			          	 		
+					</select> -->
+					<input class="easyui-validatebox commonInput" readonly="readonly" type="text" id="stationPTD" name="station" 
+	              ></input>
+	        </div>
+	        <div class="ftable">
+	            <label for="goodsPTDatagridD">选中的商品列表:</label>
+	           <div style="float:left;margin-left:30px;width:700px;">
+	            	<table id="goodsPTDatagridD" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
+					</table>
+	            </div>
+	        </div>
+	      </form>
+    </div>
+    
 </body>
 	
 	
