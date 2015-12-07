@@ -334,9 +334,9 @@ public class AgentController {
 	 		if(isHasall)
 			 	{
 	 				DictBean dictBean = new DictBean();
-	 				dictBean.setId(Constants.PROVINCE_ALL);
-	 				dictBean.setName(Constants.PROVINCE_ALL_NAME);	
-	 				dictList.add(dictBean);
+	 				dictBean.setId("");
+	 				dictBean.setName("全部");
+	 				dictList.add(0,dictBean);
 			 	}
 	 			return dictList;
 		}

@@ -11,6 +11,10 @@ package com.sdf.manager.station.application.dto;
 public class StationFormDto {
 	//主键
 	private String id;
+	/** 
+	  * @Fields addFormAgent : 代理名称
+	  */ 
+	private String addFormAgent;
 	//站点登录号
 	private String addFormStationCode;
 	//站点类型
@@ -40,6 +44,12 @@ public class StationFormDto {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getAddFormAgent() {
+		return addFormAgent;
+	}
+	public void setAddFormAgent(String addFormAgent) {
+		this.addFormAgent = addFormAgent;
 	}
 	public String getAddFormStationCode() {
 		return addFormStationCode;

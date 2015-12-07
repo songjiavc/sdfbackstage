@@ -8,9 +8,9 @@ import org.springframework.data.domain.Pageable;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
-import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.dto.AddAgentForm;
+import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
 
@@ -114,6 +114,15 @@ public interface UserService {
 	  * @return 
 	  */
 	public List<AccountBean> findAccountsByRoleCode(String roleCode);
+	
+	/** 
+	  * @Description: 根据userId获取角色列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月7日 下午3:30:31 
+	  * @param userId
+	  * @return 
+	  */
+	public List<Role> findRolesByUserId(String userId);
 	
 	/** 
 	  * @Description: 业务层查询用户列表
