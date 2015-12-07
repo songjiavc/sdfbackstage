@@ -49,6 +49,46 @@
 	  			width: 200px;
 	  		}
 	  		
+	  		/*setorder样式*/
+	  		 .fsetOrdertitle{
+	  			width:50%;
+	  			float : left;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑';
+	  		}
+	  		
+	  		 .fsetOrdertable{
+	  			width:100%;
+	  			float : left;
+	  			margin-bottom: 20px;
+	  			font-family:'微软雅黑';
+	  		}
+	  		.fsetOrdertitle  label{
+	  			float : left;
+	  			margin-left: 30px;
+	  		}
+	  		
+	  		.fsetOrdertable  label{
+	  			float : left;
+	  			margin-left: 30px;
+	  		}
+	  		.fsetOrdertitle  .commonInput{
+	  			float : left;
+	  			width: 200px;
+	  			margin-left: 30px;
+	  			border-radius : 5px;
+	  		}
+	  		
+	  		 .td_font {
+	  			font-weight:bold;
+	  		}
+	  		
+	  		 .input_border{
+	  			width:150px;
+	  			border-radius : 5px;
+	  		}
+	  		
+	  		
 	  		#main-layout{     min-width:1050px;     min-height:240px;     overflow:hidden; }
 		</style>
 </head>
@@ -203,7 +243,7 @@
                 }]
             ">
 		<form id="ff" method="get" novalidate>
-	        <div class="ftitle">
+	        <div class="fsetOrdertitle">
 	            <label for="idA">订单编码:</label>
 	            <input type="hidden" name="id" id="idA"/>
 	            <div style="float:left;margin-left: 30px;">
@@ -211,19 +251,19 @@
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="codeA" style="width:200px"/> 
 	           	</div>
 	        </div>
-	        <div class="ftitle">
+	        <div class="fsetOrdertitle">
 	            <label for="creatorU">订单创建人:</label><!-- 读取创建订单的代理人姓名 -->
 	             <div style="float:left;margin-left: 30px;">
 	            	<input class="easyui-textbox" type="text" id="creatorA" name="creator" readonly="readonly" style="width:200px;"
 	               ></input>
 	              </div>
 	        </div>
-	        <div class="ftitle">
+	        <div class="fsetOrdertitle">
 	            <label for="nameU">订单名称:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="nameA" name="name" data-options="required:true"
 	            validType="length[1,50]"  missingMessage="订单名称不可以为空" ></input>
 	        </div>
-	       <div class="ftitle">
+	       <div class="fsetOrdertitle">
 	            <label for="priceU">支付方式:</label>
 	            <div style="float : left;margin-left: 30px;">
 		            <select class="easyui-combobox" id="payModeA" name="payMode"  
@@ -233,41 +273,41 @@
 					</select>
 				</div>
 	        </div>
-	        <div class="ftitle">
+	        <div class="fsetOrdertitle">
 	            <label for="receiveAddrU">收货人地址:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="receiveAddrA" name="receiveAddr" data-options="required:true"
 	             validType="length[1,50]" ></input>
 	        </div>
-	         <div class="ftitle">
+	         <div class="fsetOrdertitle">
 	            <label for="receiveTeleU">联系电话:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="receiveTeleA" name="receiveTele" data-options="required:true"
 	             validType="mobileAndTel"  ></input>
 	        </div>
-	       <!--  <div class="ftitle">
+	       <!--  <div class="fsetOrdertitle">
 	            <label for="subject">配送方式:</label>
 	             <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
 	             validType="money"  ></input>
 	        </div> -->
-	      <!--   <div class="ftitle">
+	      <!--   <div class="fsetOrdertitle">
 	            <label for="priceU">运费:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
 	             validType="money"  ></input>
 	        </div> -->
-	         <div class="ftitle">
+	         <div class="fsetOrdertitle">
 	            <label for="priceA">商品总价(元):</label>
 	            <div style="float:left;margin-left: 30px;">
 	            	<input name="price" id="pricehidden" type="hidden" >
 	           	 	<input class="easyui-textbox" readonly="readonly" type="text" id="priceA" style="width:200px"/> 
 	           	</div>
 	        </div>
-	        <div class="ftitle">
+	        <div class="fsetOrdertitle">
 	            <label for="stationA">站点号:</label>
 	             <div style="float:left;margin-left: 40px;">
 	             <input name="station" id="stationAhidden" type="hidden" >
 	             <input class="easyui-textbox" readonly="readonly" type="text" id="stationA" style="width:200px"/> 
 				</div>
 	        </div>
-	        <div class="ftable">
+	        <div class="fsetOrdertable">
 	            <label for="product">选择商品:</label>
 	           <div style="float:left;margin-left:30px;width:700px;">
 	            	<table id="goodsDatagridU" class="easyui-datagrid" style="width:700px;"  title="商品列表" >
