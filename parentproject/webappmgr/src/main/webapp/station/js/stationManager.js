@@ -4,6 +4,7 @@ $(document).ready(
 			initDatagrid();
 			closeDialog();
 			initQueryProvince();//初始化模糊查询省数据
+			initSearchFormAgent();
 		}
 );
 
@@ -126,6 +127,34 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 	}); 
 }
 
+	/**
+	 * add by songj@sdfcp.com
+	 * date 2015-11-27 
+	 * desc 初始化上级代理列表
+	 */
+	function initSearchFormAgent(agentId){
+		debugger;
+		$('#searchFormAgent').combobox('clear');//清空combobox值
+		$('#searchFormAgent').combobox({
+			queryParams:{
+				isHasall : true 
+			},//暂时没有任何需要查询的条件
+			url:contextPath+'/agent/getScdlList.action',
+			valueField : 'id',
+			textField : 'name',
+			onLoadSuccess: function (data) { //数据加载完毕事件
+	             if (agentId == undefined) 
+	             {
+	            	 $("#searchFormAgent").combobox('select',data[0].id);
+	             }
+	             else
+	        	 {
+	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
+	            	 $("#searchFormAgent").combobox('setValue', parentId);
+	        	 }
+	         }
+		});
+	}
 
 
 /*

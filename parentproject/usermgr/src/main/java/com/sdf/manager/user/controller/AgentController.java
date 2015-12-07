@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sdf.manager.common.bean.DictBean;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
@@ -306,6 +307,40 @@ public class AgentController {
 			return resultBean;
 		}
 	}
+	 	/** 
+	 	  * @Description: 根据角色code获取角色下面对应所有人
+	 	  * @author songj@sdfcp.com
+	 	  * @date 2015年11月27日 上午11:00:04 
+	 	  * @param model
+	 	  * @param httpSession
+	 	  * @return
+	 	  * @throws Exception 
+	 	  */
+	 	@RequestMapping(value = "/getScdlList", method = RequestMethod.POST)
+		public @ResponseBody List<DictBean> getScdlList(
+				@RequestParam(value="isHasall",required=false) boolean isHasall,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+	 		List<DictBean> dictList = new ArrayList<DictBean>();	
+	 		List<AccountBean> scdlList = userService.findAccountsByRoleCode(Constants.ROLE_SCDL_CODE);
+	 		if(scdlList != null && scdlList.size() > 0){
+	 			for(AccountBean accountBean : scdlList){
+	 				DictBean dictBean = new DictBean();
+	 				dictBean.setId(accountBean.getId());
+	 				dictBean.setName(accountBean.getName());
+	 				dictList.add(dictBean);
+	 			}
+	 		}
+	 		if(isHasall)
+			 	{
+	 				DictBean dictBean = new DictBean();
+	 				dictBean.setId(Constants.PROVINCE_ALL);
+	 				dictBean.setName(Constants.PROVINCE_ALL_NAME);	
+	 				dictList.add(dictBean);
+			 	}
+	 			return dictList;
+		}
+	 	
 	 	/** 
 	 	  * @Description: 根据角色code获取角色下面对应所有人
 	 	  * @author songj@sdfcp.com

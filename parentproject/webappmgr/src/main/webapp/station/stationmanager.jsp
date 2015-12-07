@@ -113,7 +113,7 @@
 		    		</td>
 		    		<td colspan="1" class="td_font">所属代理：</td>
 		    		<td colspan="1">
-		    			<input id="searchFormAgent" class="input_border"  type="text" name="searchFormAgent"  />  
+		    			<input id="searchFormAgent" name="searchFormAgent" class="easyui-combobox textbox"  />
 		    		</td>
 		    		<td class="td_font" colspan="2">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'"  type="button" value="查询" onclick="initDatagrid()">

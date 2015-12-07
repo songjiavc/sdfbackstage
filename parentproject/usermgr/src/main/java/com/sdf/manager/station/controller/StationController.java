@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,14 @@ public class StationController {
 	 @Autowired
 	 private CityService cityService;
 	 
-    /**
+	 	@SuppressWarnings("finally")
+	 	@RequestMapping("/stationmanager.action")
+		public String showChartForV2Vertical(HttpServletRequest request,ModelMap model,HttpSession httpSession) {
+	 		return "station/stationmanager";
+		}
+	 
+	 
+	 /**
 	 * 
 	 * @param userName
 	 * @param password
