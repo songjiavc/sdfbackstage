@@ -34,42 +34,19 @@
 			.ztree li button.switch.center_docu {visibility:visible; width:16px;}
 			.ztree li button.switch.bottom_docu {visibility:visible; width:16px;}
 			
-			  .ftitle{
-	  			width:50%;
-	  			float : left;
-	  			margin-bottom: 20px;
-	  			font-family:'微软雅黑';
-	  		}
-	  		
-	  		.ftable{
+			.ftitle{
 	  			width:100%;
-	  			float : left;
 	  			margin-bottom: 20px;
-	  			font-family:'微软雅黑';
+	  			font-family:'微软雅黑',
 	  		}
 	  		.ftitle label{
-	  			float : left;
 	  			margin-left: 30px;
 	  		}
 	  		
-	  		.ftable label{
-	  			float : left;
-	  			margin-left: 30px;
-	  		}
-	  		.ftitle .commonInput{
-	  			float : left;
+	  		.ftitle .textbox{
+	  			margin-right: 50px;
+	  			float : right;
 	  			width: 200px;
-	  			margin-left: 30px;
-	  			border-radius : 5px;
-	  		}
-	  		
-	  		.td_font{
-	  			font-weight:bold;
-	  		}
-	  		
-	  		.input_border{
-	  			width:150px;
-	  			border-radius : 5px;
 	  		}
 	  		
 	  		#main-layout{     min-width:1050px;     min-height:240px;     overflow:hidden; }
