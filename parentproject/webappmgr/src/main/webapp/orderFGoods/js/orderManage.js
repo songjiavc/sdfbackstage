@@ -27,7 +27,7 @@ function initStationList(stationinput,stationId)
 		valueField:'id',
 		textField:'stationNumber',
 		 onLoadSuccess: function (data1) { //数据加载完毕事件
-			 $('#'+stationinput).combobox('select',stationId);
+			 $('#'+stationinput).combobox('setValue',stationId);//初始化选中的stationlist时用setvalue，避免触发级联事件
 				
          }
 	}); 
@@ -76,6 +76,8 @@ function clearGoodsArray()
 	proOfgoods  = new map();
 	countPrice = 0;//清零商品总价
 	$('#goodsDatagridU').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
+	$('#goodsPTDatagridD').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
+	$('#goodsDatagridD').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 }
 
 /**
@@ -122,8 +124,9 @@ function reset()
 //关闭弹框
 function closeDialog()
 {
-	$("#updateOrders").dialog('close');
-	$("#detailOrders").dialog('close');
+	$("#updateOrders").dialog('close');//修改订单详情dialog
+	$("#detailOrders").dialog('close');//财务管理员查看订单详情dialog
+	$("#detailPTOrders").dialog('close');//普通用户查看订单详情dialog
 }
 
 /**
@@ -184,12 +187,16 @@ function initDatagrid()
 				                	+'<a class="deleterole" onclick="deleteOrders(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="删除">删除</a>'//代理删除
 				                	+'<a class="submitOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,1)" href="javascript:void(0)" title="提交">提交</a>'//代理提交
 		                		}
-	                		if(isFinancialManager && '11'==status)//当前角色为“财务管理员”且订单状态为“提交财务管理员审批”时，显示以下按钮
+		                	else if(isFinancialManager && '11'==status)//当前角色为“财务管理员”且订单状态为“提交财务管理员审批”时，显示以下按钮
 	                			{
 	                				btn=btn+'<a class="detailcls" onclick="viewOrdersDetail(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="查看详情">详情</a>'//财务管理员可以查看订单详情但是不可以修改内容，可以审批
 				                	+'<a class="rejectOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,3)" href="javascript:void(0)" title="审批驳回">驳回</a>'//财务管理员驳回
 				                	+'<a class="stopOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,4)" href="javascript:void(0)" title="不通过">不通过</a>'//财务管理员不通过，终止订单的审批流程且流程不可恢复
 				                	+'<a class="throughOrder" onclick="approveOrders(&quot;'+row.id+'&quot;,2)" href="javascript:void(0)" title="审批通过">通过</a>';//财务管理员审批通过
+	                			}
+		                		else
+	                			{
+	                				btn=btn+'<a class="detailcls" onclick="viewPTOrdersDetail(&quot;'+row.id+'&quot;)" href="javascript:void(0)" title="查看详情">详情</a>';//财务管理员可以查看订单详情但是不可以修改内容，可以审批
 	                			}
 		                	
 		                return btn;  
@@ -267,7 +274,6 @@ function approveOrdersInDialog(operortype)
 function viewOrdersDetail(orderId)
 {
 	clearGoodsArray();
-	$('#goodsDatagridD').datagrid('loadData', { total: 0, rows: [] });//清空商品datagrid内容，避免异常，在再次打开弹框时，可以重新加载内容
 	
 	var url = contextPath + '/order/getDetailOrders.action';
 	var data1 = new Object();
@@ -299,7 +305,7 @@ function viewOrdersDetail(orderId)
 					returnArr = getDetailStation(data.stationId);//rec.id is stationId
 					$("#stationD").val(returnArr[3]);//显示选中的站点号
 					//根据站点的区域和彩种加载商品信息列表
-					initGoodsDetailDatagrid(returnArr[0], returnArr[1], 'goodsDatagridD', returnArr[2]);
+					initGoodsDetailDatagrid(returnArr[0], returnArr[1], 'goodsDatagridD', returnArr[2],'idD');
 			
 					
 	        },
@@ -311,6 +317,58 @@ function viewOrdersDetail(orderId)
 		
 	
 	$('#detailOrders').dialog('open');//打开查看订单详情的dialog
+}
+
+/**
+ * 查看普通用户订单详情（普通用户权限）
+ * @param orderId
+ */
+function viewPTOrdersDetail(orderId)
+{
+	clearGoodsArray();
+	
+	var url = contextPath + '/order/getDetailOrders.action';
+	var data1 = new Object();
+	data1.id=orderId;//订单id
+	
+		$.ajax({
+			async: false,   //设置为同步获取数据形式
+	        type: "get",
+	        url: url,
+	        data:data1,
+	        dataType: "json",
+	        success: function (data) {
+	        	
+					$('#ffPTDetail').form('load',{
+						id:data.id,
+						code:data.code,
+						name:data.name,
+						creator:data.creator,
+						price:data.price,
+						payMode:data.payMode=='0'?'现金支付':'转账支付',
+						receiveAddr:data.receiveAddr,
+						receiveTele:data.receiveTele,
+//						transCost:data.transCost
+						stationId:data.stationId//填充选中订单中站点
+					});
+					
+					//选中当前商品对应产品,并在商品列表加载完成后选中商品
+					var returnArr = new Array();
+					returnArr = getDetailStation(data.stationId);//rec.id is stationId
+					$("#stationPTD").val(returnArr[3]);//显示选中的站点号
+					//根据站点的区域和彩种加载商品信息列表
+					initGoodsDetailDatagrid(returnArr[0], returnArr[1], 'goodsPTDatagridD', returnArr[2],'idPTD');
+			
+					
+	        },
+	        error: function (XMLHttpRequest, textStatus, errorThrown) {
+	            alert(errorThrown);
+	        }
+		});
+		
+		
+	
+	$('#detailPTOrders').dialog('open');//打开查看订单详情的dialog
 }
 
 
@@ -398,7 +456,7 @@ function getDetailStation(stationId)
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+//            alert(errorThrown);
         }
 	});
 	
@@ -443,6 +501,54 @@ function checkedGoodsOfOrder(id,productDatagrid)
 											price = parseInt(selectedRow.price);//js中将字符串转换为数字
 											countPrice = countPrice+price;
 											addCountPrice(countPrice);//更新商品总价
+										}
+									
+								}
+				        	});
+        				}
+        			
+        		}
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+   });
+}
+
+
+/**
+ * 选中当前订单详情配置的商品
+ * @param id
+ */
+function checkedGoodsOfDetailOrder(id,productDatagrid)
+{
+	var data = new Object();
+	data.id = id;
+	
+	$.ajax({
+		async: false,   //设置为同步获取数据形式
+        type: "get",
+        url: contextPath+'/order/getGoodsOfOrder.action',
+        data:data,
+        dataType: "json",
+        success: function (data) {
+        	if(data.length>0)
+        		{
+        			var selectedRows = $('#'+productDatagrid).datagrid('getRows');
+        			for(var i=0;i<data.length;i++)
+        				{
+        					var goods = data[i];
+	        				$.each(selectedRows,function(j,selectedRow){
+	        					var	goodId = goods.id;
+	        					var price = parseInt(goods.price);
+								if(selectedRow.id == goodId)
+								{
+//									 $('#'+productDatagrid).datagrid('selectRow',j);
+									var price = 0;
+									var pushFlag = goodListExist(goodId);
+									if(pushFlag)
+										{
+											goodsList.push(goodId);//※每次在操作goodlist的内容时就要同时操作商品总价
 										}
 									
 								}
@@ -855,7 +961,7 @@ function getSelectedOtherStation(stationInput,lotteryType)
 
 /**
  * 根据当前选中站点的信息获取其另一类别站点
- * @returns
+ * @return
  */
 function getOtherStation()
 {
@@ -889,7 +995,7 @@ function getOtherStation()
  * @param cityId
  * @param productDatagrid
  */
-function initGoodsDetailDatagrid(provinceId,cityId,productDatagrid,stationType)
+function initGoodsDetailDatagrid(provinceId,cityId,productDatagrid,stationType,orderId)
 {
 	var params = new Object();
 	params.province = provinceId;
@@ -897,7 +1003,7 @@ function initGoodsDetailDatagrid(provinceId,cityId,productDatagrid,stationType)
 	params.status = '1';//上架商品
 	params.stationType = stationType;//站点类型：1：体彩 2：福彩
 	
-	 var idU = $("#idD").val();
+	 var idU = $("#"+orderId).val();
 	var prostaList = getSproductsOfOrderId(idU);
 	
 	$('#'+productDatagrid).datagrid({
@@ -930,7 +1036,7 @@ function initGoodsDetailDatagrid(provinceId,cityId,productDatagrid,stationType)
 				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
 			}
 	        
-	        checkedGoodsOfOrder(idU,productDatagrid);
+	        checkedGoodsOfDetailOrder(idU,productDatagrid);
 	        //写入和选中当前数据选中的产品（写入productlist选中的）
 	        if(goodsList.length>0)
 	        	{
