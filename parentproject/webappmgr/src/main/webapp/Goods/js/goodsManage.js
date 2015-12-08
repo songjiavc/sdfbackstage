@@ -414,7 +414,16 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 	        				 var editors = $('#'+productDatagrid).datagrid('getEditors', i);//获取当前行可编辑的值
 	        				 if(null != editors)
 	        					 {
-	        					 	editors[1].target.val('0');//设置试用期的默认值为‘0’
+	        					 	var cpzlDm = data.rows[i].cpzlDm;
+	        					 	if('0201' == cpzlDm)
+	        					 		{//产品的中类为‘走势图’的其试用期的值默认为‘7’
+	        					 			editors[1].target.val('7');//设置试用期的默认值为‘0’
+	        					 		}
+	        					 	else
+	        					 		{//非走势图的超试用期的默认值为‘0’
+	        					 			editors[1].target.val('0');//设置试用期的默认值为‘0’
+	        					 		}
+	        					 	
 	        					 }
 	        			}
 	        	}
