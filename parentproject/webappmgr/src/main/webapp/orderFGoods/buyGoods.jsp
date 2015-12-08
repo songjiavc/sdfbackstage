@@ -32,6 +32,7 @@
 	  		.ftitle label{
 	  			float : left;
 	  			margin-left: 30px;
+	  			width:75px;
 	  		}
 	  		
 	  		.ftable label{
@@ -83,7 +84,7 @@
 	        </div>
 	       <div class="ftitle">
 	            <label for="payModeA">支付方式:</label>
-	             <div style="float:left;margin-left: 40px;">
+	             <div style="float:left;margin-left: 30px;">
 		            <select class="easyui-combobox " id="payModeA" name="payMode"  
 			          	 		 data-options="editable:false" style="width:200px;" >
 			          	 		<option value="0" checked="checked">现金支付</option>
@@ -121,7 +122,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="stationA">选中站点:</label>
-	             <div style="float:left;margin-left: 40px;">
+	             <div style="float:left;margin-left: 30px;">
 		            <select class="easyui-combobox " id="stationA" name="station"  
 			          	 		 data-options="editable:false" style="width:200px;" >
 			          	 		

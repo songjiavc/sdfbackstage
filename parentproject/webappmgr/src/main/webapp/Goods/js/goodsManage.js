@@ -411,6 +411,11 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 	        		for(var i=0;i<data.rows.length;i++)
 	        			{
 	        				$('#'+productDatagrid).datagrid('beginEdit', i);
+	        				 var editors = $('#'+productDatagrid).datagrid('getEditors', i);//获取当前行可编辑的值
+	        				 if(null != editors)
+	        					 {
+	        					 	editors[1].target.val('0');//设置试用期的默认值为‘0’
+	        					 }
 	        			}
 	        	}
 	        

@@ -70,6 +70,7 @@
 	  		.fsetOrdertitle  label{
 	  			float : left;
 	  			margin-left: 30px;
+	  			width:75px;
 	  		}
 	  		
 	  		.fsetOrdertable  label{
@@ -275,7 +276,7 @@
 	            <label for="priceU">支付方式:</label>
 	            <div style="float : left;margin-left: 30px;">
 		            <select class="easyui-combobox" id="payModeA" name="payMode"  
-			          	 		 data-options="editable:false" style="width:150px;" >
+			          	 		 data-options="editable:false" style="width:200px;" >
 			          	 		<option value="0" checked="checked">现金支付</option>
 			          	 		<option value="1">转账支付</option>
 					</select>
@@ -310,7 +311,7 @@
 	        </div>
 	        <div class="fsetOrdertitle">
 	            <label for="stationA">站点号:</label>
-	             <div style="float:left;margin-left: 40px;">
+	             <div style="float:left;margin-left: 30px;">
 	             <input name="station" id="stationAhidden" type="hidden" >
 	             <input class="easyui-textbox" readonly="readonly" type="text" id="stationA" style="width:200px"/> 
 				</div>
