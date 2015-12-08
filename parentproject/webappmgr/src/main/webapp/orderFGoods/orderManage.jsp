@@ -43,6 +43,7 @@
 	  		.ftitle label{
 	  			float : left;
 	  			margin-left: 30px;
+	  			width:75px;
 	  		}
 	  		.ftitle .commonInput{
 	  			float : left;
@@ -175,7 +176,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="stationA">选中站点:</label>
-	             <div style="float:left;margin-left: 40px;">
+	             <div style="float:left;margin-left: 30px;">
 		            <select class="easyui-combobox " id="stationA" name="station"  
 			          	 		 data-options="editable:false" style="width:200px;" >
 			          	 		
