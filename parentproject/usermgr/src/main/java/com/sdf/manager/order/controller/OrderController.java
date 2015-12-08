@@ -35,6 +35,7 @@ import com.sdf.manager.goods.dto.GoodsDTO;
 import com.sdf.manager.goods.entity.Goods;
 import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.goods.service.GoodsService;
+import com.sdf.manager.goods.service.RelaProAndGoodsService;
 import com.sdf.manager.order.dto.OrdersDTO;
 import com.sdf.manager.order.entity.FoundOrderStatus;
 import com.sdf.manager.order.entity.OrderNextStatus;
@@ -47,6 +48,7 @@ import com.sdf.manager.order.service.OrderStatusService;
 import com.sdf.manager.order.service.RelaSdfStationProService;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.service.CityService;
+import com.sdf.manager.product.service.ProductService;
 import com.sdf.manager.product.service.ProvinceService;
 import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.entity.Station;
@@ -101,6 +103,10 @@ public class OrderController extends GlobalExceptionHandler
 	 
 	 @Autowired
 	 private StationService stationService;
+	 
+	 @Autowired
+	 private ProductService productService;
+	 
 	 
 	 public static final int SERIAL_NUM_LEN = 6;//订单流水号中自动生成的数字位数
 	 
@@ -318,6 +324,9 @@ public class OrderController extends GlobalExceptionHandler
 						   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
 						   relaSdfStationProduct.setType(ps.getString(4));
 						   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_INVALID_STATUS);//订单开始时无效
+						   //计算产品使用期和试用期的和,并放置到使用期的值中
+						   relaSdfStationProduct.setDurationOfUse(this.calculateDuration(proid,ps.getString(2)));
+						   
 						   
 						   relaSdfStationProducts.add(relaSdfStationProduct);
 						   
@@ -403,9 +412,9 @@ public class OrderController extends GlobalExceptionHandler
 			   for(int m=0;m<proOfgoodsKeys.size();m++)
 			   {
 				   JSONArray choosegoods = (JSONArray) proOfgoodsData.get(proOfgoodsKeys.get(m));
-				   for(int i=0;i<choosegoods.size();i++)
+				   for(int i=0;i<choosegoods.size();i++)//循环选中商品
 				   {
-					   JSONObject products = JSONObject.parseObject(choosegoods.get(i).toString());
+					   JSONObject products = JSONObject.parseObject(choosegoods.get(i).toString());//选中的产品id
 					   List<String> proids =  (List<String>) products.get("keys");
 					   Map<String,Object> data =  (Map<String, Object>) products.get("data");
 					   String proid="";
@@ -414,7 +423,7 @@ public class OrderController extends GlobalExceptionHandler
 					   for(int j=0;j<proids.size();j++)
 					   {
 						   RelaSdfStationProduct relaSdfStationProduct = new RelaSdfStationProduct();
-						   proid = proids.get(j);
+						   proid = proids.get(j);//产品id
 						   ps = (JSONArray) data.get(proid);
 						   relaSdfStationProduct.setProductId(ps.getString(5));//productId中放置的是产品和商品关联表的id
 						   relaSdfStationProduct.setStationId(ps.getString(3));//从前台获取
@@ -428,6 +437,8 @@ public class OrderController extends GlobalExceptionHandler
 						   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
 						   relaSdfStationProduct.setType(ps.getString(4));
 						   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_INVALID_STATUS);//订单开始时无效
+						   //计算产品使用期和试用期的和,并放置到使用期的值中
+						   relaSdfStationProduct.setDurationOfUse(this.calculateDuration(proid,ps.getString(2)));
 						   
 						   relaSdfStationProducts.add(relaSdfStationProduct);
 						   
@@ -452,6 +463,34 @@ public class OrderController extends GlobalExceptionHandler
 		   
 		   return resultBean;
 		}
+	 
+	 /**
+	  * 
+	 * @Title: calculateDuration
+	 * @Description: TODO(计算使用期和试用期的和)
+	 * @Author : banna
+	 * @param productId:放置的是产品id
+	 * @param probation：站点对应该产品的试用期
+	 * @param @return    设定文件
+	 * @return String    返回类型
+	 * @throws
+	  */
+	 private String calculateDuration(String productId,String probation)
+	 {
+		 
+		 Product product = productService.getProductById(productId);
+		 
+		 String durationOfUser = product.getDurationOfusers().getNumOfDays();
+		 
+		 int duration = Integer.parseInt(durationOfUser);
+		 int probationDay = Integer.parseInt(probation);
+		 
+		 int count  = duration + probationDay;
+		 
+		 String countResult = count+"";
+		 
+		 return countResult;
+	 }
 	 
 	 /**
 	  * 
@@ -600,13 +639,19 @@ public class OrderController extends GlobalExceptionHandler
 		    {//财管订单列表审批通过
 			   OrderNextStatus orderNextStatus = orderStatusService.getOrderNextStatusBycurrentStatusId(currentStatus,directFlag);
 			   currentStatus = orderNextStatus.getNextStatusId();
-			   //审批完成后要置“站点<-->产品”关联数据为有效,，即购买此订单产品的站点可以开始使用或试用了
+			   //审批完成后要置“站点<-->产品”关联数据为有效,，即购买此订单产品的站点可以开始使用或试用了，且要初始化当前站点对于产品的使用期的开始时间和结束时间
 			   List<RelaSdfStationProduct> relaSdfStationProducts 
 			   				= relaSdfStationProService.getRelaSdfStationProductByOrderId(orderId);
+			   Date endtime;
 			   for (RelaSdfStationProduct relaSdfStationProduct : relaSdfStationProducts) {
 				   relaSdfStationProduct.setStatus(OrderController.STATION_PRODUCT_VALID_STATUS);
 				   relaSdfStationProduct.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
+				   //因为审批已完成，计算当前站点使用该产品的起始时间和终止时间
+				   relaSdfStationProduct.setStartTime(new Timestamp(System.currentTimeMillis()));//开始时间
+				   endtime = DateUtil.getNextDay(Integer.parseInt(relaSdfStationProduct.getDurationOfUse()));
+				   relaSdfStationProduct.setEndTime(DateUtil.formatDateToTimestamp(endtime, DateUtil.FULL_DATE_FORMAT));
+				   
 				   relaSdfStationProService.update(relaSdfStationProduct);
 			   }
 		    }
