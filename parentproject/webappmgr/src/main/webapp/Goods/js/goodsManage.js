@@ -271,6 +271,7 @@ function initDatagrid()
 		method:'get',
 		border:false,
 		singleSelect:false,
+		fit:true,//datagrid自适应
 		fitColumns:true,
 		pagination:true,
 		collapsible:false,

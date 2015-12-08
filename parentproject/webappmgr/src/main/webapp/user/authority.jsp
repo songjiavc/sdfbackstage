@@ -54,18 +54,17 @@
 	  		}
     </style> 
 </head>
-<body>
-    <div class="zTreeDemoBackground left" style="float:left;width: 15%;">
+<body class="easyui-layout">
+	<div class="zTreeDemoBackground left" style="float:left;width: 15%;" data-options="region:'west'">
 		<ul id="treeDemo" class="ztree"></ul>
 	</div>
-    <div style="float:left;margin-left:10px;width: 81%;" >
-    	<div style="margin-top:0px;">
+    <div style="float:left;width: 85%;" data-options="region:'east'">
     	 <table id="datagrid"  title="权限列表" 
 			data-options="rownumbers:false,singleSelect:false,pagination:true,
 			collapsible:false,toolbar:toolbar" class="easyui-datagrid">
 		 </table>
-    	</div>
      </div>
+    
      
        <!-- 添加权限弹框 -->
   <div id="addAuth" class="easyui-dialog" title="添加权限" style="width:400px;height:310px;padding:10px"
