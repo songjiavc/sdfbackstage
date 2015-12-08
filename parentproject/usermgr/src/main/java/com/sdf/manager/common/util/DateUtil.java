@@ -72,6 +72,32 @@ public class DateUtil {
         }
         return date;
     }
+    
+    /**
+     * 
+    * @Title: formatDateToTimestamp
+    * @Description: 将date转换为时间戳
+    * @Author : banna
+    * @param @param date
+    * @param @param formatstr
+    * @param @return
+    * @param @throws ParseException    设定文件
+    * @return Timestamp    返回类型
+    * @throws
+     */
+    public static Timestamp formatDateToTimestamp(Date date,String formatstr) throws ParseException {
+
+        SimpleDateFormat df = new SimpleDateFormat(formatstr);
+        Timestamp timestamp = null;
+        if (null == date) {
+            return timestamp;
+        }
+        //先转换dateTostring
+		String dateString = DateUtil.formatDate(date, formatstr);
+		
+		timestamp = Timestamp.valueOf(dateString);
+        return timestamp;
+    }
 
     /**
      * 获得一天的最早日期时间,如传进来2008-09-09 20:15:30 返回 2008-09-09 00:00:00
