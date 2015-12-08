@@ -83,7 +83,7 @@
 </head>
 <body class="easyui-layout">
 	<!-- 模糊查询 -->
-	<div   data-options="region:'north'" style="height:90px;border:1px solid #95b8e7; border-radius:5px;background-color:white;">
+	<div   data-options="region:'north'" style="height:90px;border:1px solid #95b8e7; background-color:white;">
 	    	<table style="border: none;height: 80px;">
 		    	<tr>
 		    		<td width="7%" class="td_font">商品名称：</td>
