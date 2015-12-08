@@ -27,7 +27,7 @@ function initStationList(stationinput,stationId)
 		valueField:'id',
 		textField:'stationNumber',
 		 onLoadSuccess: function (data1) { //数据加载完毕事件
-			 $('#'+stationinput).combobox('select',stationId);
+			 $('#'+stationinput).combobox('setValue',stationId);//初始化选中的stationlist时用setvalue，避免触发级联事件
 				
          }
 	}); 
@@ -456,7 +456,7 @@ function getDetailStation(stationId)
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+//            alert(errorThrown);
         }
 	});
 	
