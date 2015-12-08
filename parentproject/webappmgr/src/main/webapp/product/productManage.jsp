@@ -17,6 +17,7 @@
   	    	initProvince('add','privinceA','');//默认选中全部，则全部下是没有市数据的
   	    	initProductDL('add','cpdlA','');
   	    	generateCode();//生成产品编码
+  	    	initProDuration('durationOfuserA','');//初始化产品使用期
   	    	$("#addProduct").dialog('open');
   	    	
   	    }
@@ -180,6 +181,17 @@
 	             </div>
 	           
 	        </div>
+	        
+	        <div class="ftitle">
+	            <label for="durationOfuser">产品使用期:</label>
+	             <div style="float : left;">
+	             	 <select class="easyui-combobox " id="durationOfuserA" name="durationOfuser"  
+		          	  data-options="editable:false" style="width:200px;" >
+					</select>
+	             </div>
+	           
+	        </div>
+	        
 	        <div class="ftitle">
 	            <label for="priceA">参考价格:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="priceA" name="price" data-options="required:true"
@@ -267,6 +279,17 @@
 	            </div>
 	            
 	        </div>
+	        
+	        <div class="ftitle">
+	            <label for="durationOfuser">产品使用期:</label>
+	             <div style="float : left;">
+	             	 <select class="easyui-combobox " id="durationOfuserU" name="durationOfuser"  
+		          	  data-options="editable:false" style="width:200px;" >
+					</select>
+	             </div>
+	           
+	        </div>
+	        
 	       <div class="ftitle">
 	            <label for="priceU">参考价格:</label>
 	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"

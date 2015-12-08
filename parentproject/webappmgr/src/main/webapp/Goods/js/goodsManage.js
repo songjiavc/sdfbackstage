@@ -383,6 +383,7 @@ function initProductDatagrid(provinceId,cityId,productDatagrid,hiddenGTId,showGT
 		            }  },
 				{field:'cpdlName',title:'大类别',width:100,align:'center'},
 				{field:'cpzlName',title:'中类别',width:100,align:'center'},
+				{field:'durationOfUsername',title:'使用期',width:80,align:'center'},
 //				{field:'cpxlName',title:'小类别',width:100,align:'center'},
 //				{field:'createTime',title:'创建时间',width:120,align:'center'},
 				{field:'sellPrice',title:'销售价格(元)',width:100,align:'center',editor: {  

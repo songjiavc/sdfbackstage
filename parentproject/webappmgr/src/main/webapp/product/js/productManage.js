@@ -412,6 +412,7 @@ function initDatagrid()
 				{field:'cpdlName',title:'大类别',width:80,align:'center'},
 				{field:'cpzlName',title:'中类别',width:80,align:'center'},
 				{field:'cpxlName',title:'小类别',width:80,align:'center'},
+				{field:'durationOfUsername',title:'使用期',width:80,align:'center'},
 				{field:'createTime',title:'创建时间',width:140,align:'center'},
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
@@ -461,6 +462,7 @@ function updateProduct(id)
 						cpdl:data.cpdlDm,
 						cpzl:data.cpzlDm,
 						cpxl:data.cpxlDm,
+						durationOfuser:data.durationOfuser,//产品使用期
 						productDesprition:data.productDesprition,
 						city:data.city
 					});
@@ -475,6 +477,8 @@ function updateProduct(id)
 					initProductZL("update", "cpzlU", data.cpzlDm, data.cpdlDm);
 					//初始化产品大类
 					initProductXL("update", "cpxlU", data.cpxlDm, data.cpdlDm, data.cpzlDm);
+					//初始化产品使用期选择框
+					initProDuration("durationOfuserU",data.durationOfuser);
 			
 	        	
 	        },
@@ -485,6 +489,35 @@ function updateProduct(id)
 		
 		$("#updateProduct").dialog('open');
 	
+}
+
+/**
+ * 初始化产品使用期
+ * @param durationId
+ * @param durationOfuser
+ */
+function initProDuration(durationId,durationOfuser)
+{
+	var data = new Object();
+	
+	$('#'+durationId).combobox({
+		queryParams:data,
+		url:contextPath+'/product/getCodedurationlist.action',
+		valueField:'id',
+		textField:'name',
+		 onLoadSuccess: function (data1) { //数据加载完毕事件
+			
+			 if('durationOfuserA' == durationId)
+				 {//添加产品
+				 	$('#'+durationId).combobox('setValue',data1[data1.length-1].id);//默认选中第一个值
+				 }
+			 else
+				 {
+				 	$('#'+durationId).combobox('setValue',durationOfuser);//初始化选中的stationlist时用setvalue，避免触发级联事件
+				 }
+				
+         }
+	}); 
 }
 
 /**

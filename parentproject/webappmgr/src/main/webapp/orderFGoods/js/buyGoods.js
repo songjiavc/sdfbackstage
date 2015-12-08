@@ -339,6 +339,7 @@ function initGoodsDatagrid(provinceId,cityId,productDatagrid,stationType)
 			            	}
 			            	return lotteryTypeName;  
 			            }  },
+			        {field:'durationOfUsername',width:50,title:'产品使用期',align:'center'},
 			        {field:'probation',width:50,title:'试用期最大值',align:'center'},
 		            {field:'orderProbation',title:'试用期(天)',width:50,align:'center',editor: {  
 						type: 'text',  
