@@ -54,6 +54,7 @@ public class Constants {
 	//代理模块内容start
 	//固化市场专员角色编码，目地是通过编码查找对应的市场人员
 	public static final String ROLE_SCZY_CODE = "SC_ZY";
+	
 	public static final String ROLE_SCDL_CODE = "3";
 	//代理模块内容end
 	

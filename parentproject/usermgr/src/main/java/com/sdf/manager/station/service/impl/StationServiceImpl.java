@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.Constants;
-import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
@@ -45,6 +44,7 @@ public class StationServiceImpl implements StationService {
 			Station stationCode = this.getStationByCode(stationFormDto.getAddFormStationCode());
 			if(null == stationCode){
 				Station station = new Station();
+				station.setAgentId(stationFormDto.getAddFormAgent());
 				station.setCode(stationFormDto.getAddFormStationCode());
 				station.setOwner(stationFormDto.getAddFormName());
 				station.setStationNumber(stationFormDto.getAddFormStationNumber());
@@ -66,6 +66,7 @@ public class StationServiceImpl implements StationService {
 			}
 		}else{
 			Station station = this.getStationById(stationFormDto.getId());
+			station.setAgentId(stationFormDto.getAddFormAgent());
 			station.setOwner(stationFormDto.getAddFormName());
 			station.setStationNumber(stationFormDto.getAddFormStationNumber());
 			station.setAddress(stationFormDto.getAddFormAddress());

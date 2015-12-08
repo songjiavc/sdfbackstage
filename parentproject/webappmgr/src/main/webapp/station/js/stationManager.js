@@ -1,10 +1,11 @@
+
 $(document).ready(
 		function()
 		{
 			initDatagrid();
 			closeDialog();
-			initQueryProvince();//初始化模糊查询省数据
-			initSearchFormAgent();
+			initQueryProvince();//初始化模糊查询省数据]
+			initSearchFormAgent(initParam);
 		}
 );
 
@@ -132,8 +133,7 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 	 * date 2015-11-27 
 	 * desc 初始化上级代理列表
 	 */
-	function initSearchFormAgent(agentId){
-		debugger;
+	function initSearchFormAgent(initParam){
 		$('#searchFormAgent').combobox('clear');//清空combobox值
 		$('#searchFormAgent').combobox({
 			queryParams:{
@@ -143,14 +143,41 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 			valueField : 'id',
 			textField : 'name',
 			onLoadSuccess: function (data) { //数据加载完毕事件
-	             if (agentId == undefined) 
+				if (initParam.flag == 'false')
 	             {
 	            	 $("#searchFormAgent").combobox('select',data[0].id);
 	             }
 	             else
 	        	 {
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
-	            	 $("#searchFormAgent").combobox('setValue', parentId);
+	            	 $("#searchFormAgent").combobox('setValue', initParam.agentId);
+	            	 $("#searchFormAgent").combobox('disable');
+	        	 }
+	         }
+		});
+	}
+	
+	/**
+	 * add by songj@sdfcp.com
+	 * date 2015-11-27 
+	 * desc 初始化上级代理列表
+	 */
+	function initAddFormAgent(initParam){
+		$('#addFormAgent').combobox('clear');//清空combobox值
+		$('#addFormAgent').combobox({
+			url:contextPath+'/agent/getScdlList.action',
+			valueField : 'id',
+			textField : 'name',
+			onLoadSuccess: function (data) { //数据加载完毕事件
+				if (initParam.flag == 'false')
+	             {
+	            	 $("#addFormAgent").combobox('select',data[0].id);
+	             }
+	             else
+	        	 {
+	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
+	            	 $("#addFormAgent").combobox('setValue', initParam.agentId);
+	            	 $("#addFormAgent").combobox('disable');
 	        	 }
 	         }
 		});
@@ -162,7 +189,7 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
  */
 function initDatagrid()
 {
-	//获取查询form中所有值   $('#com').combobox('getValue')
+	//获取查询form中所有值 
 	var queryParams = {
 			searchFormNumber : $('#searchFormNumber').val(),
 			searchFormStyle : $('#searchFormStyle').combobox('getValue'),
@@ -170,7 +197,7 @@ function initDatagrid()
 			searchFormCity : $('#searchFormCity').combobox('getValue'),
 			searchFormName : $('#searchFormName').val(),
 			searchFormTelephone : $('#searchFormTelephone').val(),
-			searchFormAgent : $('#searchFormAgent').val()
+			searchFormAgent : $('#searchFormAgent').combobox('getValue')
 	};
 	//渲染列表
 	$('#stationDataGrid').datagrid({

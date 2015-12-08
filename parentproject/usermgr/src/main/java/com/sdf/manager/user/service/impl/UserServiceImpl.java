@@ -244,7 +244,23 @@ public class UserServiceImpl implements UserService {
 		}
 		return null;
 	}
-
+	/* (非 Javadoc) 
+	 * <p>Title: findRolesByUserId</p> 
+	 * <p>Description: </p> 
+	 * @param userId
+	 * @return 
+	 * @see com.sdf.manager.user.service.UserService#findRolesByUserId(java.lang.String) 
+	 */
+	public List<Role> findRolesByUserId(String userId){
+		User user = null;
+		try {
+			user = this.getUserById(userId);
+		} catch (BizException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return user.getRoles();
+	}
 	/* (非 Javadoc) 
 	 * <p>Title: getUserList</p> 
 	 * <p>Description: </p> 

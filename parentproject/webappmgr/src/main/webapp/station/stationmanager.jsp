@@ -1,5 +1,4 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
   	<head>
@@ -10,12 +9,17 @@
     <script type="text/javascript" src="<%=request.getContextPath() %>/station/js/stationManager.js"></script>  
     <script type="text/javascript" src="<%=request.getContextPath() %>/station/js/setOrder.js"></script>  
     <script type="text/javascript">
-	    var toolbar = [{
+    var initParam = {
+    		agentId : '<%=request.getAttribute("userId")%>',
+    		flag : '<%=request.getAttribute("flag")%>'
+    };
+    var toolbar = [{
 	  	    text:'添加',
 	  	    iconCls:'icon-add',
 	  	    handler:function(){
 	  	    	 //初始化上级权限下拉框值
 	  	    	initProvince('add','addFormProvince','');//默认选中全部，则全部下是没有市数据的
+	  	    	initAddFormAgent(initParam);
 	  	    	$('.panel-title.panel-with-icon').html('添加站点');
 	  	    	$('#addOrUpdateStationForm').form('clear');
 	  	    	$("#addOrUpdateStation").dialog('open');
@@ -164,6 +168,10 @@
             ">
 		<form id="addOrUpdateStationForm" method="post" >
 	        <input type="hidden" name="id" />
+	        <div class="ftitle">
+	            <label for="addFormAgent">站点编码:</label>
+    			<input id="addFormAgent" name="addFormAgent" class="easyui-combobox textbox"  />
+    		</div>
 	        <div class="ftitle">
 	            <label for="addFormStationCode">站点编码:</label>
 	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 

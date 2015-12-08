@@ -33,6 +33,8 @@ import com.sdf.manager.station.application.dto.StationDto;
 import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.service.StationService;
+import com.sdf.manager.user.entity.Role;
+import com.sdf.manager.user.service.UserService;
 
 
 /** 
@@ -46,18 +48,30 @@ import com.sdf.manager.station.service.StationService;
 @RequestMapping("/station")
 public class StationController {
 	
-	@Autowired
-	private StationService stationService;
+		@Autowired
+		private UserService userService;
 	
-	 @Autowired
-	 private ProvinceService provinceService;
+		@Autowired
+		private StationService stationService;
 	
-	 @Autowired
-	 private CityService cityService;
+		@Autowired
+		private ProvinceService provinceService;
+	
+		@Autowired
+		private CityService cityService;
 	 
-	 	@SuppressWarnings("finally")
 	 	@RequestMapping("/stationmanager.action")
-		public String showChartForV2Vertical(HttpServletRequest request,ModelMap model,HttpSession httpSession) {
+		public String initStationManager(HttpServletRequest request,ModelMap model,HttpSession httpSession) {
+	 		boolean flag = false;
+	 		String userId = LoginUtils.getAuthenticatedUserId(httpSession);
+	 		List<Role> roles = userService.findRolesByUserId(userId);
+	 		for(Role role : roles){
+	 			if(Constants.ROLE_SCDL_CODE.equals(role.getCode())){
+	 				flag = true;
+	 			}
+	 		}
+	 		request.setAttribute("flag", flag);
+	 		request.setAttribute("userId", userId);
 	 		return "station/stationmanager";
 		}
 	 
@@ -147,8 +161,14 @@ public class StationController {
 		
 		if(null != searchFormTelephone && !"".equals(searchFormTelephone))
 		{
-			params.add("%"+searchFormTelephone+"%");//根据产品描述模糊查询产品数据
+			params.add(searchFormTelephone);//根据产品描述模糊查询产品数据
 			buffer.append(" and ownerTelephone = ?").append(params.size());
+		}
+		
+		if(null != searchFormAgent && !"".equals(searchFormAgent))
+		{
+			params.add(searchFormAgent);//根据产品描述模糊查询产品数据
+			buffer.append(" and agentId = ?").append(params.size());
 		}
 		QueryResult<Station> stationList = stationService.getStationList(Station.class, buffer.toString(), params.toArray(),
 				orderBy, pageable);
@@ -167,6 +187,7 @@ public class StationController {
 		StationFormDto stationFormDto = new StationFormDto();
 		Station station = stationService.getSationById(id);
 		stationFormDto.setId(station.getId());
+		stationFormDto.setAddFormAgent(station.getAgentId());
 		stationFormDto.setAddFormStationCode(station.getCode());
 		stationFormDto.setAddFormName(station.getOwner());
 		stationFormDto.setAddFormStationNumber(station.getStationNumber());
