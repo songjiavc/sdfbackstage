@@ -46,11 +46,12 @@
 	  		.ftitle label{
 	  			float : left;
 	  			margin-left: 30px;
+	  			width:75px;
 	  		}
 	  		.ftitle .commonInput{
 	  			float : left;
 	  			width: 200px;
-	  			margin-left: 30px;
+	  			
 	  			border-radius : 5px;
 	  		}
 	  		
@@ -136,7 +137,7 @@
   
   
     <!-- 添加产品弹框 -->
-  <div id="addProduct" class="easyui-dialog" title="添加产品" style="width:600px;height:450px;padding:10px;top:40px;"
+  <div id="addProduct" class="easyui-dialog" title="添加产品" style="width:700px;height:450px;padding:10px;top:40px;"
             data-options="
                 iconCls: 'icon-save',
                 buttons: [{
@@ -157,7 +158,7 @@
 	        <div class="ftitle">
 	            <label for="codeA">产品编码:</label>
 	            <input type="hidden" name="id" id="idA"/>
-	             <div style="float:left;margin-left: 30px;">
+	             <div style="float:left;">
 		            <input name="code" id="codehidden" type="hidden" >
 		            <input class="easyui-textbox" readonly="readonly" type="text" id="codeA"  data-options="required:true"
 		              style="width:200px" ></input>
@@ -170,11 +171,14 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="lotteryTypeA">产品彩种分类:</label>
-	            <select class="easyui-combobox " id="lotteryTypeA" name="lotteryType"  
-		          	  data-options="editable:false" style="width:150px;" >
+	             <div style="float : left;">
+	             	 <select class="easyui-combobox " id="lotteryTypeA" name="lotteryType"  
+		          	  data-options="editable:false" style="width:200px;" >
 		          	  <option value="1" checked>体彩</option>
 		          	  <option value="2" >福彩</option>
-				</select>
+					</select>
+	             </div>
+	           
 	        </div>
 	        <div class="ftitle">
 	            <label for="priceA">参考价格:</label>
@@ -183,7 +187,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="subject">产品地域:</label>
-	            <div style="float:left;margin-left:30px;">
+	            <div style="float:left;">
 	           		<!-- <label for="privinceA">省:</label> -->
 		            <select class="easyui-combobox " id="privinceA" name="privince"  
 		          	  data-options="editable:false" style="width:150px;" >
@@ -196,19 +200,19 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="cpdlA">大类:</label>
-	            <div style="float:left;margin-left:30px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpdlA" name="cpdl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
 	            </div>
 	             <label for="cpzlA">中类:</label>
-	            <div style="float:left;margin-left:20px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpzlA" name="cpzl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
 	            </div>
 	            <label for="cpxlA">小类:</label>
-	            <div style="float:left;margin-left:20px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpxlA" name="cpxl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
@@ -218,12 +222,12 @@
 	         	 <label for="productDespritionA">产品描述:</label>
 	         	 <!-- ※textarea两个标签间有空格时焦点会不落在首字符上※ -->
 	         	 <textarea id="productDespritionA" name="productDesprition" class="easyui-validatebox" 
-	         	 validType="length[0,100]" style="resize:none;width:400px;height:100px;margin-left:30px;border-radius:5px;"></textarea>
+	         	 validType="length[0,100]" style="resize:none;width:400px;height:100px;border-radius:5px;"></textarea>
 	         </div>
 	      </form>
     </div>
      <!-- 修改产品弹框 -->
-     <div id="updateProduct" class="easyui-dialog" title="修改产品信息" style="width:600px;height:450px;padding:10px;top:40px;"
+     <div id="updateProduct" class="easyui-dialog" title="修改产品信息" style="width:700px;height:450px;padding:10px;top:40px;"
             data-options="
                 iconCls: 'icon-save',
                 buttons: [{
@@ -254,11 +258,14 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="lotteryTypeU">产品彩种分类:</label>
-	            <select class="easyui-combobox " id="lotteryTypeU" name="lotteryType"  
+	            <div style="float : left;">
+	            	<select class="easyui-combobox " id="lotteryTypeU" name="lotteryType"  
 		          	  data-options="editable:false" style="width:150px;" >
 		          	  <option value="1" checked>体彩</option>
 		          	  <option value="2" >福彩</option>
-				</select>
+					</select>
+	            </div>
+	            
 	        </div>
 	       <div class="ftitle">
 	            <label for="priceU">参考价格:</label>
@@ -267,7 +274,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="subject">产品地域:</label>
-	            <div style="float:left;margin-left:30px;">
+	            <div style="float:left;">
 	           		<!-- <label for="privinceA">省:</label> -->
 		            <select class="easyui-combobox " id="privinceU" name="privince"  
 		          	  data-options="editable:false" style="width:150px;" >
@@ -280,19 +287,19 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="cpdlU">大类:</label>
-	            <div style="float:left;margin-left:30px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpdlU" name="cpdl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
 	            </div>
 	             <label for="cpzlU">中类:</label>
-	            <div style="float:left;margin-left:20px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpzlU" name="cpzl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
 	            </div>
 	            <label for="cpxlU">小类:</label>
-	            <div style="float:left;margin-left:20px;">
+	            <div style="float:left;">
 		            <select class="easyui-combobox " id="cpxlU" name="cpxl"  
 		          	  data-options="editable:false" style="width:100px;" >
 					</select>
@@ -301,7 +308,7 @@
 	         <div class="ftitle">
 	         	 <label for="productDespritionU">产品描述:</label>
 	         	 <textarea id="productDespritionU" name="productDesprition" class="easyui-validatebox" 
-	         	 validType="length[0,100]" style="resize:none;width:400px;height:100px;margin-left:30px;border-radius:5px;"></textarea>
+	         	 validType="length[0,100]" style="resize:none;width:400px;height:100px;border-radius:5px;"></textarea>
 	         </div>
 	      </form>
     </div>
