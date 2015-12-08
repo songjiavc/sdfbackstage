@@ -21,10 +21,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
+import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
-import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.bean.RoleBean;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
@@ -171,12 +172,20 @@ public class AccountController {
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 	    Map<String,Object> returnMap = new HashMap<String,Object>();
-		List<Role> roles = new ArrayList<Role>();
+		List<RoleBean> roleBeans = new ArrayList<RoleBean>();
+	    List<Role> roles = new ArrayList<Role>();
 		try {
 			User user = userService.getUserById(id);
 			roles = user.getRoles();
-			returnMap.put("rows", roles);
-			returnMap.put("total", roles.size());
+			if(roles != null && roles.size() > 0){
+				for(Role role : roles){
+					RoleBean roleBean = new RoleBean();
+					BeanUtil.copyBeanProperties(roleBean, role);
+					roleBeans.add(roleBean);
+				}
+			}
+			returnMap.put("rows", roleBeans);
+			returnMap.put("total", roleBeans.size());
 		}catch(BizException bizEx){
 			returnMap.put("success", false);
 			returnMap.put("message", bizEx.getMessage());

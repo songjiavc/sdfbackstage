@@ -9,36 +9,44 @@ package com.sdf.manager.user.bean;
   */
 public class RoleBean 
 {
-	private String ruleId;
+	private String id;
 	
-	private String ruleCode;
+	private String code;
 	
-	private String ruleName;
-
-	public String getRuleId() {
-		return ruleId;
-	}
-
-	public void setRuleId(String ruleId) {
-		this.ruleId = ruleId;
-	}
-
-	public String getRuleCode() {
-		return ruleCode;
-	}
-
-	public void setRuleCode(String ruleCode) {
-		this.ruleCode = ruleCode;
-	}
-
-	public String getRuleName() {
-		return ruleName;
-	}
-
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
-	}
+	private String name;
 	
-	
-	
+	private String parentRolename;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getParentRolename() {
+		return parentRolename;
+	}
+
+	public void setParentRolename(String parentRolename) {
+		this.parentRolename = parentRolename;
+	}
+
 }
