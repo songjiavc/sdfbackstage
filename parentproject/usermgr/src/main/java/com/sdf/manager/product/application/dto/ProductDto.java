@@ -50,9 +50,30 @@ public class ProductDto {
 	
 	private boolean isChecked;//是否为当前商品的对应产品
 	
+	private String durationOfUsername;//产品使用期名字
+	
+	private String durationOfuser;//产品使用期id
 	
 	
 	
+	
+	
+
+	public String getDurationOfuser() {
+		return durationOfuser;
+	}
+
+	public void setDurationOfuser(String durationOfuser) {
+		this.durationOfuser = durationOfuser;
+	}
+
+	public String getDurationOfUsername() {
+		return durationOfUsername;
+	}
+
+	public void setDurationOfUsername(String durationOfUsername) {
+		this.durationOfUsername = durationOfUsername;
+	}
 
 	public String getLotteryTypeName() {
 		return lotteryTypeName;

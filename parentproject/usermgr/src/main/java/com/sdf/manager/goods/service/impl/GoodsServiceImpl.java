@@ -210,6 +210,8 @@ public class GoodsServiceImpl implements GoodsService {
 					dto.setLotteryType(entity.getProduct().getLotteryType());
 					
 					dto.setCode(entity.getProduct().getCode());
+					
+					dto.setDurationOfUsername(entity.getProduct().getDurationOfusers().getName());
 				}
 				
 				dto.setOrderprobation("");
