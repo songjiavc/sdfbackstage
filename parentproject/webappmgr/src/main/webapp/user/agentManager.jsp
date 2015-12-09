@@ -9,7 +9,12 @@
 	<jsp:include page="../common/top.jsp" flush="true" /> 
     <script type="text/javascript" src="<%=request.getContextPath() %>/user/js/agentManager.js"></script>  
     <script type="text/javascript">
-	    var toolbar = [{
+	   	//后台传入前台初始化参数
+	  	var initParam = {
+    		userId : '<%=request.getAttribute("userId")%>',
+    		flag : '<%=request.getAttribute("flag")%>'
+    	};
+    	var toolbar = [{
 	  	    text:'添加',
 	  	    iconCls:'icon-add',
 	  	    handler:function(){
@@ -18,7 +23,7 @@
 	  	    	$('.panel-title.panel-with-icon').html('添加代理');
 	  	    	$('#addOrUpdateAgentForm').form('clear');
 	  	    	$("#addOrUpdateAgent").dialog('open');
-	  	    	initAddFormParentId();
+	  	    	initAddFormParentId(initParam);
 	  	    }
 	  	},{
 	  	    text:'删除',
@@ -74,7 +79,10 @@
 								<select class="easyui-combobox " id="searchFormCity" name="searchFormCity"  style="width:150px;" >
 						</select>
 		    		</td>
-		    		
+	        		<td colspan="1" class="td_font">所属专员：</td>
+		    		<td colspan="1">
+		    			<input id="searchFormParentId" name="searchFormParentId" class="easyui-combobox textbox"  />
+		    		</td>
 		    		<td class="td_font" colspan="2">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'"  type="button" value="查询" onclick="initDatagrid()">
 		    			<input style="cursor:pointer;background-color: #e0ecff;border-radius:5px;float:left;margin-left:5px;width:80;" class="easyui-linkbutton" data-options="iconCls:'icon-search'" type="button" value="重置" onclick="reset()">

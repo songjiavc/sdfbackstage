@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ import com.sdf.manager.product.service.RegionService;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.dto.AddAgentForm;
 import com.sdf.manager.user.dto.AgentListDto;
+import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.service.UserService;
 
@@ -62,7 +64,29 @@ public class AgentController {
 	@Autowired
 	private RegionService regionService;
 	
-	
+	/** 
+	  * @Description: 代理管理菜单入口
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月9日 上午9:36:15 
+	  * @param request
+	  * @param model
+	  * @param httpSession
+	  * @return 
+	  */
+	@RequestMapping("/agentmanager.action")
+	public String initAgentManager(HttpServletRequest request,ModelMap model,HttpSession httpSession) {
+ 		boolean flag = false;
+ 		String userId = LoginUtils.getAuthenticatedUserId(httpSession);
+ 		List<Role> roles = userService.findRolesByUserId(userId);
+ 		for(Role role : roles){
+ 			if(Constants.ROLE_SCZY_CODE.equals(role.getCode())){
+ 				flag = true;
+ 			}
+ 		}
+ 		request.setAttribute("flag", flag);
+ 		request.setAttribute("userId", userId);
+ 		return "user/agentManager";
+	}
     /**
 	 * demo登录提交后跳转方法
 	 * @param userName
@@ -105,6 +129,7 @@ public class AgentController {
 			@RequestParam(value="searchFormTelephone",required=false) String searchFormTelephone,
 			@RequestParam(value="searchFormProvince",required=false) String searchFormProvince,
 			@RequestParam(value="searchFormCity",required=false) String searchFormCity,
+			@RequestParam(value="searchFormParentId",required=false) String searchFormParentId,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		Map<String,Object> returnData = new HashMap<String, Object>();
@@ -143,6 +168,11 @@ public class AgentController {
 		{
 			params.add(searchFormTelephone);//根据产品描述模糊查询产品数据
 			buffer.append(" and a.TELEPHONE = ?").append(params.size());
+		}
+		if(null != searchFormParentId && !"".equals(searchFormParentId))
+		{
+			params.add(searchFormParentId);//根据产品描述模糊查询产品数据
+			buffer.append(" and a.PARENT_UID = ?").append(params.size());
 		}
 		QueryResult<User> stationList = userService.getAgentList(User.class, buffer.toString(), params.toArray(),
 				orderBy, pageable);
@@ -351,10 +381,27 @@ public class AgentController {
 	 	  * @throws Exception 
 	 	  */
 	 	@RequestMapping(value = "/getSczyList", method = RequestMethod.POST)
-		public @ResponseBody List<AccountBean> getSczyList(
+		public @ResponseBody List<DictBean> getSczyList(
+				@RequestParam(value="isHasall",required=false) boolean isHasall,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
+	 			List<DictBean> dictList = new ArrayList<DictBean>();	
 	 			List<AccountBean> sczyList = userService.findAccountsByRoleCode(Constants.ROLE_SCZY_CODE);
-	 			return sczyList;
+	 			if(sczyList != null && sczyList.size() > 0){
+		 			for(AccountBean accountBean : sczyList){
+		 				DictBean dictBean = new DictBean();
+		 				dictBean.setId(accountBean.getId());
+		 				dictBean.setName(accountBean.getName());
+		 				dictList.add(dictBean);
+		 			}
+		 		}
+		 		if(isHasall)
+				 	{
+		 				DictBean dictBean = new DictBean();
+		 				dictBean.setId("");
+		 				dictBean.setName("全部");
+		 				dictList.add(0,dictBean);
+				 	}
+		 			return dictList;
 		}
 }

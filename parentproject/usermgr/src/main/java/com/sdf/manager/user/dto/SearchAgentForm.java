@@ -15,16 +15,13 @@ public class SearchAgentForm
 	private String searchAgentNumber;
 	//省
 	private String searchFormProvince;
-	//市
-	private String city;
-	//区
-	private String region;
-	//详细地址
-	private String address;
 	//代理姓名
 	private String searchFormName;
 	//代理手机号
 	private String searchFormTelephone;
+	//所属专员
+	private String searchFormParentId;
+	
 	public String getSearchAgentNumber() {
 		return searchAgentNumber;
 	}
@@ -48,6 +45,12 @@ public class SearchAgentForm
 	}
 	public void setSearchFormTelephone(String searchFormTelephone) {
 		this.searchFormTelephone = searchFormTelephone;
+	}
+	public String getSearchFormParentId() {
+		return searchFormParentId;
+	}
+	public void setSearchFormParentId(String searchFormParentId) {
+		this.searchFormParentId = searchFormParentId;
 	}
 	
 	

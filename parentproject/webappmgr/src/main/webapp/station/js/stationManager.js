@@ -2,7 +2,6 @@
 $(document).ready(
 		function()
 		{
-			initDatagrid();
 			closeDialog();
 			initQueryProvince();//初始化模糊查询省数据]
 			initSearchFormAgent(initParam);
@@ -152,6 +151,7 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
 	            	 $("#searchFormAgent").combobox('setValue', initParam.agentId);
 	            	 $("#searchFormAgent").combobox('disable');
+	            	 initDatagrid();
 	        	 }
 	         }
 		});
@@ -270,6 +270,7 @@ function initDatagrid()
 		        success: function (data) {
 					$('#addOrUpdateStationForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
+					initAddFormAgent(initParam);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);

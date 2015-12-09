@@ -1,9 +1,9 @@
 $(document).ready(
 		function()
 		{
-			initDatagrid();
-			closeDialog();
+			initSearchFormParentId(initParam);
 			initQueryProvince();//初始化模糊查询省数据
+			closeDialog();
 		}
 );
 
@@ -36,6 +36,37 @@ function initQueryProvince()
         }
 	}); 
 }
+/**
+ * add by songj@sdfcp.com
+ * date 2015-11-27 
+ * desc 初始化上级代理列表
+ */
+function initSearchFormParentId(initParam){
+	$('#searchFormParentId').combobox('clear');//清空combobox值
+	$('#searchFormParentId').combobox({
+		queryParams:{
+			isHasall : true
+		},//暂时没有任何需要查询的条件
+		url:contextPath+'/agent/getSczyList.action',
+		valueField : 'id',
+		textField : 'name',
+		onLoadSuccess: function (data) { //数据加载完毕事件
+             if (initParam.flag == 'false') 
+             {
+            	 $("#searchFormParentId").combobox('select',data[0].id);
+             }
+             else
+        	 {
+            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
+            	 $("#searchFormParentId").combobox('setValue', initParam.userId);
+            	 $("#searchFormParentId").combobox('disable');
+        	 }
+             initDatagrid();
+         }
+	});
+}
+
+
 
 	/**
 	 * add by songj@sdfcp.com
@@ -52,15 +83,16 @@ function initQueryProvince()
 			valueField : 'id',
 			textField : 'name',
 			onLoadSuccess: function (data) { //数据加载完毕事件
-                 if (parentId == undefined) 
-                 {
-                	 $("#addFormParentId").combobox('select',data[0].id);
-                 }
-                 else
-            	 {
-                	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
-                	 $("#addFormParentId").combobox('setValue', parentId);
-            	 }
+				if (initParam.flag == 'false')
+	             {
+	            	 $("#addFormParentId").combobox('select',data[0].id);
+	             }
+	             else
+	        	 {
+	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
+	            	 $("#addFormParentId").combobox('setValue', initParam.userId);
+	            	 $("#addFormParentId").combobox('disable');
+	        	 }
              }
 		});
 	}
@@ -174,7 +206,8 @@ function initDatagrid()
 			searchFormProvince : $('#searchFormProvince').combobox('getValue'),
 			searchFormCity : $('#searchFormCity').combobox('getValue'),
 			searchFormName : $('#searchFormName').val(),
-			searchFormTelephone : $('#searchFormTelephone').val()
+			searchFormTelephone : $('#searchFormTelephone').val(),
+			searchFormParentId : $('#searchFormParentId').combobox('getValue')
 	};
 	//渲染列表
 	$('#agentDataGrid').datagrid({
@@ -298,6 +331,7 @@ function initDatagrid()
 		    	//在修改权限后刷新权限数据列表
 		    	initDatagrid();
 		    	$('#updateagentForm').form('clear');
+		    	initAddFormParentId(initParam);
 		    }
 		});
 	}

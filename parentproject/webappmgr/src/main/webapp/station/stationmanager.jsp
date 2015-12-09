@@ -170,7 +170,7 @@
 		<form id="addOrUpdateStationForm" method="post" >
 	        <input type="hidden" name="id" />
 	        <div class="ftitle">
-	            <label for="addFormAgent">站点编码:</label>
+	            <label for="addFormAgent">所属代理:</label>
     			<input id="addFormAgent" name="addFormAgent" class="easyui-combobox textbox"  />
     		</div>
 	        <div class="ftitle">

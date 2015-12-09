@@ -60,6 +60,15 @@ public class StationController {
 		@Autowired
 		private CityService cityService;
 	 
+	 	/** 
+	 	  * @Description: 站点管理菜单入口
+	 	  * @author songj@sdfcp.com
+	 	  * @date 2015年12月9日 上午9:35:52 
+	 	  * @param request
+	 	  * @param model
+	 	  * @param httpSession
+	 	  * @return 
+	 	  */
 	 	@RequestMapping("/stationmanager.action")
 		public String initStationManager(HttpServletRequest request,ModelMap model,HttpSession httpSession) {
 	 		boolean flag = false;
@@ -119,7 +128,6 @@ public class StationController {
 			@RequestParam(value="searchFormProvince",required=false) String searchFormProvince,//模糊查询所选省
 			@RequestParam(value="searchFormCity",required=false) String searchFormCity,//模糊查询所选市
 			@RequestParam(value="searchFormAgent",required=false) String searchFormAgent,//模糊查询所选市
-			
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		Map<String,Object> returnData = new HashMap<String, Object>();
