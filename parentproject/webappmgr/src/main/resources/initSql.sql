@@ -15,9 +15,12 @@ values ('4028813a506515ad01506519290a0001','admin','2015-10-14 14:45:59','admin'
 insert  into `T_SDF_AUTHORITY`(`ID`,`CREATER`,`CREATER_TIME`,`MODIFY`,`MODIFY_TIME`,`AUTH_IMG`,`AUTH_NAME`,`CODE`,`PARANT_AUTH_ID`,`STATUS`,`URL`,`IS_DELETED`,`ISSYSTEM`) 
 values ('4028813a506515ad01506519e1720002','admin','2015-10-14 14:46:46','admin','2015-10-14 15:21:19','icon-nav','权限管理','12','4028813a505fe87201505ff93aa80002','1','/user/authority.jsp','1','1');
 insert  into `T_SDF_AUTHORITY`(`ID`,`CREATER`,`CREATER_TIME`,`MODIFY`,`MODIFY_TIME`,`AUTH_IMG`,`AUTH_NAME`,`CODE`,`PARANT_AUTH_ID`,`STATUS`,`URL`,`IS_DELETED`,`ISSYSTEM`) 
-values ('4028813a506536910150653be3ed0001','admin','2015-10-14 15:23:55','admin','2015-10-14 15:23:55','icon-nav','站点管理','auth5','4028813a505fe87201505ff93aa80002','1','/station/stationmanager.jsp','1','1');
+values ('ff808181513737320151373886c80000', 'agentMgr', '代理管理', '4028813a505fe87201505ff93aa80002', '/agent/agentmanager.action', 'icon-nav', '1', 'admin', '2015-11-24 10:00:30', 'admin', '2015-11-24 10:02:12', '1', '0');
+insert  into `T_SDF_AUTHORITY`(`ID`,`CREATER`,`CREATER_TIME`,`MODIFY`,`MODIFY_TIME`,`AUTH_IMG`,`AUTH_NAME`,`CODE`,`PARANT_AUTH_ID`,`STATUS`,`URL`,`IS_DELETED`,`ISSYSTEM`) 
+values ('4028813a506536910150653be3ed0001', 'auth5', '站点管理', '4028813a505fe87201505ff93aa80002', '/station/stationmanager.action', 'icon-nav', '1', 'admin', '2015-10-14 15:23:55', 'admin', '2015-10-14 15:23:55', '1', '1');
 insert  into `T_SDF_AUTHORITY`(`ID`,`CREATER`,`CREATER_TIME`,`MODIFY`,`MODIFY_TIME`,`AUTH_IMG`,`AUTH_NAME`,`CODE`,`PARANT_AUTH_ID`,`STATUS`,`URL`,`IS_DELETED`,`ISSYSTEM`) 
 values ('4028813a506a4de701506a79c6990000','admin','2015-10-15 15:49:37','admin','2015-10-15 15:49:37','11','角色管理','tole55','4028813a505fe87201505ff93aa80002','1','/user/roleManage.jsp','1','1');
+
 
 
 /*
@@ -29,6 +32,14 @@ insert  into `T_SDF_ROLES`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`
 values ('1','admin','2015-10-13 14:53:00','1','admin','2015-10-20 10:20:38','2','财务管理员','0','超级管理员','1');
 insert  into `T_SDF_ROLES`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`MODIFY_TIME`,`CODE`,`NAME`,`PARENT_ROLE`,`PARENT_ROLENAME`,`ISSYSTEM`) 
 values ('2','admin','2015-10-13 14:53:00','1','admin','2015-10-20 10:20:38','3','代理','0','超级管理员','1');
+
+insert  into `T_SDF_ROLES`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`MODIFY_TIME`,`CODE`,`NAME`,`PARENT_ROLE`,`PARENT_ROLENAME`,`ISSYSTEM`) 
+values ('ff808181514698fb015146a02eaf0000', 'admin', '2015-11-27 09:48:01', '1', 'admin', '2015-11-27 09:48:01', 'SC_ZJ', '市场总监', '0', '超级管理员', '0');
+insert  into `T_SDF_ROLES`(`ID`,`CREATER`,`CREATER_TIME`,`IS_DELETED`,`MODIFY`,`MODIFY_TIME`,`CODE`,`NAME`,`PARENT_ROLE`,`PARENT_ROLENAME`,`ISSYSTEM`) 
+values ('ff808181514698fb015146a085460001', 'admin', '2015-11-27 09:48:23', '1', 'admin', '2015-12-03 15:51:45', 'SC_ZY', '市场专员', 'ff808181514698fb015146a02eaf0000', '市场总监', '0');
+
+
+
 
 /*
 	初始化用户表数据
