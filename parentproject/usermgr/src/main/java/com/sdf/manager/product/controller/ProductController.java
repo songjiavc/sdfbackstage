@@ -392,9 +392,10 @@ public class ProductController extends GlobalExceptionHandler
 		{
 		 	
 		 	List<City> cities = cityService.findCitiesOfProvice(pcode);
-		 	if(isHasall){
-			 	City cityall = new City();
-			 	
+		 	if(!isHasall){
+			 	return cities;
+		 	}else{
+		 		City cityall = new City();
 			 	cityall.setCcode(Constants.CITY_ALL);
 			 	cityall.setCname(Constants.CITY_ALL_NAME);
 			 	cities.add(cityall);

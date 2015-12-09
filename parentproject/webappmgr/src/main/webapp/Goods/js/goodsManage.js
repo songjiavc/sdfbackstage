@@ -166,7 +166,6 @@ function initProvince(addOrUpdate,provinceId,pcode)
 function initCities(addOrUpdate,cityId,oldccode,pcode)
 {
 	$('#'+cityId).combobox('clear');//清空combobox值
-	
 	var data = new Object();
 	
 	data.pcode = pcode;
