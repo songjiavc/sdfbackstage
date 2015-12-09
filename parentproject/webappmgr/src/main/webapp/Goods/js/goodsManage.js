@@ -169,7 +169,7 @@ function initCities(addOrUpdate,cityId,oldccode,pcode)
 	var data = new Object();
 	
 	data.pcode = pcode;
-	
+	data.isHasall=true;
 	$('#'+cityId).combobox({
 			queryParams:data,
 			url:contextPath+'/product/getCityList.action',
