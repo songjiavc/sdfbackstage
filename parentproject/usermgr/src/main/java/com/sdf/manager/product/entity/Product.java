@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -71,9 +73,24 @@ public class Product extends BaseEntiry implements Serializable{
 	private List<RelaSdfGoodProduct> goodAndproduct;
 	
 	
+	@ManyToOne  
+    @JoinColumn(name = "DURATION_OF_USER", referencedColumnName = "id")
+    private CodeDuration durationOfusers; //产品使用期限，和CodeDuration实体的id进行关联，CodeDuration中的numOfDays为使用期
 	
 	
 	
+	
+	
+	
+	
+
+	public CodeDuration getDurationOfusers() {
+		return durationOfusers;
+	}
+
+	public void setDurationOfusers(CodeDuration durationOfusers) {
+		this.durationOfusers = durationOfusers;
+	}
 
 	public String getLotteryType() {
 		return lotteryType;

@@ -39,6 +39,7 @@ import com.sdf.manager.order.controller.OrderController;
 import com.sdf.manager.order.entity.Orders;
 import com.sdf.manager.product.application.dto.ProductDto;
 import com.sdf.manager.product.entity.City;
+import com.sdf.manager.product.entity.CodeDuration;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.entity.ProductDL;
 import com.sdf.manager.product.entity.ProductXL;
@@ -225,6 +226,7 @@ public class ProductController extends GlobalExceptionHandler
 				@RequestParam(value="cpdl",required=false) String cpdl,
 				@RequestParam(value="cpzl",required=false) String cpzl,
 				@RequestParam(value="cpxl",required=false) String cpxl,
+				@RequestParam(value="durationOfuser",required=false) String durationOfuser,//产品使用期
 				@RequestParam(value="productDesprition",required=false) String productDesprition,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
@@ -247,6 +249,9 @@ public class ProductController extends GlobalExceptionHandler
 			   product.setProductDesprition(productDesprition);
 			   product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   product.setModifyTime(new Timestamp(System.currentTimeMillis()));
+			   //获取使用期
+			   CodeDuration duration = productService.getCodeDurationById(durationOfuser);
+			   product.setDurationOfusers(duration);
 			   productService.update(product);
 			   resultBean.setMessage("修改产品信息成功!");
 			   resultBean.setStatus("success");
@@ -273,6 +278,10 @@ public class ProductController extends GlobalExceptionHandler
 			   product.setCreaterTime(new Timestamp(System.currentTimeMillis()));
 			   product.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 			   product.setModifyTime(new Timestamp(System.currentTimeMillis()));
+			   //获取使用期
+			   CodeDuration duration = productService.getCodeDurationById(durationOfuser);
+			   product.setDurationOfusers(duration);
+			   
 			   product.setIsDeleted("1");//当前数据为有效数据的标记为
 			   productService.save(product);
 			   
@@ -390,6 +399,24 @@ public class ProductController extends GlobalExceptionHandler
 		 	cities.add(cityall);
 		 	
 		 	return cities;
+		}
+	 
+	 /**
+	  * 
+	 * @Description: 获取使用期数据
+	 * @author bann@sdfcp.com
+	 * @date 2015年12月8日 下午4:43:25
+	  */
+	 @RequestMapping(value = "/getCodedurationlist", method = RequestMethod.POST)
+		public @ResponseBody List<CodeDuration> getCodedurationlist(
+				@RequestParam(value="id",required=false) String id,
+				ModelMap model,HttpSession httpSession) throws Exception
+		{
+		 	List<CodeDuration> list = new ArrayList<CodeDuration>();
+		 	
+		 	list = productService.getCodeDurationAll();
+		 	
+		 	return list;
 		}
 	
 	 /** 

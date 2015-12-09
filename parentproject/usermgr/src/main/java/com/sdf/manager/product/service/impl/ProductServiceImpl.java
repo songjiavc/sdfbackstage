@@ -17,11 +17,13 @@ import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.goods.entity.RelaSdfGoodProduct;
 import com.sdf.manager.product.application.dto.ProductDto;
 import com.sdf.manager.product.entity.City;
+import com.sdf.manager.product.entity.CodeDuration;
 import com.sdf.manager.product.entity.Product;
 import com.sdf.manager.product.entity.ProductDL;
 import com.sdf.manager.product.entity.ProductXL;
 import com.sdf.manager.product.entity.ProductZL;
 import com.sdf.manager.product.entity.Province;
+import com.sdf.manager.product.repository.CodeDurationRepository;
 import com.sdf.manager.product.repository.ProductRepository;
 import com.sdf.manager.product.service.CityService;
 import com.sdf.manager.product.service.ProductLBService;
@@ -45,6 +47,9 @@ public class ProductServiceImpl implements ProductService {
 	 
 	 @Autowired
 	 private ProductLBService productLBService;
+	 
+	 @Autowired
+	 private CodeDurationRepository codeDurationRepository;
 	
 	/**
 	 * 
@@ -171,6 +176,12 @@ public class ProductServiceImpl implements ProductService {
 					
 				}
 				
+				if(null != entity.getDurationOfusers())
+				{
+					dto.setDurationOfUsername(entity.getDurationOfusers().getName());
+					dto.setDurationOfuser(entity.getDurationOfusers().getId().toString());
+				}
+				
 				
 				
 			} catch (Exception e) {
@@ -196,6 +207,28 @@ public class ProductServiceImpl implements ProductService {
 				dtos.add(dto);
 			}
 			return dtos;
+		}
+
+		/**
+		 * 获取所有的使用期表数据
+		 */
+		public List<CodeDuration> getCodeDurationAll() {
+			return codeDurationRepository.findAll();
+		}
+		
+		/**
+		 * 
+		* @Title: getCodeDurationById
+		* @Description: 根据id获取使用期数据
+		* @Author : banna
+		* @param @param id
+		* @param @return    设定文件
+		* @return CodeDuration    返回类型
+		* @throws
+		 */
+		public CodeDuration getCodeDurationById(String id)
+		{
+			return codeDurationRepository.getCodeDurationById(id);
 		}
 	 
 	

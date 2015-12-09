@@ -20,7 +20,7 @@ function initDatagrid(parentCode)
 		url:contextPath + '/menu/getAuthList.action',//'datagrid_data1.json',
 		method:'get',
 		border:false,
-//		fit:true,
+		fit:true,//datagrid自适应
 		fitColumns:true,
 //		pagination:true,
 		pageSize:10,

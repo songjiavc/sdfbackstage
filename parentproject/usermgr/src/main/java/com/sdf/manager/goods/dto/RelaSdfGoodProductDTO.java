@@ -25,12 +25,24 @@ public class RelaSdfGoodProductDTO {
 	
 	private String stationOfPro;
 	
+	private String durationOfUsername;//产品使用期名称
+	
+	
+	
 	
 	
 	
 
 	
 	
+	public String getDurationOfUsername() {
+		return durationOfUsername;
+	}
+
+	public void setDurationOfUsername(String durationOfUsername) {
+		this.durationOfUsername = durationOfUsername;
+	}
+
 	public String getStationOfPro() {
 		return stationOfPro;
 	}

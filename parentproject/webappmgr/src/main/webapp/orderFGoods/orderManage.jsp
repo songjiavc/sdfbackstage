@@ -66,9 +66,9 @@
 		
 	 
 </head>
-<body >
+<body  class="easyui-layout">
 	<!-- 模糊查询 -->
-	<div   region="north" style="height:80px;border:1px solid #95b8e7; margin-bottom: 10px;border-radius:5px;background-color:white;">
+	<div   data-options="region:'north'" style="height:90px;border:1px solid #95b8e7;background-color:white;">
 	    	<table style="border: none;height: 80px;">
 		    	<tr>
 		    		<td width="7%" class="td_font">订单名称：</td>
@@ -88,7 +88,7 @@
 	    	</table>	
 	</div>
 
-    <div id="main-layout" class="easyui-layout" data-options="border:false" >
+    <div id="main-layout" data-options="region:'center'" data-options="border:false" >
     	 <table id="datagrid" class="easyui-datagrid"  title="订单列表" >
 			</table>
  	</div>  
