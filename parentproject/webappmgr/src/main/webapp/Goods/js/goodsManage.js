@@ -109,7 +109,7 @@ function initQueryCities(proId)
 	$('#cityC').combobox('clear');//清空combobox值
 	
 	var data = new Object();
-	
+	data.isHasall = true;//包含"全部"
 	data.pcode = proId;
 	
 	$('#cityC').combobox({

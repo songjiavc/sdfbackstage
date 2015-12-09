@@ -31,6 +31,7 @@ function initQueryProvince()
 		});
 	$('#searchFormCity').combobox({
 		valueField:'ccode',
+		queryParams:param,
 		textField:'cname',
 		onLoadSuccess: function (data) { //数据加载完毕事件
 			$('#searchFormCity').combobox('select',data[data.length-1].ccode);
@@ -47,19 +48,17 @@ function initQueryProvince()
 function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 {
 	$('#addFormProvince').combobox('clear');//清空combobox值
-	
-	var data = new Object();
-	data.isHasall = false;//不包含"全部"
-	
 	$('#addFormProvince').combobox({
-			queryParams:data,
+			queryParams:{
+				isHasall : false
+			},
 			url:contextPath+'/product/getProvinceList.action',
 			valueField:'pcode',
 			textField:'pname',
-			 onLoadSuccess: function (data1) { //数据加载完毕事件
-                 if (data1.length > 0 && "add" == addOrUpdate) 
+			 onLoadSuccess: function (data) { //数据加载完毕事件
+                 if (data.length > 0 && "add" == addOrUpdate) 
                  {
-                	 $("#addFormProvince").combobox('select',data1[0].pcode);
+                	 $("#addFormProvince").combobox('select',data[0].pcode);
                  }
                  else
             	 {
@@ -68,19 +67,29 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
             	 }
              },
              onSelect: function(rec){
-            	 var url = contextPath+'/product/getCityList.action?pcode='+rec.pcode;
- 		        $('#addFormCity').combobox('reload', url);
+            	 if(rec.pcode!=pcode){
+            		 oldccode="";
+            		 oldacode="";
+            	 }
+            	 initAddFormCity(addOrUpdate,rec.pcode,oldccode,oldacode);
  		    }
 		});
+}
+
+function initAddFormCity(addOrUpdate,pcode,oldccode,oldacode){
 	//初始化城市combo
 	$('#addFormCity').combobox({
-		queryParams:data,
+		url : contextPath+'/product/getCityList.action',
+		queryParams:{
+			isHasall : false,    //不包含"全部",
+			pcode : pcode
+		},
 		valueField:'ccode',
 		textField:'cname',
 		 onLoadSuccess: function (data) { //数据加载完毕事件
              if (data.length > 0 && "add" == addOrUpdate) 
              {
-            	 $("#addFormCity").combobox('select',data[data.length-1].ccode);
+            	 $("#addFormCity").combobox('select',data[0].ccode);
              }
              else
         	 {
@@ -91,38 +100,45 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
             	 else
             		 {//当修改产品初始化市级数据时设置选中当前数据值
             		 	$("#addFormCity").combobox('select', oldccode);
-            		 	oldccode = "";
             		 }
         	 }
          },
          onSelect: function(rec){
-          	var url = contextPath+'/product/getRegionList.action?ccode='+rec.ccode;
-		        $('#addFormRegion').combobox('reload', url);
+        	 if(rec.ccode!=oldccode){
+        		 oldacode="";
+        	 }
+        	 initAddFormRegion(addOrUpdate,rec.ccode,oldacode);
 		    }
 	}); 
+}
+
+function initAddFormRegion(addOrUpdate,ccode,oldacode){
+	
 	//初始化乡镇区combo
 	$('#addFormRegion').combobox({
-		queryParams:data,
+		url :  contextPath+'/product/getRegionList.action',
+		queryParams:{
+			isHasall : false,    //不包含"全部",
+			ccode : ccode
+		},
 		valueField:'acode',
 		textField:'aname',
 		 onLoadSuccess: function (data) { //数据加载完毕事件
              if (data.length > 0 && "add" == addOrUpdate) 
              {
-            	 $("#addFormRegion").combobox('select',data[data.length-1].acode);
+            	 $("#addFormRegion").combobox('select',data[0].acode);
              }
              else
         	 {
             	 if(data.length > 0 &&"update" == addOrUpdate&&"" == oldacode)
             		 {
-            		 	$("#addFormRegion").combobox('select',data[data.length-1].acode);
+            		 	$("#addFormRegion").combobox('select',data[0].acode);
             		 }
             	 else
             		 {
             		 	$("#addFormRegion").combobox('select', oldacode);
-            		 	oldacode = "";
             		 }
         	 }
-				
          }
 	}); 
 }
@@ -151,8 +167,8 @@ function initProvince(addOrUpdate,pcode,oldccode,oldacode)
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
 	            	 $("#searchFormAgent").combobox('setValue', initParam.agentId);
 	            	 $("#searchFormAgent").combobox('disable');
-	            	 initDatagrid();
 	        	 }
+				 initDatagrid();
 	         }
 		});
 	}
@@ -270,6 +286,7 @@ function initDatagrid()
 		        success: function (data) {
 					$('#addOrUpdateStationForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
+					$('#addFormStationCode').attr("disabled", true);
 					initAddFormAgent(initParam);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {

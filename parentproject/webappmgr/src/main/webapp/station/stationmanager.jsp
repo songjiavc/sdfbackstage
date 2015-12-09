@@ -23,6 +23,7 @@
 	  	    	$('.panel-title.panel-with-icon').html('添加站点');
 	  	    	$('#addOrUpdateStationForm').form('clear');
 	  	    	$("#addOrUpdateStation").dialog('open');
+	  	    	$("#addFormStationStyle").combobox('setValue','1');
 	  	    }
 	  	},{
 	  	    text:'删除',
@@ -110,7 +111,7 @@
 		    		<td colspan="2">
 		    			<select class="easyui-combobox" id="searchFormStyle" name="searchFormStyle" style="width:200px;">
 							<option value="">全部</option>
-							<option value="1">体彩</option>
+							<option value="1" >体彩</option>
 							<option value="2">福彩</option>
 						</select>
 		    		</td>
@@ -175,14 +176,14 @@
     		</div>
 	        <div class="ftitle">
 	            <label for="addFormStationCode">站点编码:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
+	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  id="addFormStationCode" data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
 	              missingMessage="站点编码不可以为空" invalidMessage="站点编码长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="addFormStationStyle">站点类型:</label>
 	            <select class="easyui-combobox" id="addFormStationStyle" name="addFormStationStyle" style="width:200px;">
-					<option value="1">体彩</option>
-					<option value="2">福彩</option>
+					<option value="1" selected >体彩</option>
+					<option value="2" >福彩</option>
 				</select>
 	        </div>
 	        <div class="ftitle">

@@ -117,8 +117,8 @@
 	        <input type="hidden" name="id" />
 	        <div class="ftitle">
 	            <label for="addFormAgentCode">登录帐号:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="addFormAgentCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
-	              missingMessage="站点编码不可以为空" invalidMessage="站点编码长度不可以超过20个字符"></input>
+	            <input class="easyui-validatebox textbox" type="text" id="addFormAgentCode" name="addFormAgentCode"  data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
+	              missingMessage="代理编码不可以为空" invalidMessage="代理编码长度不可以超过20个字符"></input>
 	        </div>
 	         <div class="ftitle">
 	            <label for="addFormProvince">所属专员:</label>
@@ -142,7 +142,7 @@
 	        </div>
 	        <div class="ftitle">
 	            <label for="addFormAddress" >详细地址:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="addFormAddress"  data-options="multiline:true,required:true,validType:['length[0,40]']"  missingMessage="站点详细地址"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="addFormAddress"  data-options="multiline:true,required:true,validType:['length[0,40]']"  missingMessage="代理详细地址"></input>
 	        </div>
 	        <div class="ftitle">
 	        	<label for="addFormTelephone" >代理手机号:</label>
