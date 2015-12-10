@@ -130,7 +130,7 @@ function updateRole(id,isSystem)
 	        	
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
-	            alert(errorThrown);
+	            window.parent.location.href = contextPath + "/error.jsp";
 	        }
 		});
 		
@@ -192,7 +192,7 @@ function authManage(id,parentRole)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -251,7 +251,7 @@ function getOriginAuthId()
         	authId = data.message;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -281,7 +281,7 @@ function getParentAuth(parentRole)
         	returnObject = data;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -328,7 +328,7 @@ function roleManage()
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -479,7 +479,7 @@ function deleteRole(id,isSystem)
 				                	$.messager.alert('提示', data.message);
 				                },
 				                error: function (XMLHttpRequest, textStatus, errorThrown) {
-				                    alert(errorThrown);
+				                    window.parent.location.href = contextPath + "/error.jsp";
 				                }
 				           });
 				        	
@@ -518,7 +518,7 @@ function checkHaveChildRole(id)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -549,7 +549,7 @@ function checkHaveChildAuth(id)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -582,7 +582,7 @@ function checkCodeOrName(id,code,name)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -648,7 +648,7 @@ function deleteRoleList()
 				                	
 				                },
 				                error: function (XMLHttpRequest, textStatus, errorThrown) {
-				                    alert(errorThrown);
+				                    window.parent.location.href = contextPath + "/error.jsp";
 				                }
 				           });
 				        	
@@ -748,7 +748,7 @@ function initZnodes(id)
         		zNodes = data;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	

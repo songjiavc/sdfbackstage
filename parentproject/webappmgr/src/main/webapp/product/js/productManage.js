@@ -353,7 +353,7 @@ function getProvinceAllId()
         	proAllId = data.message;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -483,7 +483,7 @@ function updateProduct(id)
 	        	
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
-	            alert(errorThrown);
+	            window.parent.location.href = contextPath + "/error.jsp";
 	        }
 		});
 		
@@ -585,7 +585,7 @@ function generateCode()
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 }
@@ -619,7 +619,7 @@ function deleteProduct(id)
 			                	$.messager.alert('提示', data.message);
 			                },
 			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    alert(errorThrown);
+			                    window.parent.location.href = contextPath + "/error.jsp";
 			                }
 			           });
 			        	
@@ -674,7 +674,7 @@ function deleteProductList()
 				                	
 				                },
 				                error: function (XMLHttpRequest, textStatus, errorThrown) {
-				                    alert(errorThrown);
+				                    window.parent.location.href = contextPath + "/error.jsp";
 				                }
 				           });
 				        	
@@ -763,7 +763,7 @@ function checkCode(id,code)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -792,7 +792,7 @@ function checkProName(id,name)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
