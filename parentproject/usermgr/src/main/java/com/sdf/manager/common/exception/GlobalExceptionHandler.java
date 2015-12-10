@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
   * @date 2015年12月3日 下午4:59:45 
   *
  */
+@Controller
 public abstract class GlobalExceptionHandler {
 
 	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+	public static final String DEFAULT_ERROR_VIEW = "error";
 
 	    @ExceptionHandler
 	    public String exception(HttpServletRequest request, Exception e) {  
@@ -61,15 +64,18 @@ public abstract class GlobalExceptionHandler {
 				 	 	        	}
 	        else
 	        {
-	        	returnMsg = e.getMessage();
+//	        	returnMsg = e.getMessage();
+	        	returnMsg = "错误信息";
 	        }
 	        
 	        //添加自己的异常处理逻辑，如日志记录　　　
 	        logger.error("全局异常捕捉 ，异常返回提示："+ returnMsg+"异常信息："+e.getMessage());
 	        request.setAttribute("exceptionMessage", returnMsg);  
 	        
-	        
-	        return "error";  
+//	        ModelAndView mav = new ModelAndView();
+//	        mav.addObject("error", returnMsg);
+//	        mav.setViewName("forward:error.jsp");
+	        return "error";
 	    }  
 	    
 }
