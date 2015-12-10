@@ -109,7 +109,7 @@ function initQueryCities(proId)
 	$('#cityC').combobox('clear');//清空combobox值
 	
 	var data = new Object();
-	
+	data.isHasall = true;//包含"全部"
 	data.pcode = proId;
 	
 	$('#cityC').combobox({
@@ -166,11 +166,10 @@ function initProvince(addOrUpdate,provinceId,pcode)
 function initCities(addOrUpdate,cityId,oldccode,pcode)
 {
 	$('#'+cityId).combobox('clear');//清空combobox值
-	
 	var data = new Object();
 	
 	data.pcode = pcode;
-	
+	data.isHasall=true;
 	$('#'+cityId).combobox({
 			queryParams:data,
 			url:contextPath+'/product/getCityList.action',

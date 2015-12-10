@@ -387,17 +387,19 @@ public class ProductController extends GlobalExceptionHandler
 	 @RequestMapping(value = "/getCityList", method = RequestMethod.POST)
 		public @ResponseBody List<City> getCityList(
 				@RequestParam(value="pcode",required=false) String pcode,
+				@RequestParam(value="isHasall",required=false) boolean isHasall,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 		 	
 		 	List<City> cities = cityService.findCitiesOfProvice(pcode);
-		 	
-		 	City cityall = new City();
-		 	
-		 	cityall.setCcode(Constants.CITY_ALL);
-		 	cityall.setCname(Constants.CITY_ALL_NAME);
-		 	cities.add(cityall);
-		 	
+		 	if(!isHasall){
+			 	return cities;
+		 	}else{
+		 		City cityall = new City();
+			 	cityall.setCcode(Constants.CITY_ALL);
+			 	cityall.setCname(Constants.CITY_ALL_NAME);
+			 	cities.add(cityall);
+		 	}
 		 	return cities;
 		}
 	 
@@ -431,14 +433,17 @@ public class ProductController extends GlobalExceptionHandler
 	  */
 	@RequestMapping(value = "/getRegionList", method = RequestMethod.POST)
 		public @ResponseBody List<Region> getRegionList(
+				@RequestParam(value="isHasall",required=false) boolean isHasall,
 				@RequestParam(value="ccode",required=false) String ccode,
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 		 	List<Region> regions = regionService.findRegionsOfCity(ccode);
-		 	Region regionAll = new Region();
-		 	regionAll.setAcode(Constants.REGION_ALL);
-		 	regionAll.setAname(Constants.REGION_ALL_NAME);
-		 	regions.add(regionAll);
+		 	if(isHasall){
+			 	Region regionAll = new Region();
+			 	regionAll.setAcode(Constants.REGION_ALL);
+			 	regionAll.setAname(Constants.REGION_ALL_NAME);
+			 	regions.add(regionAll);
+		 	}
 		 	return regions;
 		}
 	 

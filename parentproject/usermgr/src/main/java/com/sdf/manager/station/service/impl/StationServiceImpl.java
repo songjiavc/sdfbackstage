@@ -69,6 +69,7 @@ public class StationServiceImpl implements StationService {
 			station.setAgentId(stationFormDto.getAddFormAgent());
 			station.setOwner(stationFormDto.getAddFormName());
 			station.setStationNumber(stationFormDto.getAddFormStationNumber());
+			station.setStationType(stationFormDto.getAddFormStationStyle());
 			station.setAddress(stationFormDto.getAddFormAddress());
 			station.setProvinceCode(stationFormDto.getAddFormProvince());
 			station.setCityCode(stationFormDto.getAddFormCity());
