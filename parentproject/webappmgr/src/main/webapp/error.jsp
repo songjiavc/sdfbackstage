@@ -107,15 +107,15 @@
 															<br>
 															错误ID：【<span id="tim"></span>】.请检查您的操作是否正确。
 															<br>
-															异常信息： ${exceptionMessage}
+															<%-- 异常信息： ${exceptionMessage} --%>
 															<br>
-															请尝试以下操作：
+															请尝试以下操作重新登录系统：
 														</p>
 														<br>
 
 														
 														·单击
-														<a href="javascript:history.back(1)"><font color="#BA1C1C">后退</font>
+														<a href="<%=request.getContextPath() %>"><font color="#BA1C1C">跳转到登录页...</font>
 														</a><br><br><br>
 														<div>
 															

@@ -388,7 +388,7 @@ function getDetailStation(stationId)
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
 	});
 	
@@ -448,7 +448,7 @@ function getOtherStation()
         	returnData = data1;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	return returnData;
@@ -484,7 +484,7 @@ function generateCode()
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 }

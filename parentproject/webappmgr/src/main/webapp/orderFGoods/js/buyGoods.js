@@ -69,7 +69,7 @@ function getDetailStation(stationId)
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
 	});
 	
@@ -130,7 +130,7 @@ function generateCode()
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 }
@@ -500,7 +500,7 @@ function getOtherStation()
         	returnData = data1;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	return returnData;
@@ -752,7 +752,7 @@ function checkCode(id,code)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -781,7 +781,7 @@ function checkOrderName(id,name)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	

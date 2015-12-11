@@ -235,7 +235,7 @@ function getProvinceAllId()
         	proAllId = data.message;
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -761,7 +761,7 @@ function updateGoods(id)
 	        	
 	        },
 	        error: function (XMLHttpRequest, textStatus, errorThrown) {
-	            alert(errorThrown);
+	            window.parent.location.href = contextPath + "/error.jsp";
 	        }
 		});
 		
@@ -797,7 +797,7 @@ function checkProducts(id,productDatagrid)
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -897,7 +897,7 @@ function generateCode()
         	
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 }
@@ -952,7 +952,7 @@ function deleteGoods(id,status,connectOrders)
 		                	$.messager.alert('提示', data.message);
 		                },
 		                error: function (XMLHttpRequest, textStatus, errorThrown) {
-		                    alert(errorThrown);
+		                    window.parent.location.href = contextPath + "/error.jsp";
 		                }
 		           });
 		        	
@@ -1032,7 +1032,7 @@ function deleteGoodsList(operaType)
 				                	
 				                },
 				                error: function (XMLHttpRequest, textStatus, errorThrown) {
-				                    alert(errorThrown);
+				                    window.parent.location.href = contextPath + "/error.jsp";
 				                }
 				           });
 				        	
@@ -1121,7 +1121,7 @@ function checkCode(id,code)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
@@ -1150,7 +1150,7 @@ function checkProName(id,name)
         		}
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(errorThrown);
+            window.parent.location.href = contextPath + "/error.jsp";
         }
    });
 	
