@@ -5,6 +5,8 @@ $(document).ready(
 			closeDialog();
 		}
 );
+//是否刚开始加载页面
+var initFlag;
 
 /*
  * 	@desc	 
@@ -234,22 +236,21 @@ function initDatagrid()
 	
 	function initRoleGrid(){
 		$('#selectRoleGrid').datagrid({
-			singleSelect:false,
+			singleSelect:true,
 			rownumbers:false,
 			url:contextPath + '/role/getRoleList.action',//'datagrid_data1.json',
 			method:'get',
 			border:false,
-			singleSelect:false,
 			fitColumns:true,
 			pagination:true,
 			collapsible:false,
 //				pageSize:10,
 //				striped:true,
 			columns:[[
-					{field:'ck',checkbox:true},
 					{field:'id',hidden:true},
 			        {field:'name',width:120,title:'角色名称'},
 					{field:'code',title:'角色编码',width:120,align:'left'},
+					{field:'parentRole',hidden : true},
 					{field:'parentRolename',title:'角色上级角色',width:120,align:'left'}
 			    ]],  
 		    onLoadSuccess:function(data){  
@@ -263,7 +264,7 @@ function initDatagrid()
 					var selectRows = $('#selectRoleGrid').datagrid('getRows');
 					$.each(selectedRows,function(i,selectedRow){
 						$.each(selectRows,function(j,selectRow){
-							if(selectedRow.id == selectRow.id){
+							if(selectedRow.roleId == selectRow.id){
 								$('#selectRoleGrid').datagrid('checkRow',j);
 							}
 						});
@@ -271,36 +272,55 @@ function initDatagrid()
 				}
 		    },
 		    onCheck : function(rowIndex,rowData){
-		    	//var index = $('#selectedRoleGrid').datagrid('getRowIndex',rowData);//获取某行的行号
+		    	//由于是单选所以如果单击已经选中的角色将会自动删除
 		    	var index = getRowIndex(rowData);
 		    	if(index == -1){
 			    	$('#selectedRoleGrid').datagrid('insertRow',{
-			            row : rowData
-			            });//这url是想动态获取一条数据，怎么弄。？
+			            row :  {
+			            	roleId : rowData.id,
+			            	roleCode : rowData.code,
+			            	roleName : rowData.name,
+			            	parentRolename : rowData.parentRolename,
+			            	parentRole : rowData.parentRole
+			            }
+			         });
+			    	var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
+			    	$('#selectedRoleGrid').datagrid('beginEdit', selectedRows.length-1);
 		    	}
 		    },
 		    onUncheck : function(rowIndex,rowData){
-		    	var index = getRowIndex(rowData);
-		    	 $('#selectedRoleGrid').datagrid('deleteRow',index);
+		    	if(!initFlag){
+		    		var index = getRowIndex(rowData);
+			    	 $('#selectedRoleGrid').datagrid('deleteRow',index);
+		    	}
 		    },
 		    onCheckAll : function(rows){
 		    	$.each(rows,function(i,row){
 		    		var index = getRowIndex(row);
 		    		if(index == -1){
 			    		$('#selectedRoleGrid').datagrid('insertRow',{
-				            row: rowData
-				        });//这url是想动态获取一条数据，怎么弄。？
+				            row: {
+				            	roleId : rowData.id,
+				            	roleCode : rowData.code,
+				            	roleName : rowData.name,
+				            	parentRolename : rowData.parentRolename,
+				            	parentRole : rowData.parentRole
+				            }
+				        });
 		    		}
+		    		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
+			    	$('#selectedRoleGrid').datagrid('beginEdit', selectedRows.length-1);
                 });
-		    	
 		    },
 		    onUncheckAll : function(rows){
-		    	$.each(rows,function(i,row){
-		    		var index = getRowIndex(row);
-		    		if(index != -1){
-			    		$('#selectedRoleGrid').datagrid('deleteRow',index);
-		    		}
-		    });
+		    	if(!initFlag){
+			    	$.each(rows,function(i,row){
+			    		var index = getRowIndex(row);
+			    		if(index != -1){
+				    		$('#selectedRoleGrid').datagrid('deleteRow',index);
+			    		}
+			    	});
+		    	}
 		}
 	});
 	}
@@ -309,20 +329,19 @@ function initDatagrid()
 		var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
     	var index = -1;
     	$.each(selectedRows,function(i,selectedRow){
-    		if(row.id == selectedRow.id){
+    		if(row.id == selectedRow.roleId){
     			index = i;
     		}
     	});
     	return index;
 	}
-	
-	
+	//定义全局变量parentUid 存放上级编码
 	function initSelectedRoleGrid(id){
+		var comboboxUrl = '';
 		$('#selectedRoleGrid').datagrid({
 			singleSelect:false,
 			rownumbers:false,
 			url:contextPath + '/account/getUserRelaRoleList.action',//'datagrid_data1.json',
-			// url: contextPath + '/account/getUserRelaRoleList.action',     //初始化的时候查找已经存在的关联关系，并在该列表中显示。
 			method:'get',
 			queryParams : {
 				id : id
@@ -330,41 +349,76 @@ function initDatagrid()
 			border:false,
 			fitColumns:true,
 			collapsible:false,
-			columns:[[
+			columns:[[  //{"roleId":"ff808181516ab01e01516ab2bd7e0000","code":"SC_DL","name":"市场代理","parentRolename":"市场专员","parentRole":"ff808181514698fb015146a085460001"}
 					{field:'id',hidden:true},    //userRelaRole 关联关系表主键
 					{field:'userId',hidden:true},	//userId  用户主键
 					{field:'roleId',hidden:true},	//角色主键
-			        {field:'name',width:120,title:'角色名称'},
-					{field:'code',title:'角色编码',width:120,align:'left'},
-					{field:'parentRolename',title:'角色上级角色',width:120,align:'left'}
-			    ]],  
+			        {field:'roleName',width:120,title:'角色名称'},
+					{field:'roleCode',title:'角色编码',width:120,align:'left'},
+					{field:'parentRolename',title:'角色上级角色',width:120,align:'left'},
+					{field:'parentRole',hidden:true},
+					{ field: 'parentUid', title: '上级名称', width: 100, align: 'left', 
+						editor: { 
+							type: 'combobox', 
+							options: { 
+								url : contextPath + '/account/getRoleRelaUserList.action',
+								onBeforeLoad:function(param){
+									var parentRoleId = $(this).closest('td[field=parentUid]').prevAll('td[field=parentRole]').text();
+						            param.parentRoleId=parentRoleId;
+						        },
+						        onLoadSuccess:function(data){
+						        	if(data.length > 0){
+						        		var selled = $('#selectedRoleGrid').datagrid('getEditor', {index:0,field:'parentUid'});
+							        	var parentUid = selled.target.val();
+							        	if(parentUid!=''){
+							        		$(this).combobox('select',parentUid);
+							        	}else{
+							        		$(this).combobox('select',data[0].id);
+							        	}
+						        	}
+						        },
+						        onSelect:function(record){
+						        	var selled = $('#selectedRoleGrid').datagrid('getEditor', {index:0,field:'parentUid'});
+						    		selled.target.val(record.id);
+						        },
+								valueField: "id", 
+								textField: "name" 
+							},
+					} 
+				}]],  
 		    onLoadSuccess:function(data){
 		    	if(data.rows.length==0){
 					var body = $(this).data().datagrid.dc.body2;
 					body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
 				}else{
+					for(var i=0;i<data.rows.length;i++){
+        				$('#selectedRoleGrid').datagrid('beginEdit', i);
+        				var selled = $('#selectedRoleGrid').datagrid('getEditor', {index:0,field:'parentUid'});
+			    		selled.target.val(data.rows[i].parentUid);
+        			}
 					//获取已经选择的角色数据
 					var selectedRows = $('#selectedRoleGrid').datagrid('getRows');
 					//获取待选择的角色列表
 					var selectRows = $('#selectRoleGrid').datagrid('getRows');
 					$.each(selectedRows,function(i,selectedRow){
 						$.each(selectRows,function(j,selectRow){
-							if(selectedRow.id == selectRow.id){
-								$('#selectRoleGrid').datagrid('checkRow',j);
+							if(selectedRow.roleId == selectRow.id){
+								$('#selectRoleGrid').datagrid('selectRow',j);
 							}
 						});
 					});
 				}
+		    	initFlag = false;
 		    }
 		});
 	}
-	
 	/**
 	 * @desc 设置角色
 	 * @param userId
 	 * @param roles
 	 */
 	function setRoles(userId,roles){
+		initFlag = true;
 		initRoleGrid();
 		initSelectedRoleGrid(userId);
 		$("#userId").val(userId);
@@ -373,7 +427,9 @@ function initDatagrid()
 
 	function submitSelRoles(){
 		//undo 保存选择角色列表
-		var rows = $('#selectedRoleGrid').datagrid('getRows');
+		var rows = $('#selectedRoleGrid').datagrid('getRows')[0];
+		var selled = $('#selectedRoleGrid').datagrid('getEditor', {index:0,field:'parentUid'});
+		rows.parentUid = selled.target.val();
 		var userId = 	$("#userId").val();
 		$.ajax({
 			async: false,   //设置为同步获取数据形式
@@ -381,7 +437,7 @@ function initDatagrid()
 	        url: contextPath+'/account/saveUserRleaRole.action',
 	        data: {
 	        	userId : userId,                  //传入将要设定角色的用户
-	        	roleList : JSON.stringify(rows)	//传入已经选择好的用户
+	        	role : JSON.stringify(rows)	//传入已经选择好的用户
 	        },
 	        dataType: "json",
 	        success: function (data) {

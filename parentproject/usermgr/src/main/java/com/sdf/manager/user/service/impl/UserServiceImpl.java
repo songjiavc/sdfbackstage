@@ -18,7 +18,6 @@ import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.BeanUtil;
 import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.DateUtil;
-import com.sdf.manager.common.util.MD5Util;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.UserRelaRoleBean;
@@ -180,19 +179,21 @@ public class UserServiceImpl implements UserService {
 	 * @throws BizException 
 	 * @see com.sdf.manager.user.service.UserService#saveUserRelaRole(java.lang.String, java.util.List) 
 	 */
-	public void saveUserRelaRole(String userId,List<UserRelaRole> roles)throws BizException{
+	public void saveUserRelaRole(String userId,UserRelaRoleBean roleBean)throws BizException{
 		//删除以前的关系
 		List<UserRelaRole> userRelaRoleList = userRelaRoleRepository.findUserRelaRoleByUserId(userId);
 		for(UserRelaRole userRelaRole : userRelaRoleList){
 			userRelaRoleRepository.delete(userRelaRole);
 		}
 		//加入新关系
-		for(UserRelaRole role : roles){
-			UserRelaRole userRelaRole = new UserRelaRole();
-			userRelaRole.setRoleId(role.getId());
-			userRelaRole.setUserId(userId);
-			userRelaRoleRepository.save(userRelaRole);
-		}
+		UserRelaRole userRelaRole = new UserRelaRole();
+		userRelaRole.setRoleId(roleBean.getRoleId());
+		userRelaRole.setUserId(userId);
+		userRelaRoleRepository.save(userRelaRole);
+		//向user表中加入parentUid
+		User user = this.getUserById(userId);
+		user.setParentUid(roleBean.getParentUid());
+		userRepository.save(user);
 	}
 	
 	/** 
@@ -228,6 +229,33 @@ public class UserServiceImpl implements UserService {
 	 */
 	public List<AccountBean> findAccountsByRoleCode(String roleCode) {
 		Role role = roleRepository.getRoleByCode(roleCode);
+		List<User> users = role.getUsers();
+		if(users!=null && users.size()>0){
+			List<AccountBean> accountList = new ArrayList<AccountBean>();
+			for(User user : users){
+				AccountBean accountBean = new AccountBean();
+				try {
+					BeanUtil.copyBeanProperties(accountBean, user);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				accountList.add(accountBean);
+			}
+			return accountList;
+		}
+		return null;
+	}
+	
+
+	/* (非 Javadoc) 
+	 * <p>Title: findAccountsByRoleCode</p> 
+	 * <p>Description: </p> 
+	 * @param roleCode
+	 * @return 
+	 * @see com.sdf.manager.user.service.UserService#findAccountsByRoleCode(java.lang.String) 
+	 */
+	public List<AccountBean> findAccountsByRoleId(String roleId) {
+		Role role = roleRepository.getRoleById(roleId);
 		List<User> users = role.getUsers();
 		if(users!=null && users.size()>0){
 			List<AccountBean> accountList = new ArrayList<AccountBean>();

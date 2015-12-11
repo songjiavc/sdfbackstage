@@ -16,6 +16,11 @@ public class RoleBean
 	private String name;
 	
 	private String parentRolename;
+	
+	/** 
+	  * @Fields parentUid : 用户对应的上级角色id
+	  */ 
+	private String parentUid;
 
 	public String getId() {
 		return id;
@@ -48,5 +53,15 @@ public class RoleBean
 	public void setParentRolename(String parentRolename) {
 		this.parentRolename = parentRolename;
 	}
+
+	public String getParentUid() {
+		return parentUid;
+	}
+
+	public void setParentUid(String parentUid) {
+		this.parentUid = parentUid;
+	}
+	
+	
 
 }

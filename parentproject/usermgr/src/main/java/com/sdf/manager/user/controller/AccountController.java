@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sdf.manager.common.bean.DictBean;
 import com.sdf.manager.common.bean.ResultBean;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.BeanUtil;
@@ -26,6 +27,7 @@ import com.sdf.manager.common.util.Constants;
 import com.sdf.manager.common.util.LoginUtils;
 import com.sdf.manager.user.bean.AccountBean;
 import com.sdf.manager.user.bean.RoleBean;
+import com.sdf.manager.user.bean.UserRelaRoleBean;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
 import com.sdf.manager.user.entity.UserRelaRole;
@@ -172,15 +174,20 @@ public class AccountController {
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 	    Map<String,Object> returnMap = new HashMap<String,Object>();
-		List<RoleBean> roleBeans = new ArrayList<RoleBean>();
+		List<UserRelaRoleBean> roleBeans = new ArrayList<UserRelaRoleBean>();
 	    List<Role> roles = new ArrayList<Role>();
 		try {
 			User user = userService.getUserById(id);
 			roles = user.getRoles();
 			if(roles != null && roles.size() > 0){
 				for(Role role : roles){
-					RoleBean roleBean = new RoleBean();
-					BeanUtil.copyBeanProperties(roleBean, role);
+					UserRelaRoleBean roleBean = new UserRelaRoleBean();
+					roleBean.setRoleId(role.getId());
+					roleBean.setRoleCode(role.getCode());
+					roleBean.setRoleName(role.getName());
+					roleBean.setParentRolename(role.getParentRolename());
+					roleBean.setParentRole(role.getParentRole());
+					roleBean.setParentUid(user.getParentUid());
 					roleBeans.add(roleBean);
 				}
 			}
@@ -192,7 +199,7 @@ public class AccountController {
 		}catch (Exception e) {
 			returnMap.put("success", false);
 			returnMap.put("message",e.getMessage());
-		}finally{
+		}finally{	
 			return returnMap;
 		}
 	}
@@ -200,19 +207,15 @@ public class AccountController {
 	@SuppressWarnings("finally")
 	@RequestMapping(value = "/saveUserRleaRole", method = RequestMethod.POST)
 	public @ResponseBody ResultBean  saveUserRleaRole(
-			@RequestParam(value="roleList",required=true) String roleList,
+			@RequestParam(value="role",required=true) String role,
 			@RequestParam(value="userId",required=true) String userId,
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		ResultBean resultBean = new ResultBean();
 		try{
-			List<UserRelaRole> selRoleList = new ArrayList<UserRelaRole>();
 			//把json字符串转换成对象
-			JSONArray jsonArr = JSONArray.parseArray(roleList);
-			for (int i = 0; i < jsonArr.size(); i++) {
-				selRoleList.add((UserRelaRole)JSONObject.toJavaObject(jsonArr.getJSONObject(i),UserRelaRole.class)); 
-			}
-			userService.saveUserRelaRole(userId,selRoleList);
+			JSONObject jsonObj = JSONObject.parseObject(	role);
+			userService.saveUserRelaRole(userId,(UserRelaRoleBean)JSONObject.toJavaObject(jsonObj,UserRelaRoleBean.class));
 			resultBean.setStatus("success");
 			resultBean.setMessage("保存成功!");
 		}catch(BizException bizEx){
@@ -228,7 +231,7 @@ public class AccountController {
 	
 	@SuppressWarnings("finally")
 	@RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
-	public @ResponseBody ResultBean  saveUserRleaRole(
+	public @ResponseBody ResultBean  updatePassword(
 			@RequestParam(value="password",required=true) String newPassword,
 			ModelMap model,HttpSession httpSession) throws Exception{
 		ResultBean resultBean = new ResultBean();
@@ -243,6 +246,32 @@ public class AccountController {
 		}finally{
 			return resultBean;
 		}
-		
+	}
+	
+	/** 
+	  * @Description: 根据角色code获取角色下面对应所有人
+	  * @author songj@sdfcp.com
+	  * @date 2015年11月27日 上午11:00:04 
+	  * @param model
+	  * @param httpSession
+	  * @return
+	  * @throws Exception 
+	  */
+	@RequestMapping(value = "/getRoleRelaUserList", method = RequestMethod.POST)
+	public @ResponseBody List<DictBean> getRoleRelaUserList(
+			@RequestParam(value="parentRoleId",required=true) String parentRoleId,
+			ModelMap model,HttpSession httpSession) throws Exception
+	{
+		List<DictBean> dictList = new ArrayList<DictBean>();
+		List<AccountBean> userList = userService.findAccountsByRoleId(parentRoleId);
+		if(userList != null && userList.size() > 0){
+			for(AccountBean accountBean : userList){
+				DictBean dictBean = new DictBean();
+				dictBean.setId(accountBean.getId());
+				dictBean.setName(accountBean.getName());
+				dictList.add(dictBean);
+			}
+		}
+		return dictList;
 	}
 }

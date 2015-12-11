@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import com.sdf.manager.common.exception.BizException;
 import com.sdf.manager.common.util.QueryResult;
 import com.sdf.manager.user.bean.AccountBean;
+import com.sdf.manager.user.bean.UserRelaRoleBean;
 import com.sdf.manager.user.dto.AddAgentForm;
 import com.sdf.manager.user.entity.Role;
 import com.sdf.manager.user.entity.User;
@@ -86,7 +87,7 @@ public interface UserService {
 	  * @param userId
 	  * @throws BizException 
 	  */
-	public void saveUserRelaRole(String userId,List<UserRelaRole> roles)throws BizException;
+	public void saveUserRelaRole(String userId,UserRelaRoleBean role)throws BizException;
 	
 	/** 
 	  * @Description: 根据userId获取权限
@@ -114,6 +115,15 @@ public interface UserService {
 	  * @return 
 	  */
 	public List<AccountBean> findAccountsByRoleCode(String roleCode);
+	
+	/** 
+	  * @Description: 根据roleId获取人员列表
+	  * @author songj@sdfcp.com
+	  * @date 2015年12月10日 上午9:57:12 
+	  * @param roleId
+	  * @return 
+	  */
+	public List<AccountBean> findAccountsByRoleId(String roleId);
 	
 	/** 
 	  * @Description: 根据userId获取角色列表

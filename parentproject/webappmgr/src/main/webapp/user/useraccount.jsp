@@ -74,7 +74,7 @@
 	        </div>
 	        <div class="ftitle">
 	        	<label for="telephone" >用户电话:</label>
-	            <input class="easyui-validatebox textbox" type="text" name="telephone" validType="" missingMessage="用户电话"></input>
+	            <input class="easyui-validatebox textbox" type="text" name="telephone"  data-options="required:true,validType:['mobile']" missingMessage="站主手机号"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label  for="password">密码:</label>

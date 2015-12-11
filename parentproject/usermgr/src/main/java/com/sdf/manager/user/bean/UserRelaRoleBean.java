@@ -9,18 +9,51 @@ package com.sdf.manager.user.bean;
   */
 public class UserRelaRoleBean
 {
+	/** 
+	  * @Fields userId : 用户id
+	  */ 
+	private String userId;
+	
+	/** 
+	  * @Fields roleId : 角色id 
+	  */ 
 	private String roleId;
+	
+	/** 
+	  * @Fields parentUid :  
+	  */ 
+	private String parentUid;
 	
 	private String roleCode;
 	
 	private String roleName;
 
-	public String getroleId() {
+	private String parentRolename;
+	
+	private String parentRole;
+	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getRoleId() {
 		return roleId;
 	}
 
 	public void setRoleId(String roleId) {
 		this.roleId = roleId;
+	}
+
+	public String getParentUid() {
+		return parentUid;
+	}
+
+	public void setParentUid(String parentUid) {
+		this.parentUid = parentUid;
 	}
 
 	public String getRoleCode() {
@@ -38,4 +71,21 @@ public class UserRelaRoleBean
 	public void setRoleName(String roleName) {
 		this.roleName = roleName;
 	}
+
+	public String getParentRolename() {
+		return parentRolename;
+	}
+
+	public void setParentRolename(String parentRolename) {
+		this.parentRolename = parentRolename;
+	}
+
+	public String getParentRole() {
+		return parentRole;
+	}
+
+	public void setParentRole(String parentRole) {
+		this.parentRole = parentRole;
+	}
+	
 }
