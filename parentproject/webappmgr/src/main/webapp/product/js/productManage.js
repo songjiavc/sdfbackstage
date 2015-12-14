@@ -457,6 +457,7 @@ function updateProduct(id)
 						code:data.code,
 						name:data.name,
 						lotteryType:data.lotteryType,
+						proUrl:data.prourl,//软件产品的访问url
 						price:data.price,
 						privince:data.privince,
 						cpdl:data.cpdlDm,

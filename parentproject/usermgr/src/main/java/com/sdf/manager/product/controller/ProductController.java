@@ -228,6 +228,7 @@ public class ProductController extends GlobalExceptionHandler
 				@RequestParam(value="cpxl",required=false) String cpxl,
 				@RequestParam(value="durationOfuser",required=false) String durationOfuser,//产品使用期
 				@RequestParam(value="productDesprition",required=false) String productDesprition,
+				@RequestParam(value="proUrl",required=false) String proUrl,//产品访问路径（软件产品访问路径）
 				ModelMap model,HttpSession httpSession) throws Exception
 		{
 		   ResultBean resultBean = new ResultBean ();
@@ -241,6 +242,7 @@ public class ProductController extends GlobalExceptionHandler
 			   product.setName(name);
 			   product.setLotteryType(lotteryType);
 			   product.setPrice(price);
+			   product.setProurl(proUrl);//放置软件产品的访问路径值
 			   product.setProvinceDm(privince);
 			   product.setCityDm(city);
 			   product.setCpdlDm(cpdl);
@@ -267,6 +269,7 @@ public class ProductController extends GlobalExceptionHandler
 			   product.setCode(code);
 			   product.setName(name);
 			   product.setLotteryType(lotteryType);
+			   product.setProurl(null!=proUrl?proUrl:"");//放置软件产品的访问路径值
 			   product.setPrice(price);
 			   product.setProvinceDm(privince);
 			   product.setCityDm(city);

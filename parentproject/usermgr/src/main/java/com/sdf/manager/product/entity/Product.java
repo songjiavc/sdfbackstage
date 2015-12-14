@@ -50,6 +50,9 @@ public class Product extends BaseEntiry implements Serializable{
 	@Column(name="PRICE")
 	private String price;//参考价格
 	
+	@Column(name="PROURL", length=100)
+	private String prourl;//软件产品的访问路径
+	
 	@Column(name="PROVINCE_DM")
 	private String provinceDm;//省份
 	
@@ -83,6 +86,14 @@ public class Product extends BaseEntiry implements Serializable{
 	
 	
 	
+
+	public String getProurl() {
+		return prourl;
+	}
+
+	public void setProurl(String prourl) {
+		this.prourl = prourl;
+	}
 
 	public CodeDuration getDurationOfusers() {
 		return durationOfusers;

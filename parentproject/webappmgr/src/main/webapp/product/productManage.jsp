@@ -56,6 +56,13 @@
 	  			border-radius : 5px;
 	  		}
 	  		
+	  		.ftitle  .prourl{
+	  			float : left;
+	  			width: 300px;
+	  			
+	  			border-radius : 5px;
+	  		}
+	  		
 	  		.td_font{
 	  			font-weight:bold;
 	  		}
@@ -197,6 +204,13 @@
 	            <input class="easyui-validatebox commonInput" type="text" id="priceA" name="price" data-options="required:true"
 	             validType="money" missingMessage="参考价格不可以为空" ></input>(元)
 	        </div>
+	        
+	        <div class="ftitle"><%--后期应完善为：只有在操作的产品的大类为软件时才显示产品访问路径的输入框 --%>
+	            <label for="proUrlA" id="proUrlADiv">产品访问路径:</label>
+	            <input class="easyui-validatebox  prourl" type="text" id="proUrlA" name="proUrl" 
+	             ></input>
+	        </div>
+	        
 	        <div class="ftitle">
 	            <label for="subject">产品地域:</label>
 	            <div style="float:left;">
@@ -272,7 +286,7 @@
 	            <label for="lotteryTypeU">产品彩种分类:</label>
 	            <div style="float : left;">
 	            	<select class="easyui-combobox " id="lotteryTypeU" name="lotteryType"  
-		          	  data-options="editable:false" style="width:150px;" >
+		          	  data-options="editable:false" style="width:200px;" >
 		          	  <option value="1" checked>体彩</option>
 		          	  <option value="2" >福彩</option>
 					</select>
@@ -295,6 +309,13 @@
 	            <input class="easyui-validatebox commonInput" type="text" id="priceU" name="price" data-options="required:true"
 	             validType="money" missingMessage="产品价格不可以为空" ></input>(元)
 	        </div>
+	        
+	         <div class="ftitle" id="proUrlUDiv"><%--后期应完善为：只有在操作的产品的大类为软件时才显示产品访问路径的输入框 --%>
+	            <label for="proUrlU">产品访问路径:</label>
+	            <input class="easyui-validatebox  prourl" type="text" id="proUrlU" name="proUrl" 
+	             ></input>
+	        </div>
+	        
 	        <div class="ftitle">
 	            <label for="subject">产品地域:</label>
 	            <div style="float:left;">

@@ -26,6 +26,8 @@ public class ProductDto {
 	private String cityDm;//市
 	private String price;//参考价格
 	
+	private String prourl;//软件产品的访问路径
+	
 	private String provinceName;//省份名称
 	private String cityName;//市名称
 	
@@ -58,6 +60,14 @@ public class ProductDto {
 	
 	
 	
+
+	public String getProurl() {
+		return prourl;
+	}
+
+	public void setProurl(String prourl) {
+		this.prourl = prourl;
+	}
 
 	public String getDurationOfuser() {
 		return durationOfuser;
