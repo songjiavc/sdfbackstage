@@ -47,7 +47,7 @@
 				<entry key="hibernate.bytecode.use_reflection_optimizer" value="true" />
 				<entry key="hibernate.cache.use_second_level_cache" value="false" />
 				<entry key="hibernate.cache.use_query_cache" value="false" />
-				<entry key="hibernate.hbm2ddl.auto" value="update" />
+				<entry key="hibernate.hbm2ddl.auto" value="update" /><!-- 这个标签是用来基于你配置好了实体间的关系，然后可以自动生成表的 -->
 			</map>
 		</property>
 	</bean>
