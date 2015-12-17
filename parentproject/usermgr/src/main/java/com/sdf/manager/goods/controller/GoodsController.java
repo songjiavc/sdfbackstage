@@ -85,7 +85,7 @@ public class GoodsController extends GlobalExceptionHandler{
 	* @date 2015年11月9日 下午4:29:10
 	 */
 	 @RequestMapping(value = "/getDetailGoods", method = RequestMethod.GET)
-	 public @ResponseBody GoodsDTO getDetailGoods(
+	 public @ResponseBody GoodsDTO getDetailGoods( 
 			@RequestParam(value="id",required=false) String id,
 			ModelMap model,HttpSession httpSession) throws Exception
 	 {
