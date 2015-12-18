@@ -37,11 +37,21 @@ public class OrdersDTO {
 	
 	private String operator;//最近订单状态操作订单人
 	
+	private String creater;
 	
 	
 	
 	
 	
+	
+
+	public String getCreater() {
+		return creater;
+	}
+
+	public void setCreater(String creater) {
+		this.creater = creater;
+	}
 
 	public String getStatusName() {
 		return statusName;

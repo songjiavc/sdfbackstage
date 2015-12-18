@@ -185,6 +185,7 @@ public class OrderController extends GlobalExceptionHandler
 				buffer.append(" and name like ?").append(params.size());
 			}
 			
+			
 			//排序
 			LinkedHashMap<String, String> orderBy = new LinkedHashMap<String, String>();
 			orderBy.put("id", "desc");
@@ -848,6 +849,8 @@ public class OrderController extends GlobalExceptionHandler
 			if(roles.contains(roleProxy))
 			{
 				resultBean.setProxy(true);
+				//若为代理，返回当前登陆人的id
+				resultBean.setMessage(code);
 			}
 			else
 			{
@@ -857,6 +860,7 @@ public class OrderController extends GlobalExceptionHandler
 			if(roles.contains(roleFManger))
 			{
 				resultBean.setFinancialManager(true);
+				resultBean.setMessage(code);
 			}
 			else
 			{
