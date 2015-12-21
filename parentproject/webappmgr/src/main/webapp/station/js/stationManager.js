@@ -193,7 +193,7 @@ function initAddFormRegion(addOrUpdate,ccode,oldacode){
 	        	 {
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
 	            	 $("#addFormAgent").combobox('setValue', initParam.agentId);
-	            	 $("#addFormAgent").combobox('disable');
+	            	 $("#addFormAgent").combobox('readonly');
 	        	 }
 	         }
 		});

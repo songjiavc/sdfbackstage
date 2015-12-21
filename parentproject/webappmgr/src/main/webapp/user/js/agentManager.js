@@ -60,7 +60,7 @@ function initSearchFormParentId(initParam){
         	 {
             	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
             	 $("#searchFormParentId").combobox('setValue', initParam.userId);
-            	 $("#searchFormParentId").combobox('disable');
+            	 $("#searchFormParentId").combobox('readonly');
         	 }
              initDatagrid();
          }
