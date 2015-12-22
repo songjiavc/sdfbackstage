@@ -221,7 +221,7 @@ function initDatagrid()
 	        
 	        if(data.rows.length==0){
 				var body = $(this).data().datagrid.dc.body2;
-				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="8">没有数据</td></tr>');
+				body.find('table tbody').append('<tr><td width="'+body.width()+'" style="height: 25px; text-align: center;" colspan="9">没有数据</td></tr>');
 			}
 	        
 	        
