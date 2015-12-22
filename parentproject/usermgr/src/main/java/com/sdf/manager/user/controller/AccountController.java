@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -263,6 +264,9 @@ public class AccountController {
 			ModelMap model,HttpSession httpSession) throws Exception
 	{
 		List<DictBean> dictList = new ArrayList<DictBean>();
+		if(StringUtils.isEmpty(parentRoleId)){
+			return dictList;
+		}
 		List<AccountBean> userList = userService.findAccountsByRoleId(parentRoleId);
 		if(userList != null && userList.size() > 0){
 			for(AccountBean accountBean : userList){
