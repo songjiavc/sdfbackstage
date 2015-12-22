@@ -92,7 +92,7 @@ function initSearchFormParentId(initParam){
 	        	 {
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
 	            	 $("#addFormParentId").combobox('setValue', initParam.userId);
-	            	 $("#addFormParentId").combobox('disable');
+	            	 $("#addFormParentId").combobox('readonly');
 	        	 }
              }
 		});
@@ -285,7 +285,7 @@ function initDatagrid()
 					$('#addOrUpdateAgentForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
 					initAddFormParentId(data.parentId);
-					$('#addFormAgentCode').attr('disabled',true);
+					$('#addFormAgentCode').attr('readonly',true);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);

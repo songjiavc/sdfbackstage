@@ -166,7 +166,7 @@ function initAddFormRegion(addOrUpdate,ccode,oldacode){
 	        	 {
 	            	//使用“setValue”设置选中值不会触发绑定事件导致多次加载市级数据，否则会多次触发产生错误
 	            	 $("#searchFormAgent").combobox('setValue', initParam.agentId);
-	            	 $("#searchFormAgent").combobox('disable');
+	            	 $("#searchFormAgent").combobox('readonly');
 	        	 }
 				 initDatagrid();
 	         }
@@ -286,7 +286,7 @@ function initDatagrid()
 		        success: function (data) {
 					$('#addOrUpdateStationForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
-					$('#addFormStationCode').attr("disabled", true);
+					$('#addFormStationCode').attr("readonly", true);
 					initAddFormAgent(initParam);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
