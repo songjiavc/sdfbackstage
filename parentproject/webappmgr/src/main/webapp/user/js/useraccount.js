@@ -128,8 +128,14 @@ function initDatagrid()
 			success:function(data){
 				$.messager.alert('提示', eval("(" + data + ")").message);
 				$('#addAccountForm').form('clear');
+				$('#addAccountForm [name="status"]:radio').each(function() {   //设置“是”为默认选中radio
+		            if (this.value == '1'){   //默认选中“是”
+		               this.checked = true;   
+		            }       
+		         }); 
 				closeDialog();
 	        	initDatagrid();
+	        	
 			}
 		});
 	}
