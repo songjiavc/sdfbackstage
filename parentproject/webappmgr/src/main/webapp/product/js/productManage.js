@@ -701,7 +701,7 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkAname: {//自定义校验name
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-        	if(value.length==0||value.length>15){  
+        	if(value.length==0||value.length>16){  
         		rules.checkAname.message = "当前产品名称不可为空且长度不可以超过15个字符";  
                 return false;  
             }
@@ -723,7 +723,7 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkCodes: {//自定义校验code
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-        	if(value.length==0||value.length>15){  
+        	if(value.length==0||value.length>16){  
         		rules.checkCodes.message = "当前产品编码不可为空且长度不可以超过15个字符";  
                 return false;  
             }
