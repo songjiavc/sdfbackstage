@@ -699,8 +699,8 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkAname: {//自定义校验name
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-        	if(value.length==0||value.length>10){  
-        		rules.checkAname.message = "当前产品名称不可为空且长度不可以超过10个字符";  
+        	if(value.length==0||value.length>15){  
+        		rules.checkAname.message = "当前产品名称不可为空且长度不可以超过15个字符";  
                 return false;  
             }
         	else
