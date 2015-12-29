@@ -536,6 +536,8 @@ function submitAddproduct()
 	    	//提交表单后，从后台返回的data类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
 	    	$.messager.alert('提示', eval("(" + data + ")").message);
 	    	$("#addProduct").dialog('close');//初始化添加角色弹框关闭
+	    	$('#ff').form('clear');//清空表单
+	    	$("#lotteryTypeA").combobox('select','1');//彩种下拉框默认选中体彩
 	    	
 	    	//添加角色后刷新数据列表
 	    	initDatagrid();
