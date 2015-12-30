@@ -536,6 +536,8 @@ function submitAddproduct()
 	    	//提交表单后，从后台返回的data类型为String，要获取信息需要将其转换为json类型，使用eval("(" + data + ")")方法转换
 	    	$.messager.alert('提示', eval("(" + data + ")").message);
 	    	$("#addProduct").dialog('close');//初始化添加角色弹框关闭
+	    	$('#ff').form('clear');//清空表单
+	    	$("#lotteryTypeA").combobox('select','1');//彩种下拉框默认选中体彩
 	    	
 	    	//添加角色后刷新数据列表
 	    	initDatagrid();
@@ -699,8 +701,8 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkAname: {//自定义校验name
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-        	if(value.length==0||value.length>10){  
-        		rules.checkAname.message = "当前产品名称不可为空且长度不可以超过10个字符";  
+        	if(value.length==0||value.length>16){  
+        		rules.checkAname.message = "当前产品名称不可为空且长度不可以超过15个字符";  
                 return false;  
             }
         	else
@@ -721,7 +723,7 @@ $.extend($.fn.validatebox.defaults.rules, {
     checkCodes: {//自定义校验code
         validator: function(value,param){
         	var rules = $.fn.validatebox.defaults.rules;  
-        	if(value.length==0||value.length>15){  
+        	if(value.length==0||value.length>16){  
         		rules.checkCodes.message = "当前产品编码不可为空且长度不可以超过15个字符";  
                 return false;  
             }

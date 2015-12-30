@@ -24,7 +24,7 @@ function setOrder(stationId,stationNumber,stationStyle)
 	//根据站点的区域和彩种加载商品信息列表
 	initGoodsDatagrid(returnArr[0], returnArr[1], 'goodsDatagridU', returnArr[2]);
 	
-	
+	$('.panel-title.panel-with-icon').html('购买商品');
 	$("#setOrder").dialog("open");
 }
 
