@@ -394,6 +394,7 @@ function initDatagrid()
 		columns:[[
 				{field:'ck',checkbox:true},
 				{field:'id',hidden:true},
+				{field:'connectGoods',hidden:true},
 		        {field:'name',width:120,title:'产品名称',align:'center'},
 				{field:'code',title:'产品编码',width:150,align:'center'},
 				{field:'price',title:'参考价格(元)',width:80,align:'center'},
@@ -417,7 +418,7 @@ function initDatagrid()
 					{field:'opt',title:'操作',width:160,align:'center',  
 			            formatter:function(value,row,index){  
 			                var btn = '<a class="editcls" onclick="updateProduct(&quot;'+row.id+'&quot;)" href="javascript:void(0)">编辑</a>'
-			                	+'<a class="deleterole" onclick="deleteProduct(&quot;'+row.id+'&quot;)" href="javascript:void(0)">删除</a>';
+			                	+'<a class="deleterole" onclick="deleteProduct(&quot;'+row.id+'&quot;,&quot;'+row.connectGoods+'&quot;)" href="javascript:void(0)">删除</a>';
 			                return btn;  
 			            }  
 			        }  
@@ -597,7 +598,7 @@ function generateCode()
  * 删除产品数据
  * @param id
  */
-function deleteProduct(id)
+function deleteProduct(id,connectGoods)
 {
 	var url = contextPath + '/product/deleteProduct.action';
 	var data1 = new Object();
@@ -609,25 +610,35 @@ function deleteProduct(id)
 		
 	if(codearr.length>0)
 	{
-		$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
-		        if (r) {  
-			        	$.ajax({
-			        		async: false,   //设置为同步获取数据形式
-			                type: "post",
-			                url: url,
-			                data:data1,
-			                dataType: "json",
-			                success: function (data) {
-			                	initDatagrid();
-			                	$.messager.alert('提示', data.message);
-			                },
-			                error: function (XMLHttpRequest, textStatus, errorThrown) {
-			                    window.parent.location.href = contextPath + "/error.jsp";
-			                }
-			           });
-			        	
-		        }  
-		    });  
+		if('1' == connectGoods)
+		{
+			deleteFlag = false;
+			$.messager.alert('提示', "当前产品已和有效商品进行关联，不可删除!");
+		}
+		else
+			{
+				$.messager.confirm("提示", "您确认删除选中数据？", function (r) {  
+			        if (r) {  
+				        	$.ajax({
+				        		async: false,   //设置为同步获取数据形式
+				                type: "post",
+				                url: url,
+				                data:data1,
+				                dataType: "json",
+				                success: function (data) {
+				                	initDatagrid();
+				                	$.messager.alert('提示', data.message);
+				                },
+				                error: function (XMLHttpRequest, textStatus, errorThrown) {
+				                    window.parent.location.href = contextPath + "/error.jsp";
+				                }
+				           });
+				        	
+			        }  
+			    });  
+			}
+		
+		
 	}
 	else
 	{
@@ -649,10 +660,22 @@ function deleteProductList()
 	var rows = $('#datagrid').datagrid('getSelections');
 	
 	var deleteFlag = true;
+	var connectGoods = '0';//是否与有效的商品关联标记0：未关联1：关联
 	
 	for(var i=0; i<rows.length; i++)
 	{
-		codearr.push(rows[i].id);//code
+		connectGoods = rows[i].connectGoods;
+		if('1' == connectGoods)
+			{
+				deleteFlag = false;
+				$.messager.alert('提示', "当前产品编码为："+rows[i].code+"的产品已和有效商品进行关联，不可删除!");
+				break;
+			}
+		else
+			{
+				codearr.push(rows[i].id);//code
+			}
+		
 	}
 	
 	if(deleteFlag)//选中的待删除权限中没有拥有子级权限的权限时可以进行删除操作

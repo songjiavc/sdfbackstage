@@ -182,6 +182,13 @@ public class ProductServiceImpl implements ProductService {
 					dto.setDurationOfuser(entity.getDurationOfusers().getId().toString());
 				}
 				
+				//是否和有效商品关联
+				String connectGoods = "1";//默认为与有效商品关联
+				if(null == entity.getGoodAndproduct()||entity.getGoodAndproduct().size()==0)
+				{
+					connectGoods = "0";
+				}
+				dto.setConnectGoods(connectGoods);
 				
 				
 			} catch (Exception e) {

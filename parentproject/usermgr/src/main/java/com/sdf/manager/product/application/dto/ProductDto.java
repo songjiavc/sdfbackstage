@@ -56,10 +56,21 @@ public class ProductDto {
 	
 	private String durationOfuser;//产品使用期id
 	
+	private String connectGoods;//有效商品关联标志位0：未关联，1：关联
 	
 	
 	
 	
+	
+	
+
+	public String getConnectGoods() {
+		return connectGoods;
+	}
+
+	public void setConnectGoods(String connectGoods) {
+		this.connectGoods = connectGoods;
+	}
 
 	public String getProurl() {
 		return prourl;
