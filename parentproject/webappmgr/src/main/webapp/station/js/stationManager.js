@@ -178,7 +178,7 @@ function initAddFormRegion(addOrUpdate,ccode,oldacode){
 	 * date 2015-11-27 
 	 * desc 初始化上级代理列表
 	 */
-	function initAddFormAgent(initParam){
+	function initAddFormAgent(initParam,addFormAgent){
 		$('#addFormAgent').combobox('clear');//清空combobox值
 		$('#addFormAgent').combobox({
 			url:contextPath+'/agent/getScdlList.action',
@@ -187,7 +187,12 @@ function initAddFormRegion(addOrUpdate,ccode,oldacode){
 			onLoadSuccess: function (data) { //数据加载完毕事件
 				if (initParam.flag == 'false')
 	             {
-	            	 $("#addFormAgent").combobox('select',data[0].id);
+	            	if(addFormAgent == undefined){
+	            		$("#addFormAgent").combobox('select',data[0].id);
+	            	}
+	            	else{
+	            		$("#addFormAgent").combobox('select',addFormAgent);
+	            	}
 	             }
 	             else
 	        	 {
@@ -287,7 +292,7 @@ function initDatagrid()
 					$('#addOrUpdateStationForm').form('load',data);
 					initProvince('update',data.addFormProvince,data.addFormCity,data.addFormRegion);
 					$('#addFormStationCode').attr("readonly", true);
-					initAddFormAgent(initParam);
+					initAddFormAgent(initParam,data.addFormAgent);
 		        },
 		        error: function (XMLHttpRequest, textStatus, errorThrown) {
 		            alert(errorThrown);
