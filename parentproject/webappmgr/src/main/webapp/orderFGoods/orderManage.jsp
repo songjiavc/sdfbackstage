@@ -10,11 +10,11 @@
     
     <script type="text/javascript">
   	var toolbar = [{
-  	    text:'批量删除订单',
+  	   /*  text:'批量删除订单',
   	    iconCls:'icon-remove',
   	    handler:function(){
   	    	deleteOrdersList();
-  	    	}
+  	    	} */
   	}];
   	  
   	
