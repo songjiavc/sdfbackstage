@@ -175,9 +175,9 @@
     			<input id="addFormAgent" name="addFormAgent" class="easyui-combobox textbox"  />
     		</div>
 	        <div class="ftitle">
-	            <label for="addFormStationCode">站点编码:</label>
+	            <label for="addFormStationCode">登录账号:</label>
 	            <input class="easyui-validatebox textbox" type="text" name="addFormStationCode"  id="addFormStationCode" data-options="required:true,validType:['englishOrNum','length[0,20]',]"" 
-	              missingMessage="站点编码不可以为空" invalidMessage="站点编码长度不可以超过20个字符"></input>
+	              missingMessage="站点编码不可以为空" invalidMessage="登录账号长度不可以超过20个字符"></input>
 	        </div>
 	        <div class="ftitle">
 	            <label for="addFormStationStyle">站点类型:</label>
