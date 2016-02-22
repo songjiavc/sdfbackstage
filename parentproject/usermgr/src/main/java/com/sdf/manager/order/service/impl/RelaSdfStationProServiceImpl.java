@@ -35,4 +35,9 @@ public class RelaSdfStationProServiceImpl implements RelaSdfStationProService {
 		return relaSdfStaProRepository.getRelaSdfStationProductByOrderId(orderId);
 	}
 
+	public List<RelaSdfStationProduct> getRelaSdfStationProductByStationIdAndProductIdAndType(
+			String stationId, String productId, String type) {
+		return relaSdfStaProRepository.getRelaSdfStationProductByStationIdAndProductIdAndType(stationId, productId, type);
+	}
+
 }
