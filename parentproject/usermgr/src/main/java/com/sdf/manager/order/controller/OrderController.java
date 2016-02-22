@@ -649,9 +649,43 @@ public class OrderController extends GlobalExceptionHandler
 				   relaSdfStationProduct.setModify(LoginUtils.getAuthenticatedUserCode(httpSession));
 				   relaSdfStationProduct.setModifyTime(new Timestamp(System.currentTimeMillis()));
 				   //因为审批已完成，计算当前站点使用该产品的起始时间和终止时间
-				   relaSdfStationProduct.setStartTime(new Timestamp(System.currentTimeMillis()));//开始时间
-				   endtime = DateUtil.getNextDay(Integer.parseInt(relaSdfStationProduct.getDurationOfUse()));
-				   relaSdfStationProduct.setEndTime(DateUtil.formatDateToTimestamp(endtime, DateUtil.FULL_DATE_FORMAT));
+				 //2016-2-22添加，若当前站点之前购买过当前产品，则开始时间要连续
+				   List<RelaSdfStationProduct> saveBefore = relaSdfStationProService.
+						   getRelaSdfStationProductByStationIdAndProductIdAndType
+						   (relaSdfStationProduct.getStationId(), relaSdfStationProduct.getProductId(), OrderController.STATION_PRODUCT_VALID_STATUS);
+				   if(null != saveBefore &&saveBefore.size()>0)
+				   {
+					   //获取最近一次的购买记录
+					   RelaSdfStationProduct nearBuy = saveBefore.get(0);
+					   if(null != nearBuy)
+					   {
+						   Timestamp lastEndtime = nearBuy.getEndTime();//上次一购买应用的到期时间
+						   Date newStartTime = DateUtil.
+								   				getNextDayOfCurrentTime(lastEndtime, 1);//新的开始时间是从上次购买的到期时间的第二天开始计算的
+						   Timestamp newStTimestamp = DateUtil.formatDateToTimestamp(newStartTime, DateUtil.FULL_DATE_FORMAT);//新数据的开始时间
+						   
+						   Date newendtime;//新数据的结束时间
+						   newendtime = DateUtil.getNextDayOfCurrentTime(newStTimestamp, Integer.parseInt(relaSdfStationProduct.getDurationOfUse()));
+						   
+						   //插入连续的开始时间和结束时间
+						   relaSdfStationProduct.setStartTime(newStTimestamp);//开始时间
+						   relaSdfStationProduct.setEndTime(DateUtil.formatDateToTimestamp(newendtime, DateUtil.FULL_DATE_FORMAT));
+					   }
+					   else
+					   {
+						   relaSdfStationProduct.setStartTime(new Timestamp(System.currentTimeMillis()));//开始时间
+						   endtime = DateUtil.getNextDay(Integer.parseInt(relaSdfStationProduct.getDurationOfUse()));
+						   relaSdfStationProduct.setEndTime(DateUtil.formatDateToTimestamp(endtime, DateUtil.FULL_DATE_FORMAT));
+					   }
+				   }
+				   else
+				   {
+					   relaSdfStationProduct.setStartTime(new Timestamp(System.currentTimeMillis()));//开始时间
+					   endtime = DateUtil.getNextDay(Integer.parseInt(relaSdfStationProduct.getDurationOfUse()));
+					   relaSdfStationProduct.setEndTime(DateUtil.formatDateToTimestamp(endtime, DateUtil.FULL_DATE_FORMAT));
+				   }
+				   
+				  
 				   
 				   relaSdfStationProService.update(relaSdfStationProduct);
 			   }

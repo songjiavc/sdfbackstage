@@ -335,4 +335,22 @@ public class DateUtil {
 		  }
     	 return null;
     }
+    
+    /**
+     * 
+     * Created on 2010-10-25 
+     * <p>Description:[获得n天后的日期]</p>
+     * @param n
+     * @return
+     */
+    public static Date getNextDayOfCurrentTime(Timestamp currentTime,int n) {
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(currentTime.getTime());
+        calendar.add(Calendar.DAY_OF_MONTH, n);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        return calendar.getTime();
+    }
 }
