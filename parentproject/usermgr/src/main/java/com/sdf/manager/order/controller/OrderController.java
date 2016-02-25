@@ -313,7 +313,8 @@ public class OrderController extends GlobalExceptionHandler
 						   RelaSdfStationProduct relaSdfStationProduct = new RelaSdfStationProduct();
 						   proid = proids.get(j);
 						   ps = (JSONArray) data.get(proid);
-						   relaSdfStationProduct.setProductId(ps.getString(5));//productId中放置的是产品和商品关联表的id
+						   relaSdfStationProduct.setRelaProGood(ps.getString(5));//productId中放置的是产品和商品关联表的id
+						   relaSdfStationProduct.setProductId(proid);
 						   relaSdfStationProduct.setStationId(ps.getString(3));//从前台获取
 						   relaSdfStationProduct.setProbation(ps.getString(2));
 						   relaSdfStationProduct.setGoodsId(ps.getString(1));
@@ -426,7 +427,9 @@ public class OrderController extends GlobalExceptionHandler
 						   RelaSdfStationProduct relaSdfStationProduct = new RelaSdfStationProduct();
 						   proid = proids.get(j);//产品id
 						   ps = (JSONArray) data.get(proid);
-						   relaSdfStationProduct.setProductId(ps.getString(5));//productId中放置的是产品和商品关联表的id
+						   relaSdfStationProduct.setProductId(proid);
+						   System.out.println(proid);
+						   relaSdfStationProduct.setRelaProGood(ps.getString(5));//productId中放置的是产品和商品关联表的id
 						   relaSdfStationProduct.setStationId(ps.getString(3));//从前台获取
 						   relaSdfStationProduct.setProbation(ps.getString(2));
 						   relaSdfStationProduct.setGoodsId(ps.getString(1));

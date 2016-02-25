@@ -27,9 +27,12 @@ public class RelaSdfStationProduct extends BaseEntiry {
 	
 	@Column(name="STATION_ID", length=45, nullable=false)
 	private String stationId;//站点id
+	/*宋佳2016-2-25 日增加   增加产品本身id*/
+	@Column(name="RELA_PRO_GOOD", length=45, nullable=false)
+	private String relaProGood;//商品与产品关联表的id
 	
 	@Column(name="PRODUCT_ID", length=45, nullable=false)
-	private String productId;//商品与产品关联表的id
+	private String productId;//商品id
 	
 	@Column(name="GOODS_ID", length=45, nullable=false)
 	private String goodsId;//商品id
@@ -150,6 +153,14 @@ public class RelaSdfStationProduct extends BaseEntiry {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getRelaProGood() {
+		return relaProGood;
+	}
+
+	public void setRelaProGood(String relaProGood) {
+		this.relaProGood = relaProGood;
 	}
 	
 	

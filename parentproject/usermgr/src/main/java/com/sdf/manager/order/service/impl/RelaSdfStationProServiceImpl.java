@@ -36,8 +36,8 @@ public class RelaSdfStationProServiceImpl implements RelaSdfStationProService {
 	}
 
 	public List<RelaSdfStationProduct> getRelaSdfStationProductByStationIdAndProductIdAndType(
-			String stationId, String productId, String type) {
-		return relaSdfStaProRepository.getRelaSdfStationProductByStationIdAndProductIdAndType(stationId, productId, type);
+			String stationId, String relaProGoodId, String type) {
+		return relaSdfStaProRepository.getRelaSdfStationProductByStationIdAndProductIdAndType(stationId, relaProGoodId, type);
 	}
 
 }

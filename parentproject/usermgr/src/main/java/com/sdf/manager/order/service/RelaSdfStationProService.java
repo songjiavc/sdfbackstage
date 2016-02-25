@@ -13,6 +13,6 @@ public interface RelaSdfStationProService {
 	
 	public List<RelaSdfStationProduct> getRelaSdfStationProductByOrderId(String orderId);
 	
-	public List<RelaSdfStationProduct> getRelaSdfStationProductByStationIdAndProductIdAndType(String stationId,String productId,String type);
+	public List<RelaSdfStationProduct> getRelaSdfStationProductByStationIdAndProductIdAndType(String stationId,String relaProGoodId,String type);
 	
 }
