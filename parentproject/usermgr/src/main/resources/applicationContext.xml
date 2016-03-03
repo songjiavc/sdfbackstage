@@ -65,7 +65,7 @@
 		<property name="url">
 			<value>jdbc:mysql://localhost:3306/analysis?useUnicode=true&amp;amp;characterEncoding=utf-8</value>
 		</property>
-		<property name="username" value="root" />
-		<property name="password" value="echart" />
+		<property name="username" value="analysis" />
+		<property name="password" value="34songJIA$#" />
 	</bean>
 </beans>
