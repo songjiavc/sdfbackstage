@@ -4,7 +4,7 @@
 <html>
   <head>
     
-    <title>时代枫企业管理平台</title>
+    <title>企业管理平台</title>
 	 <jsp:include page="../common/top.jsp" flush="true" /> 
 	  <script type="text/javascript">
 	 
@@ -46,10 +46,10 @@
          		当前登录用户：<span id="loginuser">admin</span>
          </span>
 
-        <span style="padding-left:10px; font-size: 36px; float:left;font-family:隶书;">时代枫企业管理平台</span>
+        <span style="padding-left:10px; font-size: 36px; float:left;font-family:隶书;">企业管理平台</span>
     </div>
     <div region="south" split="false" style="height: 30px; background: #D2E0F2; ">
-        <div class="footer"><center>时代枫传媒@2015</center></div>
+        <div class="footer"><center>@2015</center></div>
     </div>
     <div region="west" hide="true" split="false" title="导航菜单" style="width:180px;" id="west">
 <div id='wnav' class="easyui-accordion" fit="true" border="false">
@@ -62,7 +62,7 @@
         <div id="tabs" class="easyui-tabs"  fit="true" border="false" >
 			<div title="欢迎使用" style="padding:20px;overflow:hidden;" id="home">
 				
-			<h1>欢迎进入时代枫企业管理平台</h1>
+			<h1>欢迎进入企业管理平台</h1>
 
 			</div>
 		</div>

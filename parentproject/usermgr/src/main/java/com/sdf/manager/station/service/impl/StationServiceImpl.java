@@ -18,6 +18,8 @@ import com.sdf.manager.station.application.dto.StationFormDto;
 import com.sdf.manager.station.entity.Station;
 import com.sdf.manager.station.repository.StationRepository;
 import com.sdf.manager.station.service.StationService;
+import com.sdf.manager.user.entity.LoginStatus;
+import com.sdf.manager.user.repository.LoginStatusRepostitory;
 /** 
   * @ClassName: AuthServiceImpl 
   * @Description: 
@@ -30,7 +32,8 @@ import com.sdf.manager.station.service.StationService;
 public class StationServiceImpl implements StationService {
 	@Autowired
 	private StationRepository stationRepository;
-
+	@Autowired
+	private LoginStatusRepostitory loginStatusRepostitory;
 	/**
 	 * 
 	* @Description: 业务上保存更新方法
@@ -61,6 +64,12 @@ public class StationServiceImpl implements StationService {
 				station.setModify(userId);
 				station.setModifyTime(new Date());
 				stationRepository.save(station);
+				//站点维护完毕后，将站点登陆信息内容初始化数据
+				LoginStatus loginStatus = new LoginStatus();
+				loginStatus.setIsLogin("0");
+				loginStatus.setStationCode(station.getCode());
+				loginStatus.setUpdateTime(null);
+				loginStatusRepostitory.save(loginStatus);
 			}else{
 				throw new BizException(0201);
 			}
